@@ -1,0 +1,58 @@
+[build-system]
+requires = ['setuptools >= 61.0.0']
+build-backend = 'setuptools.build_meta'
+
+[project]
+name = 'fsstats'
+description = 'Statistics for FastSurfer and FreeSurfer output'
+license = {file = 'LICENSE'}
+requires-python = '>=3.10'
+authors = [
+    {name = 'Kersten Diers', email = 'kersten.diers@dzne.de'},
+    {name = 'Martin Reuter', email = 'martin.reuter@dzne.de'}
+]
+maintainers = [
+    {name = 'Kersten Diers', email = 'kersten.diers@dzne.de'},
+    {name = 'Martin Reuter', email = 'martin.reuter@dzne.de'}
+]
+keywords = [
+    'FastSurfer',
+    'FreeSurfer',
+    'Statistics',
+]
+classifiers = [
+    'Operating System :: Unix',
+    'Operating System :: MacOS',
+    'Programming Language :: Python :: 3 :: Only',
+    'Programming Language :: Python :: 3.10',
+    'Programming Language :: Python :: 3.11',
+    'Programming Language :: Python :: 3.12',
+    'Natural Language :: English',
+    'License :: OSI Approved :: MIT License',
+    'Intended Audience :: Science/Research',
+]
+dynamic = ["version", "readme", "dependencies"]
+
+[project.urls]
+homepage = 'https://github.com/Deep-MI/fsstats'
+documentation = 'https://github.com/Deep-MI/fsstats'
+source = 'https://github.com/Deep-MI/fsstats'
+tracker = 'https://github.com/Deep-MI/fsstats/issues'
+
+[project.scripts]
+mri_lmefit = 'fsstats.cli:lmefit'
+
+[tool.setuptools.dynamic]
+version = {file = 'VERSION'}
+readme = {file = 'DESCRIPTION.md', content-type = "text/markdown"}
+dependencies = {file = 'requirements.txt'}
+
+#[tool.setuptools] ### probably not needed
+#include-package-data = false
+
+[tool.setuptools.packages.find]
+include = ['fsstats', 'fsstats.cli', 'fsstats.cfg', 'fsstats.doc', 'fsstats.utils']
+exclude = ['docker', 'singularity']
+
+[tool.setuptools.package-data]
+"fsstats.doc" = ["*.md"]
