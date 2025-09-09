@@ -5,7 +5,7 @@ from .lme_fit_init import lme_fit_init
 from .lme_Gradient import lme_Gradient
 from .lme_EI import lme_EI
 
-def lme_fit_FS(X, Zcols, Y, ni, nit=20, e=1e-1, label=None, compute_random_effects=False, return_minimal_information=False, verbose=False):
+def lme_fit_FS(X, Zcols, Y, ni, nit, e, label, compute_random_effects, return_minimal_information, verbose):
     """
     Linear mixed-effects estimation by the Fisher scoring algorithm.
 
@@ -19,18 +19,18 @@ def lme_fit_FS(X, Zcols, Y, ni, nit=20, e=1e-1, label=None, compute_random_effec
         Data matrix (nm, nv) whose columns represent the data vector for each voxel/vertex. Rows must correspond to rows in X.
     ni : ndarray
         List (nc,) whose entries are the number of repeated measures for each subject. Order must correspond to order of X.
-    nit : int, optional
-        Number of iterations. Default is 20.
-    e : float, optional
-        Convergence epsilon (gradient's norm). Default 10^-1.
-    label : str, optional
-        Label used for reporting. Default: None.
-    compute_random_effects : bool, optional
-        Compute random effects estimates. Default: False.
-    return_minimal_information : bool, optional
-        Return minimal information. Default: False.
-    verbose : bool, optional
-        Increase verbosity. Default: False.
+    nit : int
+        Number of iterations.
+    e : float
+        Convergence epsilon (gradient norm).
+    label : str
+        Label used for reporting. Can be None.
+    compute_random_effects : bool
+        Compute random effects estimates.
+    return_minimal_information : bool
+        Return minimal information.
+    verbose : bool
+        Increase verbosity.
 
     Returns
     -------

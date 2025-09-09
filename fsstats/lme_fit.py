@@ -1,7 +1,7 @@
 import logging
 import multiprocessing
+from tqdm import tqdm
 import numpy as np
-from scipy.io import savemat
 from joblib import Parallel, delayed
 from .lme_fit_FS import lme_fit_FS
 
@@ -63,20 +63,22 @@ def lme_fit(X, Zcols, Y, ni, maskvtx=None, prs=1, nit=20, e=1e-1, compute_random
     # Processing
 
     if prs > 1:
-        results = Parallel(n_jobs=prs)(delayed(lme_fit_FS)(
-                X=X,
-                Zcols=Zcols,
-                Y=np.expand_dims(Y[:, i], axis=1),
-                ni=ni,
-                nit=nit,
-                e=e,
-                label=str(i),
-                compute_random_effects=compute_random_effects,
-                return_minimal_information=return_minimal_information,
-                verbose=verbose
-                )
-            for i in range(nv)
-            )
+        results = list(tqdm(Parallel(return_as="generator", n_jobs=prs)(delayed(lme_fit_FS)(
+                    X=X,
+                    Zcols=Zcols,
+                    Y=np.expand_dims(Y[:, i], axis=1),
+                    ni=ni,
+                    nit=nit,
+                    e=e,
+                    label=str(i),
+                    compute_random_effects=compute_random_effects,
+                    return_minimal_information=return_minimal_information,
+                    verbose=verbose
+                    )
+                for i in range(nv)
+                ),
+                total = nv
+            ))
         for i, stats_i in enumerate(results):
             stats_masked[i] = stats_i
     else:
@@ -98,15 +100,15 @@ def lme_fit(X, Zcols, Y, ni, maskvtx=None, prs=1, nit=20, e=1e-1, compute_random
     # Prepare outputs
 
     stats = [{'Bhat': None, 'CovBhat': None, 'phisqhat': None, 'Dhat': None,
-              'Zcols': None, 'invEI': None, 'Pth': None, 'Qthth': None, 'lreml': None} for _ in range(nv0)]
+              'Zcols': None, 'invEI': None, 'Pth': None, 'Qthth': None, 'lreml': None, 'st' : None} for _ in range(nv0)]
 
     for i in range(nv):
         stats[maskvtx[i]] = stats_masked[i]
 
     # Summary
-    converged = np.sum([ stats[i]['st'] for i in range(nv0) ])
-
-    LOGGER.info(f'Summary: Algorithm did not converge at {100 * (1 - converged / nv):.2f} percent of the total number of locations.')
+    #converged = np.sum([ stats[i]['st'] for i in range(nv0) ])
+    #TODO: summation does not work for None
+    #LOGGER.info(f'Summary: Algorithm did not converge at {100 * (1 - converged / nv):.2f} percent of the total number of locations.')
 
     # Return
 

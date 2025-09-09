@@ -4,3 +4,4 @@ nibabel
 numpy
 pandas
 scipy
+tqdm

@@ -3,21 +3,42 @@ import numpy as np
 from scipy.stats import f as f_dist
 from .lme_EI import lme_EI
 
-def lme_test_F(C, Bhat, CBhat, Zcols, invEI, Pth, Qthth, X=None, W=None, ni=None, label=None, bias_correct=False, verbose=False):
+def lme_test_F(C, Bhat, CBhat, Zcols, invEI, Pth, Qthth, X, W, ni, label, bias_correct, verbose):
     """
     Inference for the fixed-effects in the linear mixed-effects model.
 
     Parameters
     ----------
-    stats : list of dict
-        Structure array containing statistics for every voxel/vertex.
-    C : array-like
-        Contrast matrix.
-    bias_correct : bool, optional
-        Bias-adjustment of covariance of fixed effects. Default: False.
-    verbose : bool, optional
-        Increase verbosity. Default: False.        
-
+    C : ndarray
+        Contrast vector or matrix.
+    Bhat : ndarray
+        Beta estimates.
+    CBhat : ndarray
+        Covariance of beta estimates.
+    Zcols : ndarray
+        List of indices of the columns of X that will be considered as random effects (nr,).
+    invEI : ndarray
+        Inverse of expected information matrix.
+    Pth : ndarray
+        ...
+    Qthth : ndarray
+        ...
+    X : ndarray
+        Design matrix, ordered according to time for each subject (nm, p).
+        Can be None if bias_correct==False.
+    W : ndarray
+        ...
+        Can be None if bias_correct==False.
+    ni : ndarray
+        List (nc,) whose entries are the number of repeated measures for each subject. Order must correspond to order of X.
+        Can be None if bias_correct==False.
+    label : str
+        Label used for reporting. Can be None.
+    bias_correct : bool
+        Perform small-sample bias adjustment of covariance of fixed effects.
+    verbose : bool
+        Increase verbosity.
+    
     Returns
     -------
     fstats : dict
@@ -30,15 +51,6 @@ def lme_test_F(C, Bhat, CBhat, Zcols, invEI, Pth, Qthth, X=None, W=None, ni=None
     # Prepare inputs
     q = len(Zcols)
     nth = q * (q + 1) // 2 + 1
-
-    # Computation of Pis, Qijs and the expected information matrix EI // should exist already # TODO
-    #V = stats['SIGMA']
-    #Dhat = stats[i]['Dhat']
-    #phisqhat = stats[i]['phisqhat']
-    #phi = np.sqrt(phisqhat)
-    #L = cholesky(Dhat)
-    #EI, Pth, Qthth = lme_EI(X, Zcols, W, CBhat, V, L, phi, ni)
-    #invEI = np.linalg.inv(EI)
 
     # Computation of Rijs: Kenward & Roger (1997) “A method for small sample inference in linear mixed models” (Biometrics); bias-adjusted covariance of fixed effects.
     if bias_correct:
@@ -109,16 +121,19 @@ def lme_test_F(C, Bhat, CBhat, Zcols, invEI, Pth, Qthth, X=None, W=None, ni=None
         LOGGER.info('Index ' + label + ': Negative F-values encountered, setting to zero.')
         Fstat_i = np.array(0)
     pval_i = 1 - f_dist.cdf(Fstat_i, szC, m)
+    sig_i = -np.log10(pval_i)
     sgn_i = np.sign(C @ Bhat)
     df_i = [m, szC]
 
     Fstat_i = Fstat_i.item()
     pval_i = pval_i.item()
+    sig_i = sig_i.item()
     sgn_i = sgn_i.item()
     df_i = [ float(i) for i in df_i ]
 
     # Output
-    LOGGER.info('Index ' + label + ': F(' + f"{df_i[0]:.2f}" + ',' + f"{df_i[1]:.2f}" + ') = ' + str(Fstat_i) + ', p = ' + str(pval_i) + ', sgn = ' + str(sgn_i))
+    if verbose:
+        LOGGER.info('Index ' + label + ': F(' + f"{df_i[0]:.2f}" + ',' + f"{df_i[1]:.2f}" + ') = ' + str(Fstat_i) + ', p = ' + str(pval_i) + ', sgn = ' + str(sgn_i))
         
     # Return
-    return { 'F' : Fstat_i, 'pval' : pval_i, 'sgn' : sgn_i, 'df' : df_i }
+    return { 'F' : Fstat_i, 'pval' : pval_i, 'sig' : sig_i, 'sgn' : sgn_i, 'df' : df_i }

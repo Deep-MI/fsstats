@@ -16,10 +16,19 @@ def read_mgh(filename):
     """
     LOGGER.info("Reading " + filename)
     img = nb.freesurfer.load(filename)
-    dat = img.get_fdata().squeeze()
+    dat = img.get_fdata().squeeze().T
     LOGGER.info("Found data with shape " + str(dat.shape))
-    import pdb ; pdb.set_trace()
     return img, dat
+
+def read_label(filename):
+    """
+    expects label file
+    returns numpy array
+    """
+    LOGGER.info("Reading " + filename)
+    lbl = nb.freesurfer.io.read_label(filename)
+    LOGGER.info("Found label with shape " + str(lbl.shape))
+    return lbl
 
 def read_table(filename):
     """

@@ -6,19 +6,18 @@ modeling and inference package.
 
 import argparse
 import logging
-from math import gamma
 import os
 import pickle
-import sys
 
 import numpy as np
 import pandas as pd
 
 from .cfg.config import get_defaults
 from .cfg.logging import setup_logging
-from .cfg.version import get_version
 from .doc.documentation import get_help_text
-from .utils.importing import read_mgh, read_table, read_design_matrix, read_contrasts, read_clusters
+from .utils.importing import read_mgh, read_label, read_table, read_design_matrix, read_contrasts, read_clusters
+from .utils.exporting import write_mgh
+from .utils.parser import _parse_arguments
 from .lme_fit import lme_fit
 from .lme_test import lme_test
 
@@ -75,178 +74,6 @@ def _create_directories(args):
     return
 
 # ------------------------------------------------------------------------------
-# parse_arguments
-
-def _parse_arguments():
-    """
-    an internal function to parse input arguments
-
-    """
-    # setup parser
-    parser = argparse.ArgumentParser(
-        description="This program conducts statistical modeling and inference for FastSurfer output.",
-        add_help=False,
-    )
-
-    # required arguments (set to required=False, because not required when using --more-help)
-    required = parser.add_argument_group("Required arguments")
-
-    required.add_argument(
-        "--y",
-        dest="filename",
-        help="Filename of a concatenated overlay file, e.g. produced by mris_preproc.",
-        default=None,
-        metavar="<filename>",
-        required=False,
-    )
-    required.add_argument(
-        "--table",
-        dest="table",
-        help="Filename of a table output, e.g. produced by asegstats2table or aparcstats2table.",
-        default=None,
-        metavar="<filename>",
-        required=False,
-    )
-    required.add_argument(
-        "--X",
-        dest="design_matrix",
-        help="Design matrix.",
-        default=None,
-        metavar="<filename>",
-        required=False
-    )
-    required.add_argument(
-        "--C",
-        dest="contrasts",
-        help="Filename of a contrast matrix or vector.",
-        action="append",
-        default=None,
-        metavar="filename",
-        required=False,
-    )
-    # TODO: make this argument optional when exting the software to regular glms
-    required.add_argument(
-        "--rfx",
-        dest="random_effects",
-        help="Column indices (1-based) of random effects in the design matrix.",
-        nargs="+",
-        type=int,
-        default=None,
-        metavar="<int>",
-        required=False
-    )
-    required.add_argument(
-        "--clusters",
-        dest="clusters",
-        help="Filename of a list of clusters (e.g., case IDs), where each line corresponds to the same row in the design matrix.",
-        default=None,
-        metavar="<filename>",
-        required=False
-    )
-    required.add_argument(
-        "--glmdir",
-        dest="glmdir",
-        help="Directory where the results will be written.",
-        default=None,
-        metavar="<directory>",
-        required=False,
-    )
-    required.add_argument(
-        "--surface",
-        dest="surface",
-        help="Template surface (e.g., fsaverage) and hemisphere (lh or rh).",
-        nargs=2,
-        default=None,
-        metavar="<surface name> <lh|rh>",
-        required=False,
-    )
-    required.add_argument(
-        "--cores",
-        dest="num_cores",
-        help="Number of CPU cores used in parallel processing. Default: 1.",
-        type=int,
-        default=get_defaults("num_cores"),
-        metavar="<int>",
-        required=False,
-    )
-    required.add_argument(
-        "--skip-estimation",
-        dest="skip_estimation",
-        help="Number of CPU cores used in parallel processing. Default: 1.",
-        default=False,
-        action="store_true",
-        required=False,
-    )    
-
-    # define help
-    help = parser.add_argument_group("Getting help")
-
-    help.add_argument("--help", help="Display this help message and exit", action="help")
-    help.add_argument(
-        "--detailed-help",
-        dest="more_help",
-        help="Display extensive help message and exit",
-        default=False,
-        action="store_true",
-        required=False,
-    )
-    help.add_argument(
-        "--version", help="Display version number and exit", action="version", version="%(prog)s " + get_version()
-    )
-
-    # check if there are any inputs; if not, print help
-    if len(sys.argv) == 1:
-        args = parser.parse_args(["--help"])
-    else:
-        args = parser.parse_args()
-
-    #
-    if args.more_help is False:
-        # check for required arguments, print message and exit
-        if args.filename is None and args.table is None:
-            print("ERROR: either the --y or the --table argument is required, exiting. Use --help to see details.")
-            print()
-            sys.exit(1)
-
-        if args.filename is not None and args.table is not None:
-            print("ERROR: --y and --table cannot be present at the same time, exiting. Use --help to see details.")
-            print()
-            sys.exit(1)
-
-        if args.design_matrix is None:
-            print("ERROR: the --X argument is required, exiting. Use --help to see details.")
-            print()
-            sys.exit(1)
-
-        if args.contrasts is None:
-            print("ERROR: the --C argument is required, exiting. Use --help to see details.")
-            print()
-            sys.exit(1)
-
-        if args.random_effects is None:
-            print("ERROR: the --rfx argument is required, exiting. Use --help to see details.")
-            print()
-            sys.exit(1)
-
-        if args.clusters is None:
-            print("ERROR: the --clusters argument is required, exiting. Use --help to see details.")
-            print()
-            sys.exit(1)
-
-        if args.glmdir is None:
-            print("ERROR: the --glmdir argument is required, exiting. Use --help to see details.")
-            print()
-            sys.exit(1)
-
-        if args.filename is not None and args.surface is None:
-            print("ERROR: the --surface argument is required when using --filename, exiting. Use --help to see details.")
-            print()
-            sys.exit(1)
-
-    #
-    return args
-
-# ------------------------------------------------------------------------------
 #  convert arguments to params
 
 def _evaluate_args(args):
@@ -260,19 +87,6 @@ def _evaluate_args(args):
 
     LOGGER.info("Evaluating arguments ...")
 
-    # initialize settings
-
-    class settings:
-        pass
-
-    # clean up
-
-    settings.epsilon = get_defaults("epsilon")
-    settings.num_iterations = get_defaults("num_iterations")
-    settings.compute_random_effects = get_defaults("compute_random_effects")
-    settings.minimal_information = get_defaults("return_minimal_information")
-    settings.verbose = get_defaults("verbose")
-
     # assemble and return params
 
     class params:
@@ -280,9 +94,14 @@ def _evaluate_args(args):
 
     if args.filename is not None:
         params.FILENAME = os.path.abspath(args.filename)
+        if args.mask is not None:
+            params.MASK = os.path.abspath(args.mask)
+        else:
+            params.MASK = None
         params.ISTABLE = False
     if args.table is not None:
         params.FILENAME = os.path.abspath(args.table)
+        params.MASK = None        
         params.ISTABLE = True
     params.DESIGN_MATRIX = os.path.abspath(args.design_matrix)
     params.CONTRASTS = [ os.path.abspath(x) for x in args.contrasts ]
@@ -297,8 +116,8 @@ def _evaluate_args(args):
         params.HEMI = None
     params.SKIP_ESTIMATION = args.skip_estimation
     params.num_cores = args.num_cores
-
-    params.internal = settings
+    params.num_iterations = args.num_iterations
+    params.epsilon = args.epsilon
 
     LOGGER.info("Using " + params.GLMDIR + " as output directory")
 
@@ -327,12 +146,20 @@ def _check_params(params):
     # data
     # data must have two dimensions
     if params.ISTABLE:
-        params.Y = np.array(read_table(params.FILENAME).iloc[:,1:])
+        tbl = read_table(params.FILENAME)
+        params.Y = np.array(tbl.iloc[:,1:])
+        params.L = tbl.columns[1:].to_list()
+        params.M = None
         params.H = None
     else:
         params.H, params.Y = read_mgh(params.FILENAME)
+        if params.MASK is not None:
+            params.M = read_label(params.MASK)
+        else:
+            params.M = None
+        params.L = None
     if len(params.Y.shape) != 2:
-        LOGGER.error("Design matrix must have two dimensions.")
+        LOGGER.error("Data matrix must have two dimensions.")
         raise argparse.ArgumentTypeError
 
     # design matrix
@@ -391,7 +218,7 @@ def _check_params(params):
     # surface
     # surface must be readable
     if params.SURFACE is not None:
-        # TODO: check surface
+        # in the present directory, data directory or freesurfer home (if it exists)
         pass
 
     # hemi
@@ -424,15 +251,17 @@ def _run_estimation(params):
             Zcols=params.U,
             ni=params.ni,
             prs=params.num_cores,
-            return_minimal_information=False,
+            nit=params.num_iterations,
+            e=params.epsilon,
             compute_random_effects=True,
+            return_minimal_information=False,            
             verbose=True
             )
-        pd.DataFrame(params.X).to_csv(os.path.join(params.GLMDIR, 'Xg.dat')) # TODO: comma or whitespace? rownames? colnames?
+        pd.DataFrame(params.X).to_csv(os.path.join(params.GLMDIR, 'Xg.dat'), sep=" ", header=False, index=False)
         betas = {}
         for s in range(len(stats)):
-            betas.update({ s : stats[s]['Bhat'].squeeze()}) # TODO: keep data labels?
-        pd.DataFrame(betas).to_csv(os.path.join(params.GLMDIR, 'beta.txt')) # TODO: comma or whitespace? rownames? colnames?
+            betas.update({ params.L[s] : stats[s]['Bhat'].squeeze()})
+        pd.DataFrame.from_dict(betas, orient="index").to_csv(os.path.join(params.GLMDIR, 'beta.txt'), sep=" ", header=False)
     else:
         LOGGER.info("Running mass-univariate analysis")
         if params.num_cores == 1:
@@ -442,12 +271,20 @@ def _run_estimation(params):
             Y=params.Y,
             Zcols=params.U,
             ni=params.ni,
+            maskvtx=params.M,
             prs=params.num_cores,
-            return_minimal_information=True,
+            nit=params.num_iterations,
+            e=params.epsilon,
             compute_random_effects=False,
+            return_minimal_information=True,            
             verbose=False
             ) 
-        # TODO: output
+        # output
+        betas = np.zeros((params.Y.shape[1], 1, 1, params.X.shape[1]))
+        for s in range(len(stats)):
+            if stats[s]['Bhat'] is not None:
+                betas[s,0,0,:] = stats[s]['Bhat'].squeeze()
+        write_mgh(dat=betas, filename=os.path.join(params.GLMDIR, 'beta.mgh'))
         
     # output
     with open(os.path.join(params.GLMDIR, "estimates.pkl"), "wb") as f:
@@ -472,15 +309,13 @@ def _run_inference(params, stats):
             F = dict()
             sig = dict()
             for s in range(len(fstats[key])):
-                gamma.update({s : float((params.C[key] @ stats[s]['Bhat']).item())})
-                F.update({ s : fstats[key][s]['F']}) # TODO: keep data labels?
-                sig.update({ s : float(-np.log10(fstats[key][s]['pval']))}) # TODO: keep data labels?
-            pd.DataFrame(params.C[key]).to_csv(os.path.join(params.GLMDIR, key, 'C.dat')) # TODO: comma or whitespace? rownames? colnames?    
-            pd.DataFrame(gamma, index=[0]).to_csv(os.path.join(params.GLMDIR, key, 'gamma.txt')) # TODO: comma or whitespace? rownames? colnames?    
-            pd.DataFrame(F, index=[0]).to_csv(os.path.join(params.GLMDIR, key, 'F.txt')) # TODO: comma or whitespace? rownames? colnames?       
-            pd.DataFrame(sig, index=[0]).to_csv(os.path.join(params.GLMDIR, key, 'sig.txt')) # TODO: comma or whitespace? rownames? colnames?    
-
-            
+                gamma.update({params.L[s] : float((params.C[key] @ stats[s]['Bhat']).item())})
+                F.update({params.L[s] : fstats[key][s]['F']})
+                sig.update({params.L[s] : float(-np.log10(fstats[key][s]['pval']))})
+            pd.DataFrame(params.C[key]).to_csv(os.path.join(params.GLMDIR, key, 'C.dat'), header=False, index=False)
+            pd.DataFrame.from_dict(gamma, orient='index').to_csv(os.path.join(params.GLMDIR, key, 'gamma.txt'), sep=" ", header=False)
+            pd.DataFrame.from_dict(F, orient='index').to_csv(os.path.join(params.GLMDIR, key, 'F.txt'), sep=" ", header=False)
+            pd.DataFrame.from_dict(sig, orient='index').to_csv(os.path.join(params.GLMDIR, key, 'sig.txt'), sep=" ", header=False)            
     else:
         LOGGER.info("Running mass-univariate inference")
         if params.num_cores == 1:
@@ -488,7 +323,21 @@ def _run_inference(params, stats):
         for key, value in params.C.items():
             LOGGER.info("Evaluating contrast " + key)
             fstats[key] = lme_test(stats=stats, C=value, prs=params.num_cores, bias_correct=False)
-        # TODO: output
+            gamma = np.zeros((params.Y.shape[1], 1, 1))
+            F = np.zeros((params.Y.shape[1], 1, 1))
+            sig = np.zeros((params.Y.shape[1], 1, 1))
+            sgn = np.zeros((params.Y.shape[1], 1, 1))
+            for s in range(len(fstats[key])): 
+                if fstats[key][s]['F'] is not None and fstats[key][s]['sig'] is not None and fstats[key][s]['sgn'] is not None:
+                    gamma[s,0,0] = float((params.C[key] @ stats[s]['Bhat']).item())
+                    F[s,0,0] = fstats[key][s]['F']
+                    sig[s,0,0] = fstats[key][s]['sig']
+                    sgn[s,0,0] = fstats[key][s]['sgn']
+            pd.DataFrame(params.C[key]).to_csv(os.path.join(params.GLMDIR, key, 'C.dat'), header=False, index=False)                
+            write_mgh(dat=gamma, filename=os.path.join(params.GLMDIR, key, 'gamma.mgh'))
+            write_mgh(dat=F, filename=os.path.join(params.GLMDIR, key, 'F.mgh'))
+            write_mgh(dat=sig, filename=os.path.join(params.GLMDIR, key, 'sig.mgh'))
+            write_mgh(dat=sgn, filename=os.path.join(params.GLMDIR, key, 'sgn.mgh'))
 
     # output
     with open(os.path.join(params.GLMDIR, "statistics.pkl"), "wb") as f:
@@ -524,8 +373,8 @@ def _run_fsstats(args):
         if params.SKIP_ESTIMATION is False:
             params, stats = _run_estimation(params)
         else:
-            # TODO: needs to be tested
             with open(os.path.join(params.GLMDIR, 'estimates.pkl'), 'rb') as f:
+                LOGGER.info("Reading " + os.path.join(params.GLMDIR, 'estimates.pkl'))
                 stats = pickle.load(f)
 
         # run inference
@@ -542,15 +391,19 @@ def _run_fsstats(args):
 # ------------------------------------------------------------------------------
 # run_fsstats
 
-def run_fsstats(filename, design_matrix, contrasts, random_effects, clusters, glmdir, surface, skip_estimation, **kwargs):
+def run_fsstats(table, filename, mask, design_matrix, contrasts, random_effects, clusters, glmdir, surface=None, hemi=None, skip_estimation=False, **kwargs):
     """
     Run FastSurfer statistical modeling and inference
 
     Parameters
     ----------
 
+    table : 
+        Filename of a table output, e.g. produced by asegstats2table or aparcstats2table.
     filename :
         Filename of a concatenated overlay file, e.g. produced by mris_preproc.
+    mask
+        Filename of a FreeSurfer label file that will be used to select vertices for analysis.
     design_matrix :
         Filename of a design matrix.
     contrasts :
@@ -562,7 +415,9 @@ def run_fsstats(filename, design_matrix, contrasts, random_effects, clusters, gl
     glmdir :
         Directory where the results will be written.
     surface :
-        Name of template surface (e.g., fsaverage) and hemisphere (lh or rh).
+        Name of template surface (e.g., fsaverage). Default: None.
+    hemi : 
+        Name of hemisphere lh or rh). Default: None.
     skip_estimation : 
         Skip estimation. Useful to compute additional contrasts. Requires existing glmdir with estimates.pkl file. Default: False.
 
@@ -578,6 +433,8 @@ def run_fsstats(filename, design_matrix, contrasts, random_effects, clusters, gl
         def __init__(self, dct=None):
             # get defaults
             self.num_cores = get_defaults("num_cores")
+            self.num_iterations = get_defaults("num_iterations")
+            self.epsilon = get_defaults("epsilon")
 
             # parse kwargs
             if dct is not None:
@@ -591,13 +448,15 @@ def run_fsstats(filename, design_matrix, contrasts, random_effects, clusters, gl
 
     my_args = Args(kwargs)
 
+    my_args.table = table
     my_args.filename = filename
+    my_args.mask = mask
     my_args.design_matrix = design_matrix
     my_args.contrasts = contrasts
     my_args.random_effects = random_effects
     my_args.clusters = clusters
     my_args.glmdir = glmdir
-    my_args.surface = surface
+    my_args.surface = surface + " " + hemi
     my_args.skip_estimation = skip_estimation
 
     #

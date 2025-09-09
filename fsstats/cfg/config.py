@@ -7,14 +7,24 @@ modeling and inference package.
 
 def get_defaults(x):
     defaults = dict(
+        # settings that can also be changed via the cmd line / function arguments
+        # will be set in _parse_arguments() for cmdline and run_fsstats() for module
         # note: if changing these values, remember to adjust the argparse help
-        # messages as well as the run_fsstats docstring also
+        # messages as well as the run_fsstats docstring also        
         num_cores=1,
         num_iterations=20,
-        epsilon=1e-1, # convergence epsilon (gradient norm)
-        compute_random_effects=True,
-        return_minimal_information=False,
-        verbose=False,
+        epsilon=1e-1,
+        # settings that are currently hardcoded in _run_estimation and _run_inferences:
+        # if univariate
+        # - compute_random_effects==True
+        # - return_minimal_information==False
+        # - verbose==True
+        # - bias_correct==True
+        # if mass-univariate        
+        # - compute_random_effects==False
+        # - return_minimal_information==True
+        # - verbose==False
+        # - bias_correct==False
     )
 
     if x in defaults.keys():
