@@ -5,6 +5,7 @@ modeling and inference package.
 """
 
 import argparse
+from genericpath import isfile
 import logging
 import os
 import pickle
@@ -101,7 +102,7 @@ def _evaluate_args(args):
         params.ISTABLE = False
     if args.table is not None:
         params.FILENAME = os.path.abspath(args.table)
-        params.MASK = None        
+        params.MASK = None
         params.ISTABLE = True
     params.DESIGN_MATRIX = os.path.abspath(args.design_matrix)
     params.CONTRASTS = [ os.path.abspath(x) for x in args.contrasts ]
@@ -206,7 +207,7 @@ def _check_params(params):
     if len(params.Z) != params.X.shape[0]:
         LOGGER.error("List of clusters must have as many items as rows of the design matrix.")
         raise argparse.ArgumentTypeError("List of clusters must have as many items as rows of the design matrix.")
-        
+
 
     # create number of observations from clusters; dictionary keys will be sorted
     # by order of appearance (in contrast to np.unique)
@@ -216,10 +217,24 @@ def _check_params(params):
     params.ni = np.array(list(ni.values()))
 
     # surface
-    # surface must be readable
+    # surface must be present in the current directory, the data directory, subjects dir, or freesurfer home (if it exists)
+    import pdb ; pdb.set_trace()
     if params.SURFACE is not None:
-        # in the present directory, data directory or freesurfer home (if it exists)
-        pass
+        if os.path.exists(params.SURFACE):
+            LOGGER.info("Found template surface " + params.SURFACE)
+            params.SURFACE_DIR = os.path.abspath(params.SURFACE)
+        elif os.path.exists(os.path.join(os.path.dirname(params.FILENAME), params.SURFACE)):
+            LOGGER.info("Found template surface " + os.path.join(os.path.dirname(params.FILENAME), params.SURFACE))
+            params.SURFACE_DIR = os.path.abspath(os.path.join(os.path.dirname(params.FILENAME), params.SURFACE))
+        elif os.environ.get('SUBJECTS_DIR') is not None and os.path.exists(os.path.join(os.environ.get('SUBJECTS_DIR'), params.SURFACE)):
+            LOGGER.info("Found template surface " + os.path.join(os.environ.get('SUBJECTS_DIR'), params.SURFACE))
+            params.SURFACE_DIR = os.path.join(os.environ.get('SUBJECTS_DIR'), params.SURFACE)
+        elif os.environ.get('FREESURFER_HOME') is not None and os.path.exists(os.path.join(os.environ.get('FREESURFER_HOME'), 'subjects', params.SURFACE)):
+            LOGGER.info("Found template surface " + os.path.join(os.environ.get('FREESURFER_HOME'), params.SURFACE))
+            params.SURFACE_DIR = os.path.join(os.environ.get('FREESURFER_HOME'), params.SURFACE)
+        else:
+            LOGGER.error("Template surface " + params.SURFACE + " could not be found.")
+            raise argparse.ArgumentTypeError("Template surface " + params.SURFACE + " could not be found.")
 
     # hemi
     # hemi must be lh or rh
@@ -254,7 +269,7 @@ def _run_estimation(params):
             nit=params.num_iterations,
             e=params.epsilon,
             compute_random_effects=True,
-            return_minimal_information=False,            
+            return_minimal_information=False,
             verbose=True
             )
         pd.DataFrame(params.X).to_csv(os.path.join(params.GLMDIR, 'Xg.dat'), sep=" ", header=False, index=False)
@@ -276,16 +291,16 @@ def _run_estimation(params):
             nit=params.num_iterations,
             e=params.epsilon,
             compute_random_effects=False,
-            return_minimal_information=True,            
+            return_minimal_information=True,
             verbose=False
-            ) 
+            )
         # output
         betas = np.zeros((params.Y.shape[1], 1, 1, params.X.shape[1]))
         for s in range(len(stats)):
             if stats[s]['Bhat'] is not None:
                 betas[s,0,0,:] = stats[s]['Bhat'].squeeze()
         write_mgh(dat=betas, filename=os.path.join(params.GLMDIR, 'beta.mgh'))
-        
+
     # output
     with open(os.path.join(params.GLMDIR, "estimates.pkl"), "wb") as f:
         pickle.dump(stats, f)
@@ -299,7 +314,7 @@ def _run_estimation(params):
 def _run_inference(params, stats):
 
     # inference
-    fstats = dict()    
+    fstats = dict()
     if params.ISTABLE:
         LOGGER.info("Running univariate inference")
         for key, value in params.C.items():
@@ -315,7 +330,7 @@ def _run_inference(params, stats):
             pd.DataFrame(params.C[key]).to_csv(os.path.join(params.GLMDIR, key, 'C.dat'), header=False, index=False)
             pd.DataFrame.from_dict(gamma, orient='index').to_csv(os.path.join(params.GLMDIR, key, 'gamma.txt'), sep=" ", header=False)
             pd.DataFrame.from_dict(F, orient='index').to_csv(os.path.join(params.GLMDIR, key, 'F.txt'), sep=" ", header=False)
-            pd.DataFrame.from_dict(sig, orient='index').to_csv(os.path.join(params.GLMDIR, key, 'sig.txt'), sep=" ", header=False)            
+            pd.DataFrame.from_dict(sig, orient='index').to_csv(os.path.join(params.GLMDIR, key, 'sig.txt'), sep=" ", header=False)
     else:
         LOGGER.info("Running mass-univariate inference")
         if params.num_cores == 1:
@@ -327,13 +342,13 @@ def _run_inference(params, stats):
             F = np.zeros((params.Y.shape[1], 1, 1))
             sig = np.zeros((params.Y.shape[1], 1, 1))
             sgn = np.zeros((params.Y.shape[1], 1, 1))
-            for s in range(len(fstats[key])): 
+            for s in range(len(fstats[key])):
                 if fstats[key][s]['F'] is not None and fstats[key][s]['sig'] is not None and fstats[key][s]['sgn'] is not None:
                     gamma[s,0,0] = float((params.C[key] @ stats[s]['Bhat']).item())
                     F[s,0,0] = fstats[key][s]['F']
                     sig[s,0,0] = fstats[key][s]['sig']
                     sgn[s,0,0] = fstats[key][s]['sgn']
-            pd.DataFrame(params.C[key]).to_csv(os.path.join(params.GLMDIR, key, 'C.dat'), header=False, index=False)                
+            pd.DataFrame(params.C[key]).to_csv(os.path.join(params.GLMDIR, key, 'C.dat'), header=False, index=False)
             write_mgh(dat=gamma, filename=os.path.join(params.GLMDIR, key, 'gamma.mgh'))
             write_mgh(dat=F, filename=os.path.join(params.GLMDIR, key, 'F.mgh'))
             write_mgh(dat=sig, filename=os.path.join(params.GLMDIR, key, 'sig.mgh'))
@@ -341,8 +356,8 @@ def _run_inference(params, stats):
 
     # output
     with open(os.path.join(params.GLMDIR, "statistics.pkl"), "wb") as f:
-        pickle.dump(fstats, f)        
-          
+        pickle.dump(fstats, f)
+
     # return
     return fstats
 
@@ -398,7 +413,7 @@ def run_fsstats(table, filename, mask, design_matrix, contrasts, random_effects,
     Parameters
     ----------
 
-    table : 
+    table :
         Filename of a table output, e.g. produced by asegstats2table or aparcstats2table.
     filename :
         Filename of a concatenated overlay file, e.g. produced by mris_preproc.
@@ -416,9 +431,9 @@ def run_fsstats(table, filename, mask, design_matrix, contrasts, random_effects,
         Directory where the results will be written.
     surface :
         Name of template surface (e.g., fsaverage). Default: None.
-    hemi : 
+    hemi :
         Name of hemisphere lh or rh). Default: None.
-    skip_estimation : 
+    skip_estimation :
         Skip estimation. Useful to compute additional contrasts. Requires existing glmdir with estimates.pkl file. Default: False.
 
     Returns

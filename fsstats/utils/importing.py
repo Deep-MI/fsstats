@@ -33,7 +33,7 @@ def read_label(filename):
 def read_table(filename):
     """
     expects table with header and first column of IDs
-    returns pandas df 
+    returns pandas df
     """
     LOGGER.info("Reading " + filename)
     tab = pd.read_table(filename, sep=r'\s+|,', engine='python')

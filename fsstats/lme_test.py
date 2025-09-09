@@ -43,13 +43,13 @@ def lme_test(stats, C, bias_correct, prs, verbose):
 
     if prs > 1:
         results = list(tqdm(Parallel(return_as="generator", n_jobs=prs)(delayed(lme_test_F)(i)(
-                    C = C, 
-                    Bhat = stats[i]['Bhat'], 
-                    CBhat = stats[i]['CBhat'], 
-                    Zcols = stats[i]['Zcols'], 
-                    invEI = stats[i]['invEI'], 
-                    Pth = stats[i]['Pth'], 
-                    Qthth = stats[i]['Qthth'], 
+                    C = C,
+                    Bhat = stats[i]['Bhat'],
+                    CBhat = stats[i]['CBhat'],
+                    Zcols = stats[i]['Zcols'],
+                    invEI = stats[i]['invEI'],
+                    Pth = stats[i]['Pth'],
+                    Qthth = stats[i]['Qthth'],
                     X = stats[i]['X'],   # can be None, required if bias_correct is True
                     W = stats[i]['W'],   # can be None, required if bias_correct is True
                     ni = stats[i]['ni'], # can be None, required if bias_correct is True
@@ -67,13 +67,13 @@ def lme_test(stats, C, bias_correct, prs, verbose):
     else:
         for i in range(nv):             # TODO: handle none or missing values
             fstats[i] = lme_test_F(
-                C = C, 
-                Bhat = stats[i]['Bhat'], 
-                CBhat = stats[i]['CovBhat'], 
-                Zcols = stats[i]['Zcols'], 
-                invEI = stats[i]['invEI'], 
-                Pth = stats[i]['Pth'], 
-                Qthth = stats[i]['Qthth'], 
+                C = C,
+                Bhat = stats[i]['Bhat'],
+                CBhat = stats[i]['CovBhat'],
+                Zcols = stats[i]['Zcols'],
+                invEI = stats[i]['invEI'],
+                Pth = stats[i]['Pth'],
+                Qthth = stats[i]['Qthth'],
                 X = stats[i]['X'],   # can be None, required if bias_correct is True
                 W = stats[i]['W'],   # can be None, required if bias_correct is True
                 ni = stats[i]['ni'], # can be None, required if bias_correct is True

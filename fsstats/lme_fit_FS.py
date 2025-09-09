@@ -129,7 +129,7 @@ def lme_fit_FS(X, Zcols, Y, ni, nit, e, label, compute_random_effects, return_mi
         eps = np.linalg.norm(gr)
         lreml[it-1] = lremlit
         if verbose:
-            LOGGER.info(f'Likelihood at FS iteration {it}: {lremlit.item()}; gradient norm: {eps}') 
+            LOGGER.info(f'Likelihood at FS iteration {it}: {lremlit.item()}; gradient norm: {eps}')
 
         # Termination
         if it == nit or eps < e:

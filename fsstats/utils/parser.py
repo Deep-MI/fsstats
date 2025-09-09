@@ -13,11 +13,11 @@ def _parse_arguments():
     """
     # setup parser
     parser = argparse.ArgumentParser(
-        description="This program conducts statistical modeling and inference for FastSurfer output.",
+        description="This program conducts statistical modeling and inference for FastSurfer and FreeSurfer data.",
         add_help=False,
     )
 
-    # required arguments (set to required=False, because not required when using --more-help)
+    # required arguments (set to required=False, because not required when using --detailed-help)
     required = parser.add_argument_group("Required arguments")
 
     required.add_argument(
@@ -35,7 +35,7 @@ def _parse_arguments():
         default=None,
         metavar="<filename>",
         required=False,
-    )    
+    )
     required.add_argument(
         "--table",
         dest="table",
@@ -87,7 +87,11 @@ def _parse_arguments():
         metavar="<directory>",
         required=False,
     )
-    required.add_argument(
+
+    # optional arguments
+    optional = parser.add_argument_group("Optional arguments")
+
+    optional.add_argument(
         "--surface",
         dest="surface",
         help="Template surface (e.g., fsaverage) and hemisphere (lh or rh).",
@@ -96,7 +100,7 @@ def _parse_arguments():
         metavar="<surface name> <lh|rh>",
         required=False,
     )
-    required.add_argument(
+    optional.add_argument(
         "--cores",
         dest="num_cores",
         help="Number of CPU cores used in parallel processing. Default: 1.",
@@ -105,7 +109,7 @@ def _parse_arguments():
         metavar="<int>",
         required=False,
     )
-    required.add_argument(
+    optional.add_argument(
         "--iterations",
         dest="num_iterations",
         help="Maximum number of iterations to achieve convergence. Default: 20.",
@@ -114,7 +118,7 @@ def _parse_arguments():
         metavar="<int>",
         required=False,
     )
-    required.add_argument(
+    optional.add_argument(
         "--epsilon",
         dest="epsilon",
         help="Epsilon for gradient norm to determine convergence. Default: 1e-1.",
@@ -122,15 +126,15 @@ def _parse_arguments():
         default=get_defaults("epsilon"),
         metavar="<float>",
         required=False,
-    )       
-    required.add_argument(
+    )
+    optional.add_argument(
         "--skip-estimation",
         dest="skip_estimation",
         help="Skip estimation. Useful to compute additional contrasts. Requires existing glmdir with estimates.pkl file. Default: False.",
         default=False,
         action="store_true",
         required=False,
-    )    
+    )
 
     # define help
     help = parser.add_argument_group("Getting help")

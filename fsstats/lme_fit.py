@@ -5,7 +5,7 @@ import numpy as np
 from joblib import Parallel, delayed
 from .lme_fit_FS import lme_fit_FS
 
-def lme_fit(X, Zcols, Y, ni, maskvtx=None, prs=1, nit=20, e=1e-1, compute_random_effects=False, return_minimal_information=False, verbose=False):
+def lme_fit(X, Zcols, Y, ni, maskvtx, prs, nit, e, compute_random_effects, return_minimal_information, verbose):
     """
     Vertex/voxel-wise linear mixed-effects estimation.
 
@@ -19,20 +19,20 @@ def lme_fit(X, Zcols, Y, ni, maskvtx=None, prs=1, nit=20, e=1e-1, compute_random
         Data matrix (nm, nv) whose columns represent the data vector for each voxel/vertex. Rows must correspond to rows in X.
     ni : ndarray
         List (nc,) whose entries are the number of repeated measures for each subject. Order must correspond to order of X.
-    maskvtx : ndarray, optional
-        List of zero-based mask indices (nv,). Default: None (all vertices included).
-    prs : int, optional
-        Number of CPU cores used for parallel computing. Default: 1.
-    nit : int, optional
-        Number of iterations. Default is 20.
-    e : float, optional
-        Convergence epsilon (gradient's norm). Default 10^-1.
-    compute_random_effects : bool, optional
-        Compute random effects estimates. Default: False.
-    return_minimal_information : bool, optional
-        Return minimal information. Default: False.
-    verbose : bool, optional
-        Increase verbosity. Default: False.
+    maskvtx : ndarray
+        List of zero-based mask indices (nv,). If None, all vertices are included.
+    prs : int
+        Number of CPU cores used for parallel computing.
+    nit : int
+        Number of iterations.
+    e : float
+        Convergence epsilon (gradient's norm).
+    compute_random_effects : bool
+        Compute random effects estimates.
+    return_minimal_information : bool
+        Return minimal information.
+    verbose : bool
+        Increase verbosity.
 
     Returns
     -------

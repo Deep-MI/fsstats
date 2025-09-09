@@ -38,13 +38,13 @@ def lme_test_F(C, Bhat, CBhat, Zcols, invEI, Pth, Qthth, X, W, ni, label, bias_c
         Perform small-sample bias adjustment of covariance of fixed effects.
     verbose : bool
         Increase verbosity.
-    
+
     Returns
     -------
     fstats : dict
         Dictionary containing the F-statistic, p-value, sign of the contrast, and degrees of freedom.
     """
-    
+
     #
     LOGGER = logging.getLogger(__name__)
 
@@ -134,6 +134,6 @@ def lme_test_F(C, Bhat, CBhat, Zcols, invEI, Pth, Qthth, X, W, ni, label, bias_c
     # Output
     if verbose:
         LOGGER.info('Index ' + label + ': F(' + f"{df_i[0]:.2f}" + ',' + f"{df_i[1]:.2f}" + ') = ' + str(Fstat_i) + ', p = ' + str(pval_i) + ', sgn = ' + str(sgn_i))
-        
+
     # Return
     return { 'F' : Fstat_i, 'pval' : pval_i, 'sig' : sig_i, 'sgn' : sgn_i, 'df' : df_i }
