@@ -1,5 +1,4 @@
 import logging
-import multiprocessing
 from tqdm import tqdm
 import numpy as np
 from joblib import Parallel, delayed
@@ -16,11 +15,11 @@ def lme_fit(X, Zcols, Y, ni, maskvtx, prs, nit, e, compute_random_effects, retur
     Zcols : ndarray
         List of indices of the columns of X that will be considered as random effects (nr,).
     Y : ndarray
-        Data matrix (nm, nv) whose columns represent the data vector for each voxel/vertex. Rows must correspond to rows in X.
+        Data matrix (nm, nv) whose columns represent the data vector for each voxel/vertex/variable. Rows must correspond to rows in X.
     ni : ndarray
         List (nc,) whose entries are the number of repeated measures for each subject. Order must correspond to order of X.
     maskvtx : ndarray
-        List of zero-based mask indices (nv,). If None, all vertices are included.
+        List of zero-based mask indices (nv,). If None, all voxels/vertices/variables are included.
     prs : int
         Number of CPU cores used for parallel computing.
     nit : int
@@ -36,34 +35,27 @@ def lme_fit(X, Zcols, Y, ni, maskvtx, prs, nit, e, compute_random_effects, retur
 
     Returns
     -------
-    stats : list
-        List of dictionaries containing estimates for every voxel/vertex.
+    stats : dict
+        A dict of dictionaries containing estimates for every voxel/vertex/variable where the model was fit. Keys will be numerical indices.
     """
 
     LOGGER = logging.getLogger(__name__)
 
     # Prepare inputs
 
-    nv0 = Y.shape[1]
+    nv = Y.shape[1]
 
     if maskvtx is None:
-        maskvtx = np.arange(nv0)
+        maskvtx = np.arange(nv)
 
     Y_masked = Y[:, maskvtx]
 
-    nm, nv = Y_masked.shape
-
-    if prs is None:
-        prs = multiprocessing.cpu_count()
-
-    # Prepare masked outputs
-
-    stats_masked = [{} for _ in range(nv)]
+    nv_masked = Y_masked.shape[1]
 
     # Processing
 
     if prs > 1:
-        results = list(tqdm(Parallel(return_as="generator", n_jobs=prs)(delayed(lme_fit_FS)(
+        stats_masked = list(tqdm(Parallel(return_as="generator", n_jobs=prs)(delayed(lme_fit_FS)(
                     X=X,
                     Zcols=Zcols,
                     Y=np.expand_dims(Y[:, i], axis=1),
@@ -75,14 +67,13 @@ def lme_fit(X, Zcols, Y, ni, maskvtx, prs, nit, e, compute_random_effects, retur
                     return_minimal_information=return_minimal_information,
                     verbose=verbose
                     )
-                for i in range(nv)
+                for i in range(nv_masked)
                 ),
-                total = nv
+                total = nv_masked
             ))
-        for i, stats_i in enumerate(results):
-            stats_masked[i] = stats_i
     else:
-        for i in range(nv):
+        stats_masked = [{} for _ in range(nv_masked)]
+        for i in range(nv_masked):
             stats_masked[i] = lme_fit_FS(
                 X=X,
                 Zcols=Zcols,
@@ -96,20 +87,15 @@ def lme_fit(X, Zcols, Y, ni, maskvtx, prs, nit, e, compute_random_effects, retur
                 verbose=verbose
             )
 
-
     # Prepare outputs
 
-    stats = [{'Bhat': None, 'CovBhat': None, 'phisqhat': None, 'Dhat': None,
-              'Zcols': None, 'invEI': None, 'Pth': None, 'Qthth': None, 
-              'X' : None, 'W' : None, 'ni' : None, 'lreml': None, 'st' : None} for _ in range(nv0)]
-
-    for i in range(nv):
+    stats = dict()
+    for i in range(nv_masked):
         stats[maskvtx[i]] = stats_masked[i]
 
     # Summary
-    #converged = np.sum([ stats[i]['st'] for i in range(nv0) ])
-    #TODO: summation does not work for None
-    #LOGGER.info(f'Summary: Algorithm did not converge at {100 * (1 - converged / nv):.2f} percent of the total number of locations.')
+    converged = np.sum([ stats[i]['st'] for i in stats ])
+    LOGGER.info(f'Summary: Algorithm did not converge at {100 * (1 - converged / len(stats)):.2f} percent of the total number of locations.')
 
     # Return
 

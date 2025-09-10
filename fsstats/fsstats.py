@@ -5,6 +5,7 @@ modeling and inference package.
 """
 
 import argparse
+import multiprocessing
 from genericpath import isfile
 import logging
 import os
@@ -256,6 +257,12 @@ def _check_params(params):
 
 def _run_estimation(params):
 
+    # determine cores
+    if params.num_cores is None:
+        prs = np.min(multiprocessing.cpu_count(), 16)
+    else:
+        prs = params.num_cores
+
     # estimation
     if params.ISTABLE:
         LOGGER.info("Running univariate analysis")
@@ -263,8 +270,9 @@ def _run_estimation(params):
             X=params.X,
             Y=params.Y,
             Zcols=params.U,
+            maskvtx=None,
             ni=params.ni,
-            prs=params.num_cores,
+            prs=prs,
             nit=params.num_iterations,
             e=params.epsilon,
             compute_random_effects=True,
@@ -273,12 +281,12 @@ def _run_estimation(params):
             )
         pd.DataFrame(params.X).to_csv(os.path.join(params.GLMDIR, 'Xg.dat'), sep=" ", header=False, index=False)
         betas = {}
-        for s in range(len(stats)):
+        for s in stats.keys():
             betas.update({ params.L[s] : stats[s]['Bhat'].squeeze()})
         pd.DataFrame.from_dict(betas, orient="index").to_csv(os.path.join(params.GLMDIR, 'beta.txt'), sep=" ", header=False)
     else:
         LOGGER.info("Running mass-univariate analysis")
-        if params.num_cores == 1:
+        if prs == 1:
             LOGGER.warning("Number of cores to use for parallel processing is set to 1.")
         stats = lme_fit(
             X=params.X,
@@ -286,7 +294,7 @@ def _run_estimation(params):
             Zcols=params.U,
             ni=params.ni,
             maskvtx=params.M,
-            prs=params.num_cores,
+            prs=prs,
             nit=params.num_iterations,
             e=params.epsilon,
             compute_random_effects=False,
@@ -295,9 +303,8 @@ def _run_estimation(params):
             )
         # output
         betas = np.zeros((params.Y.shape[1], 1, 1, params.X.shape[1]))
-        for s in range(len(stats)):
-            if stats[s]['Bhat'] is not None:
-                betas[s,0,0,:] = stats[s]['Bhat'].squeeze()
+        for s in stats.keys():
+            betas[s,0,0,:] = stats[s]['Bhat'].squeeze()
         write_mgh(dat=betas, filename=os.path.join(params.GLMDIR, 'beta.mgh'))
 
     # output
@@ -312,13 +319,19 @@ def _run_estimation(params):
 
 def _run_inference(params, stats):
 
+    # determine cores
+    if params.num_cores is None:
+        prs = np.min(multiprocessing.cpu_count(), 16)
+    else:
+        prs = params.num_cores
+
     # inference
     fstats = dict()
     if params.ISTABLE:
         LOGGER.info("Running univariate inference")
         for key, value in params.C.items():
             LOGGER.info("Evaluating contrast " + key)
-            fstats[key] = lme_test(stats=stats, C=value, prs=params.num_cores, bias_correct=True, verbose=False)
+            fstats[key] = lme_test(stats=stats, C=value, prs=prs, bias_correct=True, verbose=False)
             gamma = dict()
             F = dict()
             sig = dict()
@@ -332,21 +345,20 @@ def _run_inference(params, stats):
             pd.DataFrame.from_dict(sig, orient='index').to_csv(os.path.join(params.GLMDIR, key, 'sig.txt'), sep=" ", header=False)
     else:
         LOGGER.info("Running mass-univariate inference")
-        if params.num_cores == 1:
+        if prs == 1:
             LOGGER.warning("Number of cores to use for parallel processing is set to 1.")
         for key, value in params.C.items():
             LOGGER.info("Evaluating contrast " + key)
-            fstats[key] = lme_test(stats=stats, C=value, prs=params.num_cores, bias_correct=False, verbose=False)
+            fstats[key] = lme_test(stats=stats, C=value, prs=prs, bias_correct=False, verbose=False)
             gamma = np.zeros((params.Y.shape[1], 1, 1))
             F = np.zeros((params.Y.shape[1], 1, 1))
             sig = np.zeros((params.Y.shape[1], 1, 1))
             sgn = np.zeros((params.Y.shape[1], 1, 1))
-            for s in range(len(fstats[key])):
-                if fstats[key][s]['F'] is not None and fstats[key][s]['sig'] is not None and fstats[key][s]['sgn'] is not None:
-                    gamma[s,0,0] = float((params.C[key] @ stats[s]['Bhat']).item())
-                    F[s,0,0] = fstats[key][s]['F']
-                    sig[s,0,0] = fstats[key][s]['sig']
-                    sgn[s,0,0] = fstats[key][s]['sgn']
+            for s in fstats[key].keys():
+                gamma[s,0,0] = float((params.C[key] @ stats[s]['Bhat']).item())
+                F[s,0,0] = fstats[key][s]['F']
+                sig[s,0,0] = fstats[key][s]['sig']
+                sgn[s,0,0] = fstats[key][s]['sgn']
             pd.DataFrame(params.C[key]).to_csv(os.path.join(params.GLMDIR, key, 'C.dat'), header=False, index=False)
             write_mgh(dat=gamma, filename=os.path.join(params.GLMDIR, key, 'gamma.mgh'))
             write_mgh(dat=F, filename=os.path.join(params.GLMDIR, key, 'F.mgh'))

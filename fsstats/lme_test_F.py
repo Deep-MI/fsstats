@@ -118,7 +118,7 @@ def lme_test_F(C, Bhat, CBhat, Zcols, invEI, Pth, Qthth, X, W, ni, label, bias_c
     CovBhat = CBhat + 2 * Bias
     Fstat_i = l * Bhat.T @ C.T @ np.linalg.inv(C @ CovBhat @ C.T) @ C @ Bhat / szC
     if Fstat_i < 0:
-        LOGGER.info('Index ' + label + ': Negative F-values encountered, setting to zero.')
+        LOGGER.warning('Index ' + label + ': Negative F-values encountered, setting to zero.')
         Fstat_i = np.array(0)
     pval_i = 1 - f_dist.cdf(Fstat_i, szC, m)
     sig_i = -np.log10(pval_i)

@@ -1,6 +1,4 @@
-import multiprocessing
 from tqdm import tqdm
-import numpy as np
 from joblib import Parallel, delayed
 from .lme_test_F import lme_test_F
 
@@ -11,77 +9,54 @@ def lme_test(stats, C, bias_correct, prs, verbose):
     Parameters
     ----------
     stats : list of dict
-        Structure array containing statistics for every voxel/vertex.
+        Structure array containing statistics for every voxel/vertex/variable.
     C : array-like
         Contrast matrix.
     bias_correct : bool
         Bias-adjustment of covariance of fixed effects.
     prs : int
-        Number of workers for parallel computing. If None, the number of available cores.
+        Number of workers for parallel computing.
     verbose : bool
         Increase verbosity.
 
     Returns
     -------
     fstats : dict
-        List of dictionaries containing the F-statistic, p-value, sign of the contrast, and degrees of freedom.
+        A dict of dictionaries containing the F-statistic, p-value, sign of the contrast, and degrees of freedom for every voxel/vertex/variable where estimation was performed. Keys are numerical indices.
     """
 
-    # Check parallel processing
-    if prs is None:
-        prs = multiprocessing.cpu_count()
+    # Processing function
+    def process(key, value, C, bias_correct, verbose):
+        out = lme_test_F(
+            C = C,
+            Bhat = value['Bhat'],
+            CBhat = value['CovBhat'],
+            Zcols = value['Zcols'],
+            invEI = value['invEI'],
+            Pth = value['Pth'],
+            Qthth = value['Qthth'],
+            X = value['X'],   # can be None, required if bias_correct is True
+            W = value['W'],   # can be None, required if bias_correct is True
+            ni = value['ni'], # can be None, required if bias_correct is True
+            label = str(key),
+            bias_correct=bias_correct,
+            verbose=verbose
+        )
 
-    # Prepare inputs
+        return key, out
 
-    nv = len(stats)
-
-    # Prepare outputs
-
-    fstats = [ {'F': None, 'pval': None, 'sgn': None, 'df': None } for _ in range(nv) ]
-
-    # Processing
-
+    #
+    fstats = dict()
     if prs > 1:
-        results = list(tqdm(Parallel(return_as="generator", n_jobs=prs)(delayed(lme_test_F)(i)(
-                    C = C,
-                    Bhat = stats[i]['Bhat'],
-                    CBhat = stats[i]['CovBhat'],
-                    Zcols = stats[i]['Zcols'],
-                    invEI = stats[i]['invEI'],
-                    Pth = stats[i]['Pth'],
-                    Qthth = stats[i]['Qthth'],
-                    X = stats[i]['X'],   # can be None, required if bias_correct is True
-                    W = stats[i]['W'],   # can be None, required if bias_correct is True
-                    ni = stats[i]['ni'], # can be None, required if bias_correct is True
-                    label = str(i),
-                    bias_correct=bias_correct,
-                    verbose=verbose
-                    )
-                for i in range(nv)     # TODO: handle none or missing values
+        fstats = dict(list(tqdm(Parallel(return_as="generator", n_jobs=prs)(delayed(process)(i, stats[i], C, bias_correct, verbose)
+                for i in stats
                 ),
-                total = nv
-        ))
-        for i in range(nv):
-            fstats[i] = results[i]
-
+                total = len(stats)
+        )))
     else:
-        for i in range(nv):             # TODO: handle none or missing values
-            fstats[i] = lme_test_F(
-                C = C,
-                Bhat = stats[i]['Bhat'],
-                CBhat = stats[i]['CovBhat'],
-                Zcols = stats[i]['Zcols'],
-                invEI = stats[i]['invEI'],
-                Pth = stats[i]['Pth'],
-                Qthth = stats[i]['Qthth'],
-                X = stats[i]['X'],   # can be None, required if bias_correct is True
-                W = stats[i]['W'],   # can be None, required if bias_correct is True
-                ni = stats[i]['ni'], # can be None, required if bias_correct is True
-                label = str(i),
-                bias_correct=bias_correct,
-                verbose=verbose
-                )
+        for i in stats:
+            key, value = (process(i, stats[i], C, bias_correct, verbose))
+            fstats[key] = value
 
     # Return
-
     return fstats
