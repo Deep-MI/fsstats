@@ -38,30 +38,6 @@ def lme_fit_FS(X, Zcols, Y, ni, nit, e, label, compute_random_effects, return_mi
         Dictionary containing the results of the estimation.
     """
 
-    # check for / deal with missing data # TODO: missing data
-    #if Xrows is not None:
-    #    rows = np.where(Xrows[:, i] == 1)[0]
-    #    sID = np.repeat(np.arange(len(ni)), ni)
-    #    _, ni_rows = np.unique(sID[rows], return_counts=True)
-    #else:
-    #    rows = np.arange(nm)
-    #    ni_rows = ni
-
-    # optionally catch errors # TODO: catch errors
-    # try:
-    #     stats_i, st_i = lme_fit_FS(
-    #         X[rows, :],
-    #         Zcols,
-    #         Y=np.expand_dims(Y[rows, i], axis=1),
-    #         ni=ni_rows,
-    #         nit=nit,
-    #         e=e,
-    #         compute_random_effects=compute_random_effects,
-    #         verbose=verbose)
-    # except Exception as em:
-    #     LOGGER.error(f'Location {i}: {em}')
-    #     stats_i, st_i = None, False
-
     #
     LOGGER = logging.getLogger(__name__)
 
@@ -155,7 +131,6 @@ def lme_fit_FS(X, Zcols, Y, ni, nit, e, label, compute_random_effects, return_mi
                 X = None
                 r = None
                 ni = None
-            # TODO: assess output size, in particular for mass-univariate. should not grow too large.
             stats = {
                 'X': X,             # optional in lme_F, (nm, p)
                 'Zcols': Zcols,     # required in lme_F, (nr,)

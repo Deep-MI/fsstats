@@ -100,7 +100,8 @@ def lme_fit(X, Zcols, Y, ni, maskvtx, prs, nit, e, compute_random_effects, retur
     # Prepare outputs
 
     stats = [{'Bhat': None, 'CovBhat': None, 'phisqhat': None, 'Dhat': None,
-              'Zcols': None, 'invEI': None, 'Pth': None, 'Qthth': None, 'lreml': None, 'st' : None} for _ in range(nv0)]
+              'Zcols': None, 'invEI': None, 'Pth': None, 'Qthth': None, 
+              'X' : None, 'W' : None, 'ni' : None, 'lreml': None, 'st' : None} for _ in range(nv0)]
 
     for i in range(nv):
         stats[maskvtx[i]] = stats_masked[i]

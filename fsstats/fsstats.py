@@ -218,7 +218,6 @@ def _check_params(params):
 
     # surface
     # surface must be present in the current directory, the data directory, subjects dir, or freesurfer home (if it exists)
-    import pdb ; pdb.set_trace()
     if params.SURFACE is not None:
         if os.path.exists(params.SURFACE):
             LOGGER.info("Found template surface " + params.SURFACE)
@@ -319,7 +318,7 @@ def _run_inference(params, stats):
         LOGGER.info("Running univariate inference")
         for key, value in params.C.items():
             LOGGER.info("Evaluating contrast " + key)
-            fstats[key] = lme_test(stats=stats, C=value, prs=params.num_cores, bias_correct=True)
+            fstats[key] = lme_test(stats=stats, C=value, prs=params.num_cores, bias_correct=True, verbose=False)
             gamma = dict()
             F = dict()
             sig = dict()
@@ -337,7 +336,7 @@ def _run_inference(params, stats):
             LOGGER.warning("Number of cores to use for parallel processing is set to 1.")
         for key, value in params.C.items():
             LOGGER.info("Evaluating contrast " + key)
-            fstats[key] = lme_test(stats=stats, C=value, prs=params.num_cores, bias_correct=False)
+            fstats[key] = lme_test(stats=stats, C=value, prs=params.num_cores, bias_correct=False, verbose=False)
             gamma = np.zeros((params.Y.shape[1], 1, 1))
             F = np.zeros((params.Y.shape[1], 1, 1))
             sig = np.zeros((params.Y.shape[1], 1, 1))

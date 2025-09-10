@@ -45,7 +45,7 @@ def lme_test(stats, C, bias_correct, prs, verbose):
         results = list(tqdm(Parallel(return_as="generator", n_jobs=prs)(delayed(lme_test_F)(i)(
                     C = C,
                     Bhat = stats[i]['Bhat'],
-                    CBhat = stats[i]['CBhat'],
+                    CBhat = stats[i]['CovBhat'],
                     Zcols = stats[i]['Zcols'],
                     invEI = stats[i]['invEI'],
                     Pth = stats[i]['Pth'],
