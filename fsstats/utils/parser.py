@@ -47,7 +47,7 @@ def _parse_arguments():
     required.add_argument(
         "--X",
         dest="design_matrix",
-        help="Design matrix.",
+        help="Filename of a design matrix.",
         default=None,
         metavar="<filename>",
         required=False
@@ -55,10 +55,10 @@ def _parse_arguments():
     required.add_argument(
         "--C",
         dest="contrasts",
-        help="Filename of a contrast matrix or vector.",
+        help="Filename of a contrast matrix or vector. Can be used multiple times.",
         action="append",
         default=None,
-        metavar="filename",
+        metavar="<filename>",
         required=False,
     )
     required.add_argument(
