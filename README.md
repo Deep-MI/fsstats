@@ -8,8 +8,6 @@ The `fsstats` package provides univariate and mass-univariate statistical modeli
 
 ## Description
 
-...
-
 This page provides general, usage, and installation information about the `fsstats` toolbox.
 
 ___
@@ -37,7 +35,7 @@ ___
 
 ## Functionality
 
-The core functionality of the fstats toolbox is to conduct statistical analyses for FastSurfer- and FreeSurfer-based imaging data. Its current focus is on providing univariate and mass-univariate linear mixed-effects analyses for clustered (e.g., longitudinal) data. Here, *univariate analysis* refers to the nalysis of one or few variables, where the input data can be represented in tabular format; a typical example is the analysis of extracted volume or thickness estimates in a limited set of larger brain regions (regions of interest). In contrast, *mass-univariate* refers to analysis of a very large number of variables, and typically means analyses of single voxels or vertices, which require dedicated, image-based preprocessing and input formats.
+The core functionality of this toolbox is to conduct statistical analyses for FastSurfer- and FreeSurfer-based imaging data. Its current focus is on providing univariate and mass-univariate linear mixed-effects analyses for clustered (e.g., longitudinal) data. Here, *univariate analysis* refers to the nalysis of one or few variables, where the input data can be represented in tabular format; a typical example is the analysis of extracted volume or thickness estimates in a limited set of larger brain regions (regions of interest). In contrast, *mass-univariate* refers to analysis of a very large number of variables, and typically means analyses of single voxels or vertices, which require dedicated, image-based preprocessing and input formats.
 ___
 
 ## Installation
@@ -57,7 +55,7 @@ This software can also be downloaded from its GitHub repository at `https://gith
 git clone https://github.com/Deep-MI/fsstats
 ```
 
-The `mri_lmefit` script will then be executable from the command line, as detailed above. Note, however, that the required dependencies will have to be installed manually:
+The `mri_lmefit` script will then be executable from the command line, as detailed below. Note, however, that the required dependencies will have to be installed manually:
 ```bash
 pip install -r requirements.txt
 ```
@@ -111,7 +109,7 @@ Getting help:
 
 - Univariate analysis:
 
-The following command can be used to conduct an analysis of tabular input data. This example includes specificiation of two random effects via the `--rfx` argument (e.g., random intercept and random slope of time, assuming that columns 1 and 2 of the design matrix are the global intercept and the regressor for *Time*, respectively) and the evaluation of two contrasts via the `--C` arguments. Further details on the expected inputs and their formats are given in the [Inputs and outputs](#inputs-and-outputs) section.
+The following command can be used to conduct an analysis of tabular input data. This example includes two random effects via the `--rfx` argument (e.g., random intercept and random slope of time, assuming that columns 1 and 2 of the design matrix are the global intercept and the regressor for *Time*, respectively) and the evaluation of two contrasts via the `--C` arguments. Further details on the expected inputs and their formats are given in the [Inputs and outputs](#inputs-and-outputs) section.
 
 ```bash
 mri_lmefit \
@@ -126,7 +124,7 @@ mri_lmefit \
 
 - Mass-univariate analysis:
 
-The following command can be used to conduct an analysis of mass-univariate input data. This example includes specificiation of one random effect via the `--rfx` argument (e.g., random intercept, assuming that column 1 of the design matrix is the global intercept), and the evaluation of one contrast via the `--C` argument. As specified by the `--surface` argument, the analysis will use the `fsaverage` template, and will done for the left hemisphere. The `--cores` argument tells the program to run 4 processes in parallel, which will speed up processing, and can be increased depending on how many CPU cores are available on the system. Further details on the expected inputs and their formats are given in the [Inputs and outputs](#inputs-and-outputs) section.
+The following command can be used to conduct an analysis of mass-univariate input data. This example includes specification of one random effect via the `--rfx` argument (e.g., random intercept, assuming that column 1 of the design matrix is the global intercept), and the evaluation of one contrast via the `--C` argument. As specified by the `--surface` argument, the analysis will use the `fsaverage` template, and will be done for the left hemisphere. The `--cores` argument tells the program to run 4 processes in parallel, which will speed up processing, and can be increased depending on how many CPU cores are available on the system. Further details on the expected inputs and their formats are given in the [Inputs and outputs](#inputs-and-outputs) section.
 
 ```bash
 mri_lmefit \
