@@ -21,30 +21,6 @@ def _parse_arguments():
     required = parser.add_argument_group("Required arguments")
 
     required.add_argument(
-        "--y",
-        dest="filename",
-        help="Filename of a concatenated overlay file, e.g. produced by mris_preproc.",
-        default=None,
-        metavar="<filename>",
-        required=False,
-    )
-    required.add_argument(
-        "--mask",
-        dest="mask",
-        help="Filename of a FreeSurfer label file that will be used to select vertices for analysis.",
-        default=None,
-        metavar="<filename>",
-        required=False,
-    )
-    required.add_argument(
-        "--table",
-        dest="table",
-        help="Filename of a table output, e.g. produced by asegstats2table or aparcstats2table.",
-        default=None,
-        metavar="<filename>",
-        required=False,
-    )
-    required.add_argument(
         "--X",
         dest="design_matrix",
         help="Filename of a design matrix.",
@@ -88,10 +64,29 @@ def _parse_arguments():
         required=False,
     )
 
-    # optional arguments
-    optional = parser.add_argument_group("Optional arguments")
+    # univariate analysis
+    univariate = parser.add_argument_group("Required arguments for univariate analysis")
+    univariate.add_argument(
+        "--table",
+        dest="table",
+        help="Filename of a table output, e.g. produced by asegstats2table or aparcstats2table.",
+        default=None,
+        metavar="<filename>",
+        required=False,
+    )
 
-    optional.add_argument(
+    # mass-univariate analysis
+    mass_univariate = parser.add_argument_group("Required and optional arguments for mass-univariate analysis")
+
+    mass_univariate.add_argument(
+        "--y",
+        dest="filename",
+        help="Filename of a concatenated overlay file, e.g. produced by mris_preproc.",
+        default=None,
+        metavar="<filename>",
+        required=False,
+    )
+    mass_univariate.add_argument(
         "--surface",
         dest="surface",
         help="Template surface (e.g., fsaverage) and hemisphere (lh or rh).",
@@ -100,7 +95,19 @@ def _parse_arguments():
         metavar="<surface name> <lh|rh>",
         required=False,
     )
-    optional.add_argument(
+    mass_univariate.add_argument(
+        "--mask",
+        dest="mask",
+        help="Filename of a FreeSurfer label file that will be used to select vertices for analysis. Default: All vertices.",
+        default=None,
+        metavar="<filename>",
+        required=False,
+    )
+
+    # technical
+    expert = parser.add_argument_group("Expert options")
+
+    expert.add_argument(
         "--cores",
         dest="num_cores",
         help="Number of CPU cores used in parallel processing. Default: 1.",
@@ -109,7 +116,7 @@ def _parse_arguments():
         metavar="<int>",
         required=False,
     )
-    optional.add_argument(
+    expert.add_argument(
         "--iterations",
         dest="num_iterations",
         help="Maximum number of iterations to achieve convergence. Default: 20.",
@@ -118,7 +125,7 @@ def _parse_arguments():
         metavar="<int>",
         required=False,
     )
-    optional.add_argument(
+    expert.add_argument(
         "--epsilon",
         dest="epsilon",
         help="Epsilon for gradient norm to determine convergence. Default: 1e-1.",
@@ -127,7 +134,7 @@ def _parse_arguments():
         metavar="<float>",
         required=False,
     )
-    optional.add_argument(
+    expert.add_argument(
         "--skip-estimation",
         dest="skip_estimation",
         help="Skip estimation. Useful to compute additional contrasts. Requires existing glmdir with estimates.pkl file. Default: False.",
