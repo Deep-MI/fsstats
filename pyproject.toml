@@ -51,7 +51,7 @@ dependencies = {file = 'requirements.txt'}
 #include-package-data = false
 
 [tool.setuptools.packages.find]
-include = ['fsstats', 'fsstats.cli', 'fsstats.cfg', 'fsstats.doc', 'fsstats.utils']
+include = ['fsstats', 'fsstats.cli', 'fsstats.cfg', 'fsstats.doc', 'fsstats.utils', 'fsstats.lme']
 exclude = ['docker', 'singularity']
 
 [tool.setuptools.package-data]
