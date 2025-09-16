@@ -1,296 +1,224 @@
 # Documentation
 
+## Overview
 
-## Purpose:
+The `fsstats` package provides univariate and mass-univariate statistical modeling and inference tools for [FastSurfer](http://fastsurfer.org) and [FreeSurfer](https://freesurfer.org) imaging data. It is a revision, extension, and translation to the Python language of Freesurfer’s Matlab-based [LME](https://surfer.nmr.mgh.harvard.edu/fswiki/LinearMixedEffectsModels) tools.
 
-The hipsta package is a collection of scripts for hippocampal shape and
-thickness analysis. This page provides usage information as well as a technical
-description of processing steps and outputs. An explanative description can be
-found in the tutorial.
 
-## Usage:
+## Description
 
-### As a command-line script:
+This page provides general, usage, and installation information about the `fsstats` toolbox.
 
-The hipsta scripts can be run from the command line as follows:
+___
+
+## Contents
+
+- [Functionality](#functionality)
+- [Usage](#usage)
+  - [As a command line tool](#as-a-command-line-tool)
+  - [As a Python package](#as-a-python-package)
+- [Inputs and outputs](#inputs-and-outputs)
+    - [Input data and format specifications](input-data-and-format-specifications)
+    - [Output files and their interpretation](#output-files-and-their-interpretation)
+- [Citations](#citations)
+- [License](#license)
+
+___
+
+## Functionality
+
+The core functionality of this toolbox is to conduct statistical analyses for FastSurfer- and FreeSurfer-based imaging data. Its current focus is on providing univariate and mass-univariate linear mixed-effects analyses for clustered (e.g., longitudinal) data. Here, *univariate analysis* refers to the nalysis of one or few variables, where the input data can be represented in tabular format; a typical example is the analysis of extracted volume or thickness estimates in a limited set of larger brain regions (regions of interest). In contrast, *mass-univariate* refers to analysis of a very large number of variables, and typically means analyses of single voxels or vertices, which require dedicated, image-based preprocessing and input formats.
+
+___
+
+## Usage
+
+### As a command line tool
 
 ```
-----------------------------------------
-Hippocampal shape and thickness analysis
-----------------------------------------
-
-usage: run_hipsta [--filename <filename>] [--hemi <lh|rh>] [--lut <freesurfer|ashs-penn_abc_3t_t2|ashs-umcutrecht_7t|filename>] [--outputdir <directory>] [--no-cleanup] [--no-crop] [--upsample] [--upsample-size <float> <float> <float>]
-                  [--no-merge-molecular-layer] [--automask-head] [--automask-tail] [--automask-head-margin <int>] [--automask-tail-margin <int>] [--no-gauss-filter]
-                  [--gauss-filter-size <float> <float>] [--long-filter] [--long-filter-size <int>] [--no-close-mask] [--mca <mri_mc|skimage>] [--remesh] [--smooth <int>] [--cut-range <float> <float>]
-                  [--aniso-alpha <float> [<float> ...]] [--aniso-smooth <int>] [--thickness-grid <float> <float> <float> <float> <float> <float> <float> <float> <float>] [--help] [--more-help]
-                  [--version]
-
-This program conducts a thickness analysis of the hippocampus, based on a FreeSurfer, ASHS, or custom hippocampal subfield segmentation.
+mri_lmefit --X <filename> --C <filename> [--C <filename>]--rfx <int> [<int> ...] --clusters <filename> --glmdir <directory>
+    [--table <filename>] 
+    [--y <filename> ] [--surface <surface name> <lh|rh>] [--mask <filename>] 
+    [--cores <int>] [--iterations <int>] [--epsilon <float>] [--skip-estimation] 
+    [--help] [--detailed-help] [--version]
 
 Required arguments:
-  --filename <filename>
-                        Filename of a segmentation file.
-  --hemi <lh|rh>        Hemisphere. Either 'lh' or 'rh'.
-  --lut <freesurfer|ashs-penn_abc_3t_t2|ashs-umcutrecht_7t|filename>
-                        Look-up table: a text file with numeric and verbal segmentation labels. 'freesurfer', 'ashs-penn_abc_3t_t2', and 'ashs-umcutrecht_7t' are keywords for built-in tables.
-  --outputdir <directory>
-                        Directory where the results will be written.
+  --X <filename>        Filename of a design matrix.
+  --C filename          Filename of a contrast matrix or vector. Can be used multiple times.
+  --rfx <int> [<int> ...]
+                        Column indices (1-based) of random effects in the design matrix.
+  --clusters <filename>
+                        Filename of a list of clusters (e.g., case IDs), where each line corresponds to the same row in the design matrix.
+  --glmdir <directory>  Directory where the results will be written.
 
-Optional arguments:
-  --start-with-edited-labels
-                        Start with edited labels. Requires an edited lh.labels.mgz or rh.labels.mgz file in an existing output directory. Existing files will be overwritten.
-  --no-cleanup          Do not remove files that may be useful for diagnostic or debugging purposes, but are not necessary otherwise.
-  --no-crop             Do not crop image.
-  --upsample            Upsample to the smallest voxel edge length.
-  --upsample-size <float> <float> <float>
-                        Upsampling factors. Should be between 0 and 1. If all zeros, upsample to the smallest voxel edge length. Default: 0 0 0
-  --no-merge-molecular-layer
-                        Do not merge molecular layer (only applicable for FreeSurfer segmentations).
-  --automask-head       Automated boundary detection for hippocampal head.
-  --automask-tail       Automated boundary detection for hippocampal tail.
-  --automask-head-margin <int>
-                        Margin for automated boundary detection for hippocampal head. Default: 0
-  --automask-tail-margin <int>
-                        Margin for automated boundary detection for hippocampal tail. Default: 0
-  --no-gauss-filter     Do not apply gaussian filter.
-  --gauss-filter-size <float> <float>
-                        Filter width and threshold for gaussian filtering. Default: 1 50.
-  --long-filter         Apply filter along longitudinal axis, i.e. attempt to create smooth transitions between slices.
-  --long-filter-size <int>
-                        Size of longitudinal filter. Default: 5
-  --no-close-mask       Do not apply closing operation to mask, i.e. do not attempt to close small holes.
-  --mca <mri_mc|skimage>
-                        Type of marching-cube algorithm. Either 'mri_mc' or 'skimage'. Default: 'mri_mc'
-  --remesh              Apply remeshing operation to surface, i.e. create a regular, evenly spaced surface grid.
-  --smooth <int>        Mesh smoothing iterations. Default: 5
-  --cut-range <float> <float>
-                        Range for tetrahedral boundary cutting. Default: -0.975, 0.975
-  --aniso-alpha <float> [<float> ...]
-                        Anisotropy parameter(s). Can be one or two or two numbers. Default: 40
-  --aniso-smooth <int>  Anisotropy smoothing iterations. Default: 3
-  --thickness-grid <float> <float> <float> <float> <float> <float> <float> <float> <float>
-                        Extent and resolution of the grid used for thickness computation; three lists of three numbers: negative extent of x axis, positive extent of x axis, resolution on x axis.
-                        Repeat for the y and z axes. Default: -0.9 0.9 41 -0.975 0.975 21 -0.9 0.9 11
+Required arguments for univariate analysis:
+  --table <filename>    Filename of a table output, e.g. produced by asegstats2table or aparcstats2table.
+
+Required and optional arguments for mass-univariate analysis:
+  --y <filename>        Filename of a concatenated overlay file, e.g. produced by mris_preproc.
+  --surface <surface name> <lh|rh>
+                        Template surface (e.g., fsaverage) and hemisphere (lh or rh).              
+  --mask <filename>     Filename of a FreeSurfer label file that will be used to select vertices for analysis. Default: All vertices.                        
+
+Expert options:  
+  --cores <int>         Number of CPU cores used in parallel processing. Default: 1.
+  --iterations <int>    Maximum number of iterations to achieve convergence. Default: 20.
+  --epsilon <float>     Epsilon for gradient norm to determine convergence. Default: 1e-1.
+  --skip-estimation     Skip estimation. Useful for conducting statistical inference for additional contrasts with needing to run model estimation again. 
+                        Requires existing glmdir with estimates.pkl file. Default: False.           
 
 Getting help:
   --help                Display this help message and exit
-  --more-help           Display extensive help message and exit
+  --detailed-help       Display extensive help message and exit
   --version             Display version number and exit
-  ```
 
-### As a python package:
-
-The hipsta scripts can also be run within a Python environment:
-
-```python
-import hipsta
-hipsta.run_hipsta(filename="my_filename.mgz", hemi="lh", lut="freesurfer", outputdir="my_output_directory")
 ```
 
-A full list of available arguments for the `run_hipsta` function can be obtained with:
+*Examples:*
 
-```python
-import hipsta
-help(hipsta.run_hipsta)
+- Univariate analysis:
+
+The following command can be used to conduct an analysis of tabular input data. This example includes two random effects via the `--rfx` argument (e.g., random intercept and random slope of time, assuming that columns 1 and 2 of the design matrix are the global intercept and the regressor for *Time*, respectively) and the evaluation of two contrasts via the `--C` arguments. Further details on the expected inputs and their formats are given in the [Inputs and outputs](#inputs-and-outputs) section.
+
+```bash
+mri_lmefit \
+--table /my/input/directory/my_tabular_input_file.txt \
+--X /my/input/directory/my_design_matrix.txt \
+--C /my/input/directory/my_contrast_file_1.txt \
+--C /my/input/directory/my_contrast_file_2.txt \
+--clusters /my/input/directory/my_list_of_clusters.txt \
+--rfx 1 2 \
+--glmdir /my/output/directory
 ```
 
+- Mass-univariate analysis:
 
-## Description:
+The following command can be used to conduct an analysis of mass-univariate input data. This example includes specification of one random effect via the `--rfx` argument (e.g., random intercept, assuming that column 1 of the design matrix is the global intercept), and the evaluation of one contrast via the `--C` argument. As specified by the `--surface` argument, the analysis will use the `fsaverage` template, and will be done for the left hemisphere. The `--cores` argument tells the program to run 4 processes in parallel, which will speed up processing, and can be increased depending on how many CPU cores are available on the system. Further details on the expected inputs and their formats are given in the [Inputs and outputs](#inputs-and-outputs) section.
 
-This script performs the following major processing steps:
+```bash
+mri_lmefit \
+--y /my/input/directory/my_preprocessed_image_data.mgh \
+--mask /input/directory/my_cortical_label_file.label \
+--X /my/input/directory/my_design_matrix.txt \
+--C /my/input/directory/my_contrast_file.txt \
+--clusters /my/input/directory/my_list_of_clusters.txt \
+--rfx 1 \
+--surface fsaverage lh \
+--glmdir /my/output/directory
+--cores 4
+```
 
-1. process image
-    1. convert format
-    2. cropping (optional)
-    3. upsampling (optional)
-2. process labels
-    1. automated identification of head and tail boundaries (optional)
-    2. extract and merge subfield labels
-    3. merge molecular layer (optional)
-3. process mask
-    1. binarize
-    2. apply gaussian filter operations (optional)
-    3. apply longitudinal filter operations (optional)
-    3. fill holes using dilation and erosion (optional)
-4. create surface
-    1. extract initial surface using marching cube algorithm
-    2. remesh surface (optional)
-    3. smooth surface
-    4. create QC plots
-5. create tetrahedral mesh from triangular surface
-6. create label files for tetra mesh
-7. cut open tetrahedral mesh at anterior and posterior ends
-    1. remove boundary mask
-    2. mesh cutting
-    3. check boundaries
-8. create cube parametrization
-    1. compute cube parametrization
-    2. create QC plots
-9. compute thickness and curvature
-    1. compute thickness and curvature
-    2. create QC plots
-10. map subfield values (and other volume-based data, optional)
-11. create supplementary files for visualization
+### As a Python package
 
-## Outputs:
+As an alternative to their command-line usage, the fsstats scripts can also be run within a pure Python environment, i.e. installed and imported as a Python package.
 
-1. Thickness and curvature estimates
+Use `import fsstats` (or sth. equivalent) to import the package within a Python environment, and use the `run_fsstats` function from the `fsstats` module to
+run an analysis.
 
-The primary output of the hippocampal shape and thickness package are surface
-files and associated thickness values in the 'tickness' folder.
+- Univariate analysis:
 
-The thickness values will be stored in csv tables:
+```python
+import fsstats
+fsstats.run_fsstats(
+    table="/my/input/directory/my_tabular_input_file.txt",
+    design_matrix="/my/input/directory/my_design_matrix.txt",
+    contasts=["/my/input/directory/my_contrast_file_1.txt", "/my/input/directory/my_contrast_file_2.txt"],
+    clusters="/my/input/directory/my_list_of_clusters.txt", 
+    random_effects=[1, 2],
+    glmdir="/my/output/directory"
+    )
+```
+- Mass-univariate analysis:
 
-- <lh|rh>.grid-segments-<x|y|z>.csv
-
-Here, x corresponds to the medial-->lateral dimension, y to the
-posterior-->anterior dimension, and z to the exterior-->interior dimension.
-
-The thickness values are therefore in the z files, whereas the x and y files
-contain length estimates in the other two directions.
-
-The thickness values will also be stored as mgh and psol overlay files that
-can be overlaid onto the mid-surface vtk file.
-
-- <lh|rh>.mid-surface.vtk
-- <lh|rh>.mid-surface.thickness.<mgh|psol>
-
-It is also possible to overlay the projected subfield boundary files onto
-the midsurface:
-
-- <lh|rh>.mid-surface.hsf.<mgh|psol>
-
-Besides the thickness values, mean and gaussian curvature estimates are
-provided for interior, mid, and exterior surfaces:
-
-- <lh|rh>.<int|mid|ext>-surface.vtk
-- <lh|rh>.<int|mid|ext>-surface.<mean|gauss>-curv.csv
-- <lh|rh>.<int|mid|ext>-surface.<mean|gauss>-curv.mgh
-- <lh|rh>.<int|mid|ext>-surface.<mean|gauss>-curv.psol
-
-The other files within the 'thickness' folder files are intermediate files that
-were created / used during the thickness computation:
-
-- <lh|rh>.<int|mid|ext>-surface.csv
-- <lh|rh>.mid-surface.csv
-- <lh|rh>.grid-lines.csv
-- <lh|rh>.grid-lines-<x|y|z>.vtk
-- <lh|rh>.mid-surface.hsf.csv
-- <lh|rh>.mid-surface.hsf-bnd.vtk
-
-2. Logfile and intermediate volume and surface files
-
-The logfile can be used to check if the processing finished without errors:
-
-- logfile.txt
-
-Also the intermediate volume and surface files can be useful for quality control or troubleshooting.
-
-- Result of processing step 1 ('process image'): <lh|rh>.image.mgz
-- Result of processing step 2 ('process labels'): <lh|rh>.labels.mgz
-- Result of processing step 3 ('process mask'): <lh|rh>.mask.mgz
-- Result of processing step 4 ('create surface'): <lh|rh>.surf.vtk
-- Result of processing step 5 ('create tetrahedral mesh'): <lh|rh>.tetra.vtk
-- Result of processing step 7 ('cut open tetrahedral mesh'): <lh|rh>.cut.vtk
-
-3. A set of sub-folders with intermediate results:
-
-    1. An 'image' folder with intermediate results, primarily from basic image
-    processing.
-
-    2. A 'labels' folder with intermediate results, primarily label files.
-
-    3. A 'mask' folder with intermediate results, primarily files created
-    during creation and post-processing of binary masks.
-
-    4. A 'surface' folder with intermediate results, primarily files created
-    during surface construction.
-
-    5. A 'tetra-mesh' folder with intermediate results, primarily files
-    created during tetrahedral mesh construction.
-
-    6. A 'tetra-labels' folder with intermediate results, primarily files
-    created during tetrahedral mesh construction.
-
-    7. A 'tetra-cut' folder with intermediate results, primarily files
-    created during mesh cutting.
-
-    8. A 'tetra-cube' folder with intermediate results, primarily files
-    created during cube parametrization.
-
-    9. A 'thickness' folder with thickness overlays and mid-surfaces.
-
-    10. A 'qc' folder with QC plots.
+```python
+import fsstats
+fsstats.run_fsstats(
+    filename="/my/input/directory/my_preprocessed_image_data.mgh",
+    mask="/input/directory/my_cortical_label_file.label",
+    design_matrix="/my/input/directory/my_design_matrix.txt",
+    contasts=["/my/input/directory/my_contrast_file.txt"],
+    clusters="/my/input/directory/my_list_of_clusters.txt", 
+    random_effects=[1],
+    surface="fsaverage",
+    hemi="lh",
+    num_cores=4,
+    glmdir="/my/output/directory"
+    )
+```
+___
 
 
-## Supported segmentations:
+## Inputs and outputs
 
-- A hippocampal subfields segmentation based on FreeSurfer 7.1.1 or later should 
-  work as-is. Use `--lut freesurfer`.
-- Two ASHS atlases are currently supported, the Penn ABC-3T ASHS Atlas for 
-  T2-weighted MRI and the UMC Utrecht 7T atlas. Use `--lut ashs-penn_abc_3t_t2` 
-  or `--lut ashs-umcutrecht_7t`. If additional labels for the hippocampal head
-  (label value: 20) and tail (label value: 5) labels are missing, use the `--automask-head` 
-  and/or `--automask-tail` arguments. It may also make sense to upsample the 
-  segmentations to isotropic voxel size using `--upsample`.
-- If using a custom look-up table (`--lut <filename>`), the expected format for
-  the file is: `<numeric ID> <name> <R> <G> <B> <A>`. `R`, `G`, `B`, `A` are
-  numerical values for RGB colors and transparency (alpha) and will be ignored.
-  For example, `236 Subiculum 255 0 0 0`. Each line may only contain a single
-  anatomical structure. Do not use a header line. The following labels need to
-  be present in the look-up table: `presubiculum`,  `subiculum`, `ca1`, `ca2`,
-  `ca3`, `ca4`, `head`, and `tail`. Additional labels may be present, but will
-  be ignored. Lines starting with `#` will be ignored (and can be used for
-  comments).
-- Multiple substructures can have the same numeric ID, e.g. `presubiculum` and
-  `subiculum` can have the same numeric ID if these substructures are not
-  distinguished in the segmentation. `head` and `tail` can have multiple labels
-  if these are distinguished in the segmentation, but should be combined for
-  the processing with this package.
+### Input data and format specifications
 
+Argument | Description | Format
+------|------------|------------------------
+-- table | Univariate data | Table including a header that describes the variable names and a first column of IDs; can have one or more variables. Output from FreeSurfer's `asegstats2table` or `aparcstats2table` will be accepted. Only needed for univariate analysis.
+--Y  | Preprocessed mass-univarate data | FreeSurfer mgh/mgz image file, can be obtained from `mris_preproc`. Only needed for mass-univariate analysis.
+--mask | Analysis mask for mass-univariate data | FreeSurfer label file, e.g. `lh.cortex`. Optional for mass-univariate analysis; if omitted, all data will be used.
+--X  | Design matrix | Table without header and without column of IDs; each row corresponds to one observation and each column corresponds to one parameter/variable in the model.
+--C  | Contrast vector/matrix | Table without header, with one or more rows depending on the type of contrast, and as many columns as the design matrix.  Each column refers to the same column of the design matrix. One contrast vector/matrix per file; for multiple contrasts, specify multiple `--C` arguments.
+--clusters | Grouping structure of the data | Table without header and a single column. Must have as many rows as the design matrix, and each row corresponds to the same row in the design matrix. Indicates for every observation to which which cluster (e.g., person) it belongs; can be a list of repeated participant IDs.
 
-## Requirements:
+All tables can be separated by tab, comma, or space.
 
-1. A FreeSurfer version (6.x or 7.x) must be sourced, i.e. FREESURFER_HOME must
-   exist as an environment variable and point to a valid FreeSurfer installation.
+### Output files and their interpretation
 
-2. A hippocampal subfield segmentation created by FreeSurfer 7.11 or later
-   or the ASHS software. A custom segmentation is also permissible (some restrictions
-   and settings apply; see [Supported Segmentations](#supported-segmentations)).
+The program will compute the following statistics, and produce text- or image-based output files. Text files can be accessed with any text editor. Image files follow the FreeSurfer format and conventions, and are intended to be used with visualization and post-processing tools like `Freeview` and `surfcluster`, which are available from any FreeSurfer distribution.
 
-3. Python 3.8 or higher including the lapy, numpy, scipy, nibabel, pyvista, and
-   pyacvd libraries. See `requirements.txt` for a full list.
+file           |   description
+---------------|----------------------------------------------------------------
+logfile.txt    | logfile
+Xg.dat         | design matrix
+beta.mgh       | model paramaters
+estimates.pkl  | internal file with parameter estimates
+statistics.pkl | internal file with statistics
+\<contrast_directory>/C.dat     | contrast vector or matrix
+\<contrast_directory>/gamma.mgh | contrast estimate 
+\<contrast_directory>/sgn.mgh   | sign of the contrast
+\<contrast_directory>/F.mgh     | F-value of the contrast
+\<contrast_directory>/sig.mgh   | Sig-value of the contrast
 
-4. The gmsh package (version 2.x; http://gmsh.info) must be installed. Can be
-   downloaded from e.g. https://gmsh.info/bin/Linux/gmsh-2.16.0-Linux64.tgz
-   or https://gmsh.info/bin/MacOSX/gmsh-2.16.0-MacOSX.dmg. The 'gmsh' binary
-   must also be on the $PATH, i.e `export PATH=${PATH}:/path/to/my/gmsh`
+The contrast estimate results from the application of the contrast vector or matrix to the model parameters. The sign of the contrast is computed as `sign(gamma)` and can be used for the interpretation of the results of the undirected *F* - test. The program produces `sig-values` instead of `p-values` for better representation and visualization of values that are very small or close to zero. `p-values` and `sig-values` can be converted into each other: `p = 10^(-sig)` and `sig = -log10(p)`. The following table gives a few examples.
 
+p      |  sig
+-------|-----
+0.05   | 1.3
+0.01   | 2.0
+0.001  | 3.0
+0.0001 | 4.0
 
-## References:
+___
 
-Please cite the following publications if you use these scripts in your work:
+## Citations
 
-- Diers, K., Baumeister, H., Jessen, F., Düzel, E., Berron, D., & Reuter, M. (2023).
-  An automated, geometry-based method for hippocampal shape and thickness analysis.
-  Neuroimage, 276:120182. doi: 10.1016/j.neuroimage.2023.120182.
+If you use these tools in your analysis please cite:
 
-Please also consider citing the these publications:
+- Henschel L, Conjeti S, Estrada S, Diers K, Fischl B, Reuter M, FastSurfer - 
+  A fast and accurate deep learning based neuroimaging pipeline, NeuroImage 219 
+  (2020), 117012. https://doi.org/10.1016/j.neuroimage.2020.117012
 
-- Geuzaine, C., & Remacle, J.-F. (2009). Gmsh: a three-dimensional finite element mesh
-  generator with built-in pre- and post-processing facilities. International Journal
-  for Numerical Methods in Engineering, 79, 1309-1331.
+- Henschel L*, Kuegler D*, Reuter M. (*co-first). FastSurferVINN: 
+  Building Resolution-Independence into Deep Learning Segmentation Methods - 
+  A Solution for HighRes Brain MRI. NeuroImage 251 (2022), 118933. 
+  https://dx.doi.org/10.1016/j.neuroimage.2022.118933
 
-- Andreux, M., Rodola, E., Aubry, M., & Cremers, D. (2014). Anisotropic Laplace-Beltrami
-  operators for shape analysis. In European Conference on Computer Vision (pp. 299-312).
-  Springer, Cham.
+- Bernal-Rusiel JL, Greve DN, Reuter M, Fischl B, Sabuncu MR.
+  Statistical Analysis of Longitudinal Neuroimage Data with
+  Linear Mixed Effects Models, NeuroImage 66 (2012), 249-260.
+  <https://dx.doi.org/10.1016%2Fj.neuroimage.2012.10.065>
 
-- Iglesias, J. E., Augustinack, J. C., Nguyen, K., Player, C. M., Player, A., Wright, M.,
-  ... & Fischl, B. (2015). A computational atlas of the hippocampal formation using ex vivo,
-  ultra-high resolution MRI: application to adaptive segmentation of in vivo MRI. Neuroimage,
-  115, 117-137.
+- Bernal-Rusiel JL, Greve DN, Reuter M, Fischl B, Sabuncu MR. 
+  Spatiotemporal Linear Mixed Effects Modeling for the
+  Mass-univariate Analysis of Longitudinal Neuroimage Data, NeuroImage
+  81 (2013), 358–370. <https://doi.org/10.1016/j.neuroimage.2013.05.049>
 
-- Yushkevich, P. A., Pluta, J., Wang, H., Ding, S.L., Xie, L., Gertje, E., Mancuso, L.,
-  Kliot, D., Das, S. R., & Wolk, D.A. (2015). Automated Volumetry and Regional Thickness
-  Analysis of Hippocampal Subfields and Medial Temporal Cortical Structures in Mild Cognitive
-  Impairment. Human Brain Mapping, 36, 258-287.
+___
+
+## License
+
+This software is licensed under the MIT License, see associated LICENSE file
+for details.
+
+Copyright (c) 2019 Image Analysis Group, DZNE e.V.
