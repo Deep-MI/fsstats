@@ -1,6 +1,6 @@
 from tqdm import tqdm
 from joblib import Parallel, delayed
-from .lme_test_F import lme_test_F
+from .lme.lme_test_f import lme_test_f
 
 def lme_test(stats, C, bias_correct, prs, verbose):
     """
@@ -27,7 +27,7 @@ def lme_test(stats, C, bias_correct, prs, verbose):
 
     # Processing function
     def process(key, value, C, bias_correct, verbose):
-        out = lme_test_F(
+        out = lme_test_f(
             C = C,
             Bhat = value['Bhat'],
             CBhat = value['CovBhat'],

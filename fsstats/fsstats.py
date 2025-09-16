@@ -20,8 +20,8 @@ from .doc.documentation import get_help_text
 from .utils.importing import read_mgh, read_label, read_table, read_design_matrix, read_contrasts, read_clusters
 from .utils.exporting import write_mgh
 from .utils.parser import _parse_arguments
-from .lme_fit import lme_fit
-from .lme_test import lme_test
+from .lme.lme_fit import lme_fit
+from .lme.lme_test import lme_test
 
 # ==============================================================================
 # LOGGING

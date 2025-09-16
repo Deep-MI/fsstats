@@ -1,11 +1,11 @@
 import logging
 import numpy as np
 from scipy.linalg import cholesky, solve, det
-from .lme_fit_init import lme_fit_init
-from .lme_Gradient import lme_Gradient
-from .lme_EI import lme_EI
+from .lme.lme_fit_init import lme_fit_init
+from .lme.lme_gradient import lme_gradient
+from .lme.lme_ei import lme_ei
 
-def lme_fit_FS(X, Zcols, Y, ni, nit, e, label, compute_random_effects, return_minimal_information, verbose):
+def lme_fit_fs(X, Zcols, Y, ni, nit, e, label, compute_random_effects, return_minimal_information, verbose):
     """
     Linear mixed-effects estimation by the Fisher scoring algorithm.
 
@@ -97,8 +97,8 @@ def lme_fit_FS(X, Zcols, Y, ni, nit, e, label, compute_random_effects, return_mi
             lremlit += np.log(det(Wi)) - ri.T @ Wi @ ri
             posi = posf
 
-        gr = lme_Gradient(X, Zcols, W, invH, L, phi, r, ni)
-        EI, Pth, Qthth = lme_EI(X, Zcols, W, invH, SIGMA, L, phi, ni)
+        gr = lme_gradient(X, Zcols, W, invH, L, phi, r, ni)
+        EI, Pth, Qthth = lme_ei(X, Zcols, W, invH, SIGMA, L, phi, ni)
         invEI = solve(EI, np.eye(nth))
         theta[ind] += invEI @ gr
         lremlit = 0.5 * (lremlit - np.log(det(H)))

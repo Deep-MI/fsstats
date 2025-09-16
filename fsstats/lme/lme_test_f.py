@@ -1,9 +1,9 @@
 import logging
 import numpy as np
 from scipy.stats import f as f_dist
-from .lme_EI import lme_EI
+from .lme.lme_ei import lme_ei
 
-def lme_test_F(C, Bhat, CBhat, Zcols, invEI, Pth, Qthth, X, W, ni, label, bias_correct, verbose):
+def lme_test_f(C, Bhat, CBhat, Zcols, invEI, Pth, Qthth, X, W, ni, label, bias_correct, verbose):
     """
     Inference for the fixed-effects in the linear mixed-effects model.
 

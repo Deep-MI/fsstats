@@ -2,7 +2,7 @@ import logging
 from tqdm import tqdm
 import numpy as np
 from joblib import Parallel, delayed
-from .lme_fit_FS import lme_fit_FS
+from .lme.lme_fit_fs import lme_fit_fs
 
 def lme_fit(X, Zcols, Y, ni, maskvtx, prs, nit, e, compute_random_effects, return_minimal_information, verbose):
     """
@@ -55,7 +55,7 @@ def lme_fit(X, Zcols, Y, ni, maskvtx, prs, nit, e, compute_random_effects, retur
     # Processing
 
     if prs > 1:
-        stats_masked = list(tqdm(Parallel(return_as="generator", n_jobs=prs)(delayed(lme_fit_FS)(
+        stats_masked = list(tqdm(Parallel(return_as="generator", n_jobs=prs)(delayed(lme_fit_fs)(
                     X=X,
                     Zcols=Zcols,
                     Y=np.expand_dims(Y[:, i], axis=1),
@@ -74,7 +74,7 @@ def lme_fit(X, Zcols, Y, ni, maskvtx, prs, nit, e, compute_random_effects, retur
     else:
         stats_masked = [{} for _ in range(nv_masked)]
         for i in range(nv_masked):
-            stats_masked[i] = lme_fit_FS(
+            stats_masked[i] = lme_fit_fs(
                 X=X,
                 Zcols=Zcols,
                 Y=np.expand_dims(Y[:, i], axis=1),
