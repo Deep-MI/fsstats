@@ -1,7 +1,8 @@
 import argparse
 import sys
-from ..cfg.version import get_version
+
 from ..cfg.config import get_defaults
+from ..cfg.version import get_version
 
 # ------------------------------------------------------------------------------
 # parse_arguments

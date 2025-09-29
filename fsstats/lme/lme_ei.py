@@ -1,5 +1,6 @@
 import numpy as np
 
+
 def lme_ei(X, Zcols, W, CBhat, SIGMA, L, phi, ni):
     """
     Expected information matrix for the restricted log-likelihood.

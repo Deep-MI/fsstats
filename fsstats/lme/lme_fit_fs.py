@@ -1,9 +1,12 @@
 import logging
+
 import numpy as np
-from scipy.linalg import cholesky, solve, det
+from scipy.linalg import cholesky, det, solve
+
+from .lme.lme_ei import lme_ei
 from .lme.lme_fit_init import lme_fit_init
 from .lme.lme_gradient import lme_gradient
-from .lme.lme_ei import lme_ei
+
 
 def lme_fit_fs(X, Zcols, Y, ni, nit, e, label, compute_random_effects, return_minimal_information, verbose):
     """

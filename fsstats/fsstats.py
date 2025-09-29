@@ -5,9 +5,8 @@ modeling and inference package.
 """
 
 import argparse
-import multiprocessing
-from genericpath import isfile
 import logging
+import multiprocessing
 import os
 import pickle
 
@@ -17,11 +16,11 @@ import pandas as pd
 from .cfg.config import get_defaults
 from .cfg.logging import setup_logging
 from .doc.documentation import get_help_text
-from .utils.importing import read_mgh, read_label, read_table, read_design_matrix, read_contrasts, read_clusters
-from .utils.exporting import write_mgh
-from .utils.parser import _parse_arguments
 from .lme.lme_fit import lme_fit
 from .lme.lme_test import lme_test
+from .utils.exporting import write_mgh
+from .utils.importing import read_clusters, read_contrasts, read_design_matrix, read_label, read_mgh, read_table
+from .utils.parser import _parse_arguments
 
 # ==============================================================================
 # LOGGING

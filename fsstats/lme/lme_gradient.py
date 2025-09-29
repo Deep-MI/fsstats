@@ -1,5 +1,6 @@
 import numpy as np
 
+
 def lme_gradient(X, Zcols, W, invH, L, phi, re, ni):
     """
     Gradient vector for the restricted log-likelihood.
