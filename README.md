@@ -202,7 +202,7 @@ file           |   description
 ---------------|----------------------------------------------------------------
 logfile.txt    | logfile
 Xg.dat         | design matrix
-beta.mgh       | model paramaters
+beta.mgh       | model parameters
 estimates.pkl  | internal file with parameter estimates
 statistics.pkl | internal file with statistics
 \<contrast_directory>/C.dat     | contrast vector or matrix
@@ -250,7 +250,7 @@ in version 1.0.0 of the software:
 
 - Support for spatiotemporal covariance models
 - Support for Docker and Singularity images
-- GitHub workflows for testing, building, publishing, and extended documention
+- GitHub workflows for testing, building, publishing, and extended documentation
 - Making the package installable via `pypi.org`
 
 ### Feedback, questions, and contributing 

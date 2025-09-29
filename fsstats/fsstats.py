@@ -140,7 +140,7 @@ def _check_params(params):
     nv    number of vertices / variables
     p     number of parameters
     nf    number of rows in each contrast
-    nr    numer of random effects
+    nr    number of random effects
     nc    number of clusters
     """
 
@@ -166,7 +166,7 @@ def _check_params(params):
     # design matrix
     # design matrix must have two dimensions
     # design matrix and the data matrix must have the same number of rows
-    # design matrix must contain a columnn of ones
+    # design matrix must contain a column of ones
     # design matrix must not contain redundant columns
     params.X = read_design_matrix(params.DESIGN_MATRIX)
     if len(params.X.shape) != 2:
@@ -179,8 +179,8 @@ def _check_params(params):
         LOGGER.error("Design matrix must contain a columns of ones.")
         raise argparse.ArgumentTypeError("Design matrix must contain a columns of ones.")
     if np.linalg.matrix_rank(params.X) != params.X.shape[1]:
-        LOGGER.error("Design matrix cannot have redundant columnns.")
-        raise argparse.ArgumentTypeError("Design matrix cannot have redundant columnns.")
+        LOGGER.error("Design matrix cannot have redundant columns.")
+        raise argparse.ArgumentTypeError("Design matrix cannot have redundant columns.")
 
     # contrasts
     # each contrast matrix must have two dimensions
