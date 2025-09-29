@@ -1,4 +1,3 @@
-import logging
 import numpy as np
 
 def lme_fit_init(X, Zcols, y, ni):
@@ -24,8 +23,6 @@ def lme_fit_init(X, Zcols, y, ni):
     D0 : ndarray
         Estimated random effects covariance matrix.
     """
-
-    LOGGER = logging.getLogger(__name__)
 
     m = len(ni)
     p = X.shape[1]
@@ -63,7 +60,6 @@ def lme_fit_init(X, Zcols, y, ni):
         np.linalg.cholesky(D0)
     except np.linalg.LinAlgError:
         # Handling non-positive definite initial D
-        #LOGGER.warning("Negative initial estimate of random-effects covariance matrix encountered, using fallback.")
         ED, EV = np.linalg.eigh(D0)
         ED[ED < 0] = 1e-4
         D0 = EV @ np.diag(ED) @ np.linalg.inv(EV)

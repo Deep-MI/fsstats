@@ -158,7 +158,7 @@ def lme_fit_fs(X, Zcols, Y, ni, nit, e, label, compute_random_effects, return_mi
 
     # output
     if stats['st'] and stats['lreml'][-1]>=stats['lreml'][0]:
-        LOGGER.info('Index ' + label + ': Convergence at iteration ' + str(len(stats['lreml'])) + '. Initial and final likelihoods: ' + str(stats['lreml'][0]) + ', ' + str(stats['lreml'][-1]));
+        LOGGER.info('Index ' + label + ': Convergence at iteration ' + str(len(stats['lreml'])) + '. Initial and final likelihoods: ' + str(stats['lreml'][0]) + ', ' + str(stats['lreml'][-1]))
     else:
         LOGGER.info('Index ' + label + ': Algorithm did not converge. Initial and final likelihoods: ' + str(stats['lreml'][0]) + ', ' + str(stats['lreml'][-1]))
 
