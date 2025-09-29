@@ -108,6 +108,8 @@ extend-exclude = [
     "docker",
     "setup.py",
     "singularity",
+    "ipynb",
+    "remove",
 ]
 ignore = ["E501"] # line too long (should be enforced soon)
 
