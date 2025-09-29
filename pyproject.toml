@@ -33,6 +33,42 @@ classifiers = [
 ]
 dynamic = ["version", "readme", "dependencies"]
 
+[project.optional-dependencies]
+build = [
+    'build',
+    'twine',
+]
+doc = [
+    'furo!=2023.8.17',
+    'matplotlib',
+    'memory-profiler',
+    'numpydoc',
+    'sphinx!=7.2.*',
+    'sphinxcontrib-bibtex',
+    'sphinx-copybutton',
+    'sphinx-design',
+    'sphinx-gallery',
+    'sphinx-issues',
+    'pypandoc',
+    'nbsphinx',
+    'IPython', # For syntax highlighting in notebooks
+    'ipykernel',
+]
+style = [
+    'bibclean',
+    'codespell',
+    'pydocstyle[toml]',
+    'ruff',
+]
+all = [
+    'fsstats[build]',
+    'fsstats[doc]',
+    'fsstats[style]',
+]
+full = [
+    'fsstats[all]',
+]
+
 [project.urls]
 homepage = 'https://github.com/Deep-MI/fsstats'
 documentation = 'https://github.com/Deep-MI/fsstats'
@@ -56,3 +92,36 @@ exclude = ['docker', 'singularity']
 
 [tool.setuptools.package-data]
 "fsstats.doc" = ["*.md"]
+
+[tool.pydocstyle]
+convention = 'numpy'
+ignore-decorators = '(copy_doc|property|.*setter|.*getter|pyqtSlot|Slot)'
+match = '^(?!setup|__init__|test_).*\.py'
+match-dir = '^fsstats.*'
+add_ignore = 'D100,D104,D107'
+
+[tool.ruff]
+line-length = 120
+extend-exclude = [
+    ".github",
+    "doc",
+    "docker",
+    "setup.py",
+    "singularity",
+]
+ignore = ["E501"] # line too long (should be enforced soon)
+
+
+[tool.ruff.lint]
+# https://docs.astral.sh/ruff/linter/#rule-selection
+select = [
+    "E",   # pycodestyle
+    "F",   # Pyflakes
+    "UP",  # pyupgrade
+    "B",   # flake8-bugbear
+    "I",   # isort
+    # "SIM", # flake8-simplify
+]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]
