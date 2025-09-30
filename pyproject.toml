@@ -53,6 +53,7 @@ doc = [
     'nbsphinx',
     'IPython', # For syntax highlighting in notebooks
     'ipykernel',
+    'myst_parser',
 ]
 style = [
     'bibclean',
