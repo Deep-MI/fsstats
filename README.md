@@ -3,7 +3,7 @@
 
 ## Overview
 
-The `fsstats` package provides univariate and mass-univariate statistical modeling and inference tools for [FastSurfer](http://fastsurfer.org) and [FreeSurfer](https://freesurfer.org) imaging data. It is a revision, extension, and translation to the Python language of Freesurfer’s Matlab-based [LME](https://surfer.nmr.mgh.harvard.edu/fswiki/LinearMixedEffectsModels) tools.
+The `fsstats` package provides univariate and mass-univariate statistical modeling and inference tools for [FastSurfer](http://fastsurfer.org) and [FreeSurfer](https://surfer.nmr.mgh.harvard.edu) imaging data. It is a revision, extension, and translation to the Python language of Freesurfer’s Matlab-based [LME](https://surfer.nmr.mgh.harvard.edu/fswiki/LinearMixedEffectsModels) tools.
 
 
 ## Description
@@ -22,7 +22,7 @@ ___
   - [As a command line tool](#as-a-command-line-tool)
   - [As a Python package](#as-a-python-package)
 - [Inputs and outputs](#inputs-and-outputs)
-    - [Input data and format specifications](input-data-and-format-specifications)
+    - [Input data and format specifications](#input-data-and-format-specifications)
     - [Output files and their interpretation](#output-files-and-their-interpretation)
 - [Ongoing development](#development)
   - [Current status](#current-status)
