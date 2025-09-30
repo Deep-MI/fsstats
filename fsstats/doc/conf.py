@@ -193,7 +193,7 @@ def linkcode_resolve(domain: str, info: Dict[str, str]) -> Optional[str]:
 
     # create URL
     if "dev" in release:
-        branch = "main"
+        branch = "stable"
     else:
         return None  # alternatively, link to a maint/version branch
     fname = fname.rsplit(f"/{package}/")[1]

@@ -111,7 +111,7 @@ extend-exclude = [
     "ipynb",
     "remove",
 ]
-ignore = ["E501"] # line too long (should be enforced soon)
+ignore = ["E501", "E741"]
 
 
 [tool.ruff.lint]
