@@ -3,10 +3,12 @@ This module provides statistical inference after vertex/voxel-wise linear mixed-
 """
 
 import logging
+
 import numpy as np
 from joblib import Parallel, delayed
 from scipy.stats import f as f_dist
 from tqdm import tqdm
+
 
 def _test(C, Bhat, CBhat, Zcols, invEI, Pth, Qthth, X, W, ni, label, bias_correct, verbose):
     """

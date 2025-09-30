@@ -5,7 +5,6 @@ This module provides vertex/voxel-wise linear mixed-effects estimation.
 import logging
 
 import numpy as np
-
 from joblib import Parallel, delayed
 from scipy.linalg import cholesky, det, solve
 from tqdm import tqdm
