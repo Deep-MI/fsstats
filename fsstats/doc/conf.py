@@ -46,7 +46,7 @@ extensions = [
     "sphinxcontrib.bibtex",
     "sphinx_copybutton",
     "sphinx_design",
-    # "sphinx_gallery.gen_gallery",
+    #"sphinx_gallery.gen_gallery",
     "sphinx_issues",
     "nbsphinx",
     "IPython.sphinxext.ipython_console_highlighting",

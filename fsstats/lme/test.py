@@ -1,3 +1,7 @@
+"""
+This module provides statistical inference after vertex/voxel-wise linear mixed-effects estimation.
+"""
+
 import logging
 import numpy as np
 from joblib import Parallel, delayed

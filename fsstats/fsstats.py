@@ -15,7 +15,7 @@ import pandas as pd
 
 from .cfg.config import get_defaults
 from .cfg.logging import setup_logging
-from .doc.documentation import get_help_text
+from .doc.documentation import _get_help_text
 from .lme.fit import fit
 from .lme.test import test
 from .utils.exporting import write_mgh
@@ -31,15 +31,15 @@ LOGGER = logging.getLogger(__name__)
 # FUNCTIONS
 
 # ------------------------------------------------------------------------------
-# get_help()
+# _help()
 
-def get_help(print_help=True, return_help=False):
+def _help(print_help=True, return_help=False):
     """
     a function to return a help message
 
     """
 
-    HELPTEXT = get_help_text()
+    HELPTEXT = _get_help_text()
 
     if print_help:
         print(HELPTEXT)

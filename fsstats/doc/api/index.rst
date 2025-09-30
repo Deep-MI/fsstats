@@ -6,7 +6,6 @@ API Reference
 .. autosummary::
     :toctree: generated/
 
-    fsstats
-    lme.lme_fit
-    lme.lme_ei
-    lme.lme_fit_fs
+    run_lme
+    lme.fit
+    lme.test
