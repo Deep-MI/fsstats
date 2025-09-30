@@ -1,7 +1,7 @@
 from joblib import Parallel, delayed
 from tqdm import tqdm
 
-from .lme.lme_test_f import lme_test_f
+from .lme_test_f import lme_test_f
 
 
 def lme_test(stats, C, bias_correct, prs, verbose):

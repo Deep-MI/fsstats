@@ -1,10 +1,14 @@
+"""
+This module provides vertex/voxel-wise linear mixed-effects estimation.
+"""
+
 import logging
 
 import numpy as np
 from joblib import Parallel, delayed
 from tqdm import tqdm
 
-from .lme.lme_fit_fs import lme_fit_fs
+from .lme_fit_fs import lme_fit_fs
 
 
 def lme_fit(X, Zcols, Y, ni, maskvtx, prs, nit, e, compute_random_effects, return_minimal_information, verbose):
