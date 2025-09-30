@@ -104,7 +104,7 @@ mri_lmefit \
 --clusters /my/input/directory/my_list_of_clusters.txt \
 --rfx 1 \
 --surface fsaverage lh \
---glmdir /my/output/directory
+--glmdir /my/output/directory \
 --cores 4
 ```
 
@@ -122,7 +122,7 @@ import fsstats
 fsstats.run_fsstats(
     table="/my/input/directory/my_tabular_input_file.txt",
     design_matrix="/my/input/directory/my_design_matrix.txt",
-    contasts=["/my/input/directory/my_contrast_file_1.txt", "/my/input/directory/my_contrast_file_2.txt"],
+    contrasts=["/my/input/directory/my_contrast_file_1.txt", "/my/input/directory/my_contrast_file_2.txt"],
     clusters="/my/input/directory/my_list_of_clusters.txt", 
     random_effects=[1, 2],
     glmdir="/my/output/directory"
@@ -136,7 +136,7 @@ fsstats.run_fsstats(
     filename="/my/input/directory/my_preprocessed_image_data.mgh",
     mask="/input/directory/my_cortical_label_file.label",
     design_matrix="/my/input/directory/my_design_matrix.txt",
-    contasts=["/my/input/directory/my_contrast_file.txt"],
+    contrasts=["/my/input/directory/my_contrast_file.txt"],
     clusters="/my/input/directory/my_list_of_clusters.txt", 
     random_effects=[1],
     surface="fsaverage",

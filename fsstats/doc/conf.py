@@ -12,6 +12,8 @@ from typing import Dict, Optional
 from sphinx_gallery.sorting import FileNameSortKey
 
 import fsstats
+import fsstats.cfg
+import fsstats.cfg.version
 
 # -- project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
@@ -19,7 +21,7 @@ import fsstats
 project = "fsstats"
 author = "Kersten Diers"
 copyright = f"{date.today().year}, {author}"
-release = ""  # hipsta.get_version() # TODO
+release = fsstats.cfg.version.get_version()
 package = fsstats.__name__
 gh_url = "https://github.com/Deep-MI/fsstats"
 

@@ -2,7 +2,8 @@
 fsstats CLI
 """
 
-from ..fsstats import _help, _parse_arguments, _run_lme
+from ..fsstats import _help, _run_lme
+from ..utils.parser import _parse_arguments
 
 
 def lmefit():

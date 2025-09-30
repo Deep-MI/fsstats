@@ -415,7 +415,7 @@ def _run_lme(args):
 # ------------------------------------------------------------------------------
 # run_lme
 
-def run_lme(table, filename, mask, design_matrix, contrasts, random_effects, clusters, glmdir, surface=None, hemi=None, skip_estimation=False, **kwargs):
+def run_lme(table=None, filename=None, design_matrix=None, contrasts=None, random_effects=None, clusters=None, glmdir=None, mask=None, surface=None, hemi=None, skip_estimation=False, **kwargs):
     """
     Run FastSurfer statistical modeling and inference
 
@@ -426,8 +426,6 @@ def run_lme(table, filename, mask, design_matrix, contrasts, random_effects, clu
         Filename of a table output, e.g. produced by asegstats2table or aparcstats2table.
     filename :
         Filename of a concatenated overlay file, e.g. produced by mris_preproc.
-    mask
-        Filename of a FreeSurfer label file that will be used to select vertices for analysis.
     design_matrix :
         Filename of a design matrix.
     contrasts :
@@ -438,6 +436,8 @@ def run_lme(table, filename, mask, design_matrix, contrasts, random_effects, clu
         Filename of a list of clusters (e.g., case IDs), where each line corresponds to the same row in the design matrix.
     glmdir :
         Directory where the results will be written.
+    mask
+        Filename of a FreeSurfer label file that will be used to select vertices for analysis.
     surface :
         Name of template surface (e.g., fsaverage). Default: None.
     hemi :
@@ -480,7 +480,10 @@ def run_lme(table, filename, mask, design_matrix, contrasts, random_effects, clu
     my_args.random_effects = random_effects
     my_args.clusters = clusters
     my_args.glmdir = glmdir
-    my_args.surface = surface + " " + hemi
+    if surface is not None and hemi is not None:
+        my_args.surface = surface + " " + hemi
+    else:
+        my_args.surface = None
     my_args.skip_estimation = skip_estimation
 
     #
