@@ -1,0 +1,6 @@
+﻿fsstats.run\_lme
+================
+
+.. currentmodule:: fsstats
+
+.. autofunction:: run_lme

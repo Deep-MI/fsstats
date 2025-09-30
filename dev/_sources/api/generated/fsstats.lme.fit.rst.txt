@@ -1,0 +1,6 @@
+﻿fsstats.lme.fit
+===============
+
+.. currentmodule:: fsstats.lme
+
+.. autofunction:: fit

@@ -1,0 +1,616 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="./">
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html">
+
+    <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
+        <title>Documentation - fsstats</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d111a655" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=580074bf" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=8dab3a3b" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f2f2f2;
+  --color-code-foreground: #1e1e1e;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="index.html"><div class="brand">fsstats</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
+  
+  <span class="sidebar-brand-text">fsstats</span>
+  
+</a><form class="sidebar-search-container" method="get" action="search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul>
+<li class="toctree-l1"><a class="reference internal" href="documentation/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changes/index.html">Changes</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="api/index.html">API Reference</a><input aria-label="Toggle navigation of API Reference" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/generated/fsstats.run_lme.html">fsstats.run_lme</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/generated/fsstats.lme.fit.html">fsstats.lme.fit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/generated/fsstats.lme.test.html">fsstats.lme.test</a></li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="view-this-page">
+  <a class="muted-link" href="_sources/DOCUMENTATION.md.txt" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div>
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <section id="documentation">
+<h1>Documentation<a class="headerlink" href="#documentation" title="Link to this heading">¶</a></h1>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">fsstats</span></code> package provides univariate and mass-univariate statistical modeling and inference tools for <a class="reference external" href="http://fastsurfer.org">FastSurfer</a> and <a class="reference external" href="https://freesurfer.org">FreeSurfer</a> imaging data. It is a revision, extension, and translation to the Python language of Freesurfer’s Matlab-based <a class="reference external" href="https://surfer.nmr.mgh.harvard.edu/fswiki/LinearMixedEffectsModels">LME</a> tools.</p>
+</section>
+<section id="description">
+<h2>Description<a class="headerlink" href="#description" title="Link to this heading">¶</a></h2>
+<p>This page provides general, usage, and installation information about the <code class="docutils literal notranslate"><span class="pre">fsstats</span></code> toolbox.</p>
+</section>
+<hr class="docutils" />
+<section id="contents">
+<h2>Contents<a class="headerlink" href="#contents" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="#functionality"><span class="std std-ref">Functionality</span></a></p></li>
+<li><p><a class="reference internal" href="#usage"><span class="std std-ref">Usage</span></a></p>
+<ul>
+<li><p><a class="reference internal" href="#as-a-command-line-tool"><span class="std std-ref">As a command line tool</span></a></p></li>
+<li><p><a class="reference internal" href="#as-a-python-package"><span class="std std-ref">As a Python package</span></a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#inputs-and-outputs"><span class="std std-ref">Inputs and outputs</span></a></p>
+<ul>
+<li><p><a class="reference internal" href="#input-data-and-format-specifications"><span class="std std-ref">Input data and format specifications</span></a></p></li>
+<li><p><a class="reference internal" href="#output-files-and-their-interpretation"><span class="std std-ref">Output files and their interpretation</span></a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#citations"><span class="std std-ref">Citations</span></a></p></li>
+<li><p><a class="reference internal" href="#license"><span class="std std-ref">License</span></a></p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="functionality">
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
+<p>The core functionality of this toolbox is to conduct statistical analyses for FastSurfer- and FreeSurfer-based imaging data. Its current focus is on providing univariate and mass-univariate linear mixed-effects analyses for clustered (e.g., longitudinal) data. Here, <em>univariate analysis</em> refers to the nalysis of one or few variables, where the input data can be represented in tabular format; a typical example is the analysis of extracted volume or thickness estimates in a limited set of larger brain regions (regions of interest). In contrast, <em>mass-univariate</em> refers to analysis of a very large number of variables, and typically means analyses of single voxels or vertices, which require dedicated, image-based preprocessing and input formats.</p>
+</section>
+<hr class="docutils" />
+<section id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Link to this heading">¶</a></h2>
+<section id="as-a-command-line-tool">
+<h3>As a command line tool<a class="headerlink" href="#as-a-command-line-tool" title="Link to this heading">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mri_lmefit</span> <span class="o">--</span><span class="n">X</span> <span class="o">&lt;</span><span class="n">filename</span><span class="o">&gt;</span> <span class="o">--</span><span class="n">C</span> <span class="o">&lt;</span><span class="n">filename</span><span class="o">&gt;</span> <span class="p">[</span><span class="o">--</span><span class="n">C</span> <span class="o">&lt;</span><span class="n">filename</span><span class="o">&gt;</span><span class="p">]</span><span class="o">--</span><span class="n">rfx</span> <span class="o">&lt;</span><span class="nb">int</span><span class="o">&gt;</span> <span class="p">[</span><span class="o">&lt;</span><span class="nb">int</span><span class="o">&gt;</span> <span class="o">...</span><span class="p">]</span> <span class="o">--</span><span class="n">clusters</span> <span class="o">&lt;</span><span class="n">filename</span><span class="o">&gt;</span> <span class="o">--</span><span class="n">glmdir</span> <span class="o">&lt;</span><span class="n">directory</span><span class="o">&gt;</span>
+    <span class="p">[</span><span class="o">--</span><span class="n">table</span> <span class="o">&lt;</span><span class="n">filename</span><span class="o">&gt;</span><span class="p">]</span> 
+    <span class="p">[</span><span class="o">--</span><span class="n">y</span> <span class="o">&lt;</span><span class="n">filename</span><span class="o">&gt;</span> <span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">surface</span> <span class="o">&lt;</span><span class="n">surface</span> <span class="n">name</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">lh</span><span class="o">|</span><span class="n">rh</span><span class="o">&gt;</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">mask</span> <span class="o">&lt;</span><span class="n">filename</span><span class="o">&gt;</span><span class="p">]</span> 
+    <span class="p">[</span><span class="o">--</span><span class="n">cores</span> <span class="o">&lt;</span><span class="nb">int</span><span class="o">&gt;</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">iterations</span> <span class="o">&lt;</span><span class="nb">int</span><span class="o">&gt;</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">epsilon</span> <span class="o">&lt;</span><span class="nb">float</span><span class="o">&gt;</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">skip</span><span class="o">-</span><span class="n">estimation</span><span class="p">]</span> 
+    <span class="p">[</span><span class="o">--</span><span class="n">help</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">detailed</span><span class="o">-</span><span class="n">help</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">version</span><span class="p">]</span>
+
+<span class="n">Required</span> <span class="n">arguments</span><span class="p">:</span>
+  <span class="o">--</span><span class="n">X</span> <span class="o">&lt;</span><span class="n">filename</span><span class="o">&gt;</span>        <span class="n">Filename</span> <span class="n">of</span> <span class="n">a</span> <span class="n">design</span> <span class="n">matrix</span><span class="o">.</span>
+  <span class="o">--</span><span class="n">C</span> <span class="n">filename</span>          <span class="n">Filename</span> <span class="n">of</span> <span class="n">a</span> <span class="n">contrast</span> <span class="n">matrix</span> <span class="ow">or</span> <span class="n">vector</span><span class="o">.</span> <span class="n">Can</span> <span class="n">be</span> <span class="n">used</span> <span class="n">multiple</span> <span class="n">times</span><span class="o">.</span>
+  <span class="o">--</span><span class="n">rfx</span> <span class="o">&lt;</span><span class="nb">int</span><span class="o">&gt;</span> <span class="p">[</span><span class="o">&lt;</span><span class="nb">int</span><span class="o">&gt;</span> <span class="o">...</span><span class="p">]</span>
+                        <span class="n">Column</span> <span class="n">indices</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">based</span><span class="p">)</span> <span class="n">of</span> <span class="n">random</span> <span class="n">effects</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">design</span> <span class="n">matrix</span><span class="o">.</span>
+  <span class="o">--</span><span class="n">clusters</span> <span class="o">&lt;</span><span class="n">filename</span><span class="o">&gt;</span>
+                        <span class="n">Filename</span> <span class="n">of</span> <span class="n">a</span> <span class="nb">list</span> <span class="n">of</span> <span class="n">clusters</span> <span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">g</span><span class="o">.</span><span class="p">,</span> <span class="n">case</span> <span class="n">IDs</span><span class="p">),</span> <span class="n">where</span> <span class="n">each</span> <span class="n">line</span> <span class="n">corresponds</span> <span class="n">to</span> <span class="n">the</span> <span class="n">same</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">design</span> <span class="n">matrix</span><span class="o">.</span>
+  <span class="o">--</span><span class="n">glmdir</span> <span class="o">&lt;</span><span class="n">directory</span><span class="o">&gt;</span>  <span class="n">Directory</span> <span class="n">where</span> <span class="n">the</span> <span class="n">results</span> <span class="n">will</span> <span class="n">be</span> <span class="n">written</span><span class="o">.</span>
+
+<span class="n">Required</span> <span class="n">arguments</span> <span class="k">for</span> <span class="n">univariate</span> <span class="n">analysis</span><span class="p">:</span>
+  <span class="o">--</span><span class="n">table</span> <span class="o">&lt;</span><span class="n">filename</span><span class="o">&gt;</span>    <span class="n">Filename</span> <span class="n">of</span> <span class="n">a</span> <span class="n">table</span> <span class="n">output</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">g</span><span class="o">.</span> <span class="n">produced</span> <span class="n">by</span> <span class="n">asegstats2table</span> <span class="ow">or</span> <span class="n">aparcstats2table</span><span class="o">.</span>
+
+<span class="n">Required</span> <span class="ow">and</span> <span class="n">optional</span> <span class="n">arguments</span> <span class="k">for</span> <span class="n">mass</span><span class="o">-</span><span class="n">univariate</span> <span class="n">analysis</span><span class="p">:</span>
+  <span class="o">--</span><span class="n">y</span> <span class="o">&lt;</span><span class="n">filename</span><span class="o">&gt;</span>        <span class="n">Filename</span> <span class="n">of</span> <span class="n">a</span> <span class="n">concatenated</span> <span class="n">overlay</span> <span class="n">file</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">g</span><span class="o">.</span> <span class="n">produced</span> <span class="n">by</span> <span class="n">mris_preproc</span><span class="o">.</span>
+  <span class="o">--</span><span class="n">surface</span> <span class="o">&lt;</span><span class="n">surface</span> <span class="n">name</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">lh</span><span class="o">|</span><span class="n">rh</span><span class="o">&gt;</span>
+                        <span class="n">Template</span> <span class="n">surface</span> <span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">g</span><span class="o">.</span><span class="p">,</span> <span class="n">fsaverage</span><span class="p">)</span> <span class="ow">and</span> <span class="n">hemisphere</span> <span class="p">(</span><span class="n">lh</span> <span class="ow">or</span> <span class="n">rh</span><span class="p">)</span><span class="o">.</span>              
+  <span class="o">--</span><span class="n">mask</span> <span class="o">&lt;</span><span class="n">filename</span><span class="o">&gt;</span>     <span class="n">Filename</span> <span class="n">of</span> <span class="n">a</span> <span class="n">FreeSurfer</span> <span class="n">label</span> <span class="n">file</span> <span class="n">that</span> <span class="n">will</span> <span class="n">be</span> <span class="n">used</span> <span class="n">to</span> <span class="n">select</span> <span class="n">vertices</span> <span class="k">for</span> <span class="n">analysis</span><span class="o">.</span> <span class="n">Default</span><span class="p">:</span> <span class="n">All</span> <span class="n">vertices</span><span class="o">.</span>                        
+
+<span class="n">Expert</span> <span class="n">options</span><span class="p">:</span>  
+  <span class="o">--</span><span class="n">cores</span> <span class="o">&lt;</span><span class="nb">int</span><span class="o">&gt;</span>         <span class="n">Number</span> <span class="n">of</span> <span class="n">CPU</span> <span class="n">cores</span> <span class="n">used</span> <span class="ow">in</span> <span class="n">parallel</span> <span class="n">processing</span><span class="o">.</span> <span class="n">Default</span><span class="p">:</span> <span class="mf">1.</span>
+  <span class="o">--</span><span class="n">iterations</span> <span class="o">&lt;</span><span class="nb">int</span><span class="o">&gt;</span>    <span class="n">Maximum</span> <span class="n">number</span> <span class="n">of</span> <span class="n">iterations</span> <span class="n">to</span> <span class="n">achieve</span> <span class="n">convergence</span><span class="o">.</span> <span class="n">Default</span><span class="p">:</span> <span class="mf">20.</span>
+  <span class="o">--</span><span class="n">epsilon</span> <span class="o">&lt;</span><span class="nb">float</span><span class="o">&gt;</span>     <span class="n">Epsilon</span> <span class="k">for</span> <span class="n">gradient</span> <span class="n">norm</span> <span class="n">to</span> <span class="n">determine</span> <span class="n">convergence</span><span class="o">.</span> <span class="n">Default</span><span class="p">:</span> <span class="mf">1e-1</span><span class="o">.</span>
+  <span class="o">--</span><span class="n">skip</span><span class="o">-</span><span class="n">estimation</span>     <span class="n">Skip</span> <span class="n">estimation</span><span class="o">.</span> <span class="n">Useful</span> <span class="k">for</span> <span class="n">conducting</span> <span class="n">statistical</span> <span class="n">inference</span> <span class="k">for</span> <span class="n">additional</span> <span class="n">contrasts</span> <span class="k">with</span> <span class="n">needing</span> <span class="n">to</span> <span class="n">run</span> <span class="n">model</span> <span class="n">estimation</span> <span class="n">again</span><span class="o">.</span> 
+                        <span class="n">Requires</span> <span class="n">existing</span> <span class="n">glmdir</span> <span class="k">with</span> <span class="n">estimates</span><span class="o">.</span><span class="n">pkl</span> <span class="n">file</span><span class="o">.</span> <span class="n">Default</span><span class="p">:</span> <span class="kc">False</span><span class="o">.</span>           
+
+<span class="n">Getting</span> <span class="n">help</span><span class="p">:</span>
+  <span class="o">--</span><span class="n">help</span>                <span class="n">Display</span> <span class="n">this</span> <span class="n">help</span> <span class="n">message</span> <span class="ow">and</span> <span class="n">exit</span>
+  <span class="o">--</span><span class="n">detailed</span><span class="o">-</span><span class="n">help</span>       <span class="n">Display</span> <span class="n">extensive</span> <span class="n">help</span> <span class="n">message</span> <span class="ow">and</span> <span class="n">exit</span>
+  <span class="o">--</span><span class="n">version</span>             <span class="n">Display</span> <span class="n">version</span> <span class="n">number</span> <span class="ow">and</span> <span class="n">exit</span>
+
+</pre></div>
+</div>
+<p><em>Examples:</em></p>
+<ul class="simple">
+<li><p>Univariate analysis:</p></li>
+</ul>
+<p>The following command can be used to conduct an analysis of tabular input data. This example includes two random effects via the <code class="docutils literal notranslate"><span class="pre">--rfx</span></code> argument (e.g., random intercept and random slope of time, assuming that columns 1 and 2 of the design matrix are the global intercept and the regressor for <em>Time</em>, respectively) and the evaluation of two contrasts via the <code class="docutils literal notranslate"><span class="pre">--C</span></code> arguments. Further details on the expected inputs and their formats are given in the <a class="reference internal" href="#inputs-and-outputs"><span class="std std-ref">Inputs and outputs</span></a> section.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>mri_lmefit<span class="w"> </span><span class="se">\</span>
+--table<span class="w"> </span>/my/input/directory/my_tabular_input_file.txt<span class="w"> </span><span class="se">\</span>
+--X<span class="w"> </span>/my/input/directory/my_design_matrix.txt<span class="w"> </span><span class="se">\</span>
+--C<span class="w"> </span>/my/input/directory/my_contrast_file_1.txt<span class="w"> </span><span class="se">\</span>
+--C<span class="w"> </span>/my/input/directory/my_contrast_file_2.txt<span class="w"> </span><span class="se">\</span>
+--clusters<span class="w"> </span>/my/input/directory/my_list_of_clusters.txt<span class="w"> </span><span class="se">\</span>
+--rfx<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="se">\</span>
+--glmdir<span class="w"> </span>/my/output/directory
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Mass-univariate analysis:</p></li>
+</ul>
+<p>The following command can be used to conduct an analysis of mass-univariate input data. This example includes specification of one random effect via the <code class="docutils literal notranslate"><span class="pre">--rfx</span></code> argument (e.g., random intercept, assuming that column 1 of the design matrix is the global intercept), and the evaluation of one contrast via the <code class="docutils literal notranslate"><span class="pre">--C</span></code> argument. As specified by the <code class="docutils literal notranslate"><span class="pre">--surface</span></code> argument, the analysis will use the <code class="docutils literal notranslate"><span class="pre">fsaverage</span></code> template, and will be done for the left hemisphere. The <code class="docutils literal notranslate"><span class="pre">--cores</span></code> argument tells the program to run 4 processes in parallel, which will speed up processing, and can be increased depending on how many CPU cores are available on the system. Further details on the expected inputs and their formats are given in the <a class="reference internal" href="#inputs-and-outputs"><span class="std std-ref">Inputs and outputs</span></a> section.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>mri_lmefit<span class="w"> </span><span class="se">\</span>
+--y<span class="w"> </span>/my/input/directory/my_preprocessed_image_data.mgh<span class="w"> </span><span class="se">\</span>
+--mask<span class="w"> </span>/input/directory/my_cortical_label_file.label<span class="w"> </span><span class="se">\</span>
+--X<span class="w"> </span>/my/input/directory/my_design_matrix.txt<span class="w"> </span><span class="se">\</span>
+--C<span class="w"> </span>/my/input/directory/my_contrast_file.txt<span class="w"> </span><span class="se">\</span>
+--clusters<span class="w"> </span>/my/input/directory/my_list_of_clusters.txt<span class="w"> </span><span class="se">\</span>
+--rfx<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="se">\</span>
+--surface<span class="w"> </span>fsaverage<span class="w"> </span>lh<span class="w"> </span><span class="se">\</span>
+--glmdir<span class="w"> </span>/my/output/directory<span class="w"> </span><span class="se">\</span>
+--cores<span class="w"> </span><span class="m">4</span>
+</pre></div>
+</div>
+</section>
+<section id="as-a-python-package">
+<h3>As a Python package<a class="headerlink" href="#as-a-python-package" title="Link to this heading">¶</a></h3>
+<p>As an alternative to their command-line usage, the fsstats scripts can also be run within a pure Python environment, i.e. installed and imported as a Python package.</p>
+<p>Use <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">fsstats</span></code> (or sth. equivalent) to import the package within a Python environment, and use the <code class="docutils literal notranslate"><span class="pre">run_fsstats</span></code> function from the <code class="docutils literal notranslate"><span class="pre">fsstats</span></code> module to
+run an analysis.</p>
+<ul class="simple">
+<li><p>Univariate analysis:</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">fsstats</span>
+<span class="n">fsstats</span><span class="o">.</span><span class="n">run_fsstats</span><span class="p">(</span>
+    <span class="n">table</span><span class="o">=</span><span class="s2">&quot;/my/input/directory/my_tabular_input_file.txt&quot;</span><span class="p">,</span>
+    <span class="n">design_matrix</span><span class="o">=</span><span class="s2">&quot;/my/input/directory/my_design_matrix.txt&quot;</span><span class="p">,</span>
+    <span class="n">contrasts</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;/my/input/directory/my_contrast_file_1.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;/my/input/directory/my_contrast_file_2.txt&quot;</span><span class="p">],</span>
+    <span class="n">clusters</span><span class="o">=</span><span class="s2">&quot;/my/input/directory/my_list_of_clusters.txt&quot;</span><span class="p">,</span> 
+    <span class="n">random_effects</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
+    <span class="n">glmdir</span><span class="o">=</span><span class="s2">&quot;/my/output/directory&quot;</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Mass-univariate analysis:</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">fsstats</span>
+<span class="n">fsstats</span><span class="o">.</span><span class="n">run_fsstats</span><span class="p">(</span>
+    <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;/my/input/directory/my_preprocessed_image_data.mgh&quot;</span><span class="p">,</span>
+    <span class="n">mask</span><span class="o">=</span><span class="s2">&quot;/input/directory/my_cortical_label_file.label&quot;</span><span class="p">,</span>
+    <span class="n">design_matrix</span><span class="o">=</span><span class="s2">&quot;/my/input/directory/my_design_matrix.txt&quot;</span><span class="p">,</span>
+    <span class="n">contrasts</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;/my/input/directory/my_contrast_file.txt&quot;</span><span class="p">],</span>
+    <span class="n">clusters</span><span class="o">=</span><span class="s2">&quot;/my/input/directory/my_list_of_clusters.txt&quot;</span><span class="p">,</span> 
+    <span class="n">random_effects</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+    <span class="n">surface</span><span class="o">=</span><span class="s2">&quot;fsaverage&quot;</span><span class="p">,</span>
+    <span class="n">hemi</span><span class="o">=</span><span class="s2">&quot;lh&quot;</span><span class="p">,</span>
+    <span class="n">num_cores</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+    <span class="n">glmdir</span><span class="o">=</span><span class="s2">&quot;/my/output/directory&quot;</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="inputs-and-outputs">
+<h2>Inputs and outputs<a class="headerlink" href="#inputs-and-outputs" title="Link to this heading">¶</a></h2>
+<section id="input-data-and-format-specifications">
+<h3>Input data and format specifications<a class="headerlink" href="#input-data-and-format-specifications" title="Link to this heading">¶</a></h3>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Argument</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Format</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>– table</p></td>
+<td><p>Univariate data</p></td>
+<td><p>Table including a header that describes the variable names and a first column of IDs; can have one or more variables. Output from FreeSurfer’s <code class="docutils literal notranslate"><span class="pre">asegstats2table</span></code> or <code class="docutils literal notranslate"><span class="pre">aparcstats2table</span></code> will be accepted. Only needed for univariate analysis.</p></td>
+</tr>
+<tr class="row-odd"><td><p>–Y</p></td>
+<td><p>Preprocessed mass-univarate data</p></td>
+<td><p>FreeSurfer mgh/mgz image file, can be obtained from <code class="docutils literal notranslate"><span class="pre">mris_preproc</span></code>. Only needed for mass-univariate analysis.</p></td>
+</tr>
+<tr class="row-even"><td><p>–mask</p></td>
+<td><p>Analysis mask for mass-univariate data</p></td>
+<td><p>FreeSurfer label file, e.g. <code class="docutils literal notranslate"><span class="pre">lh.cortex</span></code>. Optional for mass-univariate analysis; if omitted, all data will be used.</p></td>
+</tr>
+<tr class="row-odd"><td><p>–X</p></td>
+<td><p>Design matrix</p></td>
+<td><p>Table without header and without column of IDs; each row corresponds to one observation and each column corresponds to one parameter/variable in the model.</p></td>
+</tr>
+<tr class="row-even"><td><p>–C</p></td>
+<td><p>Contrast vector/matrix</p></td>
+<td><p>Table without header, with one or more rows depending on the type of contrast, and as many columns as the design matrix.  Each column refers to the same column of the design matrix. One contrast vector/matrix per file; for multiple contrasts, specify multiple <code class="docutils literal notranslate"><span class="pre">--C</span></code> arguments.</p></td>
+</tr>
+<tr class="row-odd"><td><p>–clusters</p></td>
+<td><p>Grouping structure of the data</p></td>
+<td><p>Table without header and a single column. Must have as many rows as the design matrix, and each row corresponds to the same row in the design matrix. Indicates for every observation to which which cluster (e.g., person) it belongs; can be a list of repeated participant IDs.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>All tables can be separated by tab, comma, or space.</p>
+</section>
+<section id="output-files-and-their-interpretation">
+<h3>Output files and their interpretation<a class="headerlink" href="#output-files-and-their-interpretation" title="Link to this heading">¶</a></h3>
+<p>The program will compute the following statistics, and produce text- or image-based output files. Text files can be accessed with any text editor. Image files follow the FreeSurfer format and conventions, and are intended to be used with visualization and post-processing tools like <code class="docutils literal notranslate"><span class="pre">Freeview</span></code> and <code class="docutils literal notranslate"><span class="pre">surfcluster</span></code>, which are available from any FreeSurfer distribution.</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>file</p></th>
+<th class="head"><p>description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>logfile.txt</p></td>
+<td><p>logfile</p></td>
+</tr>
+<tr class="row-odd"><td><p>Xg.dat</p></td>
+<td><p>design matrix</p></td>
+</tr>
+<tr class="row-even"><td><p>beta.mgh</p></td>
+<td><p>model parameters</p></td>
+</tr>
+<tr class="row-odd"><td><p>estimates.pkl</p></td>
+<td><p>internal file with parameter estimates</p></td>
+</tr>
+<tr class="row-even"><td><p>statistics.pkl</p></td>
+<td><p>internal file with statistics</p></td>
+</tr>
+<tr class="row-odd"><td><p>&lt;contrast_directory&gt;/C.dat</p></td>
+<td><p>contrast vector or matrix</p></td>
+</tr>
+<tr class="row-even"><td><p>&lt;contrast_directory&gt;/gamma.mgh</p></td>
+<td><p>contrast estimate</p></td>
+</tr>
+<tr class="row-odd"><td><p>&lt;contrast_directory&gt;/sgn.mgh</p></td>
+<td><p>sign of the contrast</p></td>
+</tr>
+<tr class="row-even"><td><p>&lt;contrast_directory&gt;/F.mgh</p></td>
+<td><p>F-value of the contrast</p></td>
+</tr>
+<tr class="row-odd"><td><p>&lt;contrast_directory&gt;/sig.mgh</p></td>
+<td><p>Sig-value of the contrast</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The contrast estimate results from the application of the contrast vector or matrix to the model parameters. The sign of the contrast is computed as <code class="docutils literal notranslate"><span class="pre">sign(gamma)</span></code> and can be used for the interpretation of the results of the undirected <em>F</em> - test. The program produces <code class="docutils literal notranslate"><span class="pre">sig-values</span></code> instead of <code class="docutils literal notranslate"><span class="pre">p-values</span></code> for better representation and visualization of values that are very small or close to zero. <code class="docutils literal notranslate"><span class="pre">p-values</span></code> and <code class="docutils literal notranslate"><span class="pre">sig-values</span></code> can be converted into each other: <code class="docutils literal notranslate"><span class="pre">p</span> <span class="pre">=</span> <span class="pre">10^(-sig)</span></code> and <code class="docutils literal notranslate"><span class="pre">sig</span> <span class="pre">=</span> <span class="pre">-log10(p)</span></code>. The following table gives a few examples.</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>p</p></th>
+<th class="head"><p>sig</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0.05</p></td>
+<td><p>1.3</p></td>
+</tr>
+<tr class="row-odd"><td><p>0.01</p></td>
+<td><p>2.0</p></td>
+</tr>
+<tr class="row-even"><td><p>0.001</p></td>
+<td><p>3.0</p></td>
+</tr>
+<tr class="row-odd"><td><p>0.0001</p></td>
+<td><p>4.0</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="citations">
+<h2>Citations<a class="headerlink" href="#citations" title="Link to this heading">¶</a></h2>
+<p>If you use these tools in your analysis please cite:</p>
+<ul class="simple">
+<li><p>Henschel L, Conjeti S, Estrada S, Diers K, Fischl B, Reuter M, FastSurfer -
+A fast and accurate deep learning based neuroimaging pipeline, NeuroImage 219
+(2020), 117012. https://doi.org/10.1016/j.neuroimage.2020.117012</p></li>
+<li><p>Henschel L*, Kuegler D*, Reuter M. (*co-first). FastSurferVINN:
+Building Resolution-Independence into Deep Learning Segmentation Methods -
+A Solution for HighRes Brain MRI. NeuroImage 251 (2022), 118933.
+https://dx.doi.org/10.1016/j.neuroimage.2022.118933</p></li>
+<li><p>Bernal-Rusiel JL, Greve DN, Reuter M, Fischl B, Sabuncu MR.
+Statistical Analysis of Longitudinal Neuroimage Data with
+Linear Mixed Effects Models, NeuroImage 66 (2012), 249-260.
+<a class="reference external" href="https://dx.doi.org/10.1016%2Fj.neuroimage.2012.10.065">https://dx.doi.org/10.1016%2Fj.neuroimage.2012.10.065</a></p></li>
+<li><p>Bernal-Rusiel JL, Greve DN, Reuter M, Fischl B, Sabuncu MR.
+Spatiotemporal Linear Mixed Effects Modeling for the
+Mass-univariate Analysis of Longitudinal Neuroimage Data, NeuroImage
+81 (2013), 358–370. <a class="reference external" href="https://doi.org/10.1016/j.neuroimage.2013.05.049">https://doi.org/10.1016/j.neuroimage.2013.05.049</a></p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="license">
+<h2>License<a class="headerlink" href="#license" title="Link to this heading">¶</a></h2>
+<p>This software is licensed under the MIT License, see associated LICENSE file
+for details.</p>
+<p>Copyright (c) 2019 Image Analysis Group, DZNE e.V.</p>
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          
+          
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2025, Kersten Diers
+            </div>
+            Made with 
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              <a class="muted-link " href="https://github.com/Deep-MI/fsstats" aria-label="GitHub">
+                <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path>
+                </svg>
+            </a>
+              
+            </div>
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Documentation</a><ul>
+<li><a class="reference internal" href="#overview">Overview</a></li>
+<li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#contents">Contents</a></li>
+<li><a class="reference internal" href="#functionality">Functionality</a></li>
+<li><a class="reference internal" href="#usage">Usage</a><ul>
+<li><a class="reference internal" href="#as-a-command-line-tool">As a command line tool</a></li>
+<li><a class="reference internal" href="#as-a-python-package">As a Python package</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#inputs-and-outputs">Inputs and outputs</a><ul>
+<li><a class="reference internal" href="#input-data-and-format-specifications">Input data and format specifications</a></li>
+<li><a class="reference internal" href="#output-files-and-their-interpretation">Output files and their interpretation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#citations">Citations</a></li>
+<li><a class="reference internal" href="#license">License</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="_static/documentation_options.js?v=d45e8c67"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/scripts/furo.js?v=46bd48cc"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    </body>
+</html>

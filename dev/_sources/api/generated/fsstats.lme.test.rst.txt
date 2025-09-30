@@ -1,0 +1,6 @@
+﻿fsstats.lme.test
+================
+
+.. currentmodule:: fsstats.lme
+
+.. autofunction:: test
