@@ -6,5 +6,3 @@
    :members:
    :inherited-members:
 
-.. minigallery:: {{ fullname }}
-    :add-heading:

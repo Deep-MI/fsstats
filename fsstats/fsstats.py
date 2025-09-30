@@ -417,38 +417,43 @@ def _run_lme(args):
 
 def run_lme(table=None, filename=None, design_matrix=None, contrasts=None, random_effects=None, clusters=None, glmdir=None, mask=None, surface=None, hemi=None, skip_estimation=False, **kwargs):
     """
-    Run FastSurfer statistical modeling and inference
+    Run mixed-effects modeling and inference.
 
     Parameters
     ----------
 
-    table :
+    table : str
         Filename of a table output, e.g. produced by asegstats2table or aparcstats2table.
-    filename :
+    filename : str
         Filename of a concatenated overlay file, e.g. produced by mris_preproc.
-    design_matrix :
+    design_matrix : str
         Filename of a design matrix.
-    contrasts :
-        Filename of a contrast matrix or vector.
-    random_effects :
+    contrasts : list
+        Filename(s) of a contrast matrix or vector.
+    random_effects : list
         List of column indices (1-based) of random effects in the design matrix.
-    clusters :
+    clusters : str
         Filename of a list of clusters (e.g., case IDs), where each line corresponds to the same row in the design matrix.
-    glmdir :
+    glmdir : str
         Directory where the results will be written.
-    mask
+    mask : str
         Filename of a FreeSurfer label file that will be used to select vertices for analysis.
-    surface :
+    surface : str
         Name of template surface (e.g., fsaverage). Default: None.
-    hemi :
+    hemi : str
         Name of hemisphere lh or rh). Default: None.
-    skip_estimation :
+    skip_estimation : bool
         Skip estimation. Useful to compute additional contrasts. Requires existing glmdir with estimates.pkl file. Default: False.
+    **kwargs : dict
+        Additional keyword arguments, including:
+        - num_cores (int):  Number of CPU cores used in parallel processing. Default: 1.
+        - num_iterations (int): Maximum number of iterations to achieve convergence. Default: 20.
+        - epsilon (float): Epsilon for gradient norm to determine convergence. Default: 1e-1.
 
     Returns
     -------
     dict
-        a dictionary of input arguments
+        A dictionary of input arguments.
     """
 
     # define class

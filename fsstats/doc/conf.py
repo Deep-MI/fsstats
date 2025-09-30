@@ -127,7 +127,7 @@ numpydoc_attributes_as_param_list = False
 # x-ref
 numpydoc_xref_param_type = True
 numpydoc_xref_aliases = {}
-numpydoc_xref_ignore = {}
+numpydoc_xref_ignore = set()
 
 # validation
 # https://numpydoc.readthedocs.io/en/latest/validation.html#validation-checks

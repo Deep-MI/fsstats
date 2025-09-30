@@ -152,7 +152,7 @@ def test(stats, C, bias_correct, prs, verbose):
 
     Parameters
     ----------
-    stats : list of dict
+    stats : list
         Structure array containing statistics for every voxel/vertex/variable.
     C : array-like
         Contrast matrix.
