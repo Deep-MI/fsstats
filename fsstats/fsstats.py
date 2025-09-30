@@ -16,8 +16,8 @@ import pandas as pd
 from .cfg.config import get_defaults
 from .cfg.logging import setup_logging
 from .doc.documentation import get_help_text
-from .lme.lme_fit import lme_fit
-from .lme.lme_test import lme_test
+from .lme.fit import fit
+from .lme.test import test
 from .utils.exporting import write_mgh
 from .utils.importing import read_clusters, read_contrasts, read_design_matrix, read_label, read_mgh, read_table
 from .utils.parser import _parse_arguments
@@ -265,7 +265,7 @@ def _run_estimation(params):
     # estimation
     if params.ISTABLE:
         LOGGER.info("Running univariate analysis")
-        stats = lme_fit(
+        stats = fit(
             X=params.X,
             Y=params.Y,
             Zcols=params.U,
@@ -287,7 +287,7 @@ def _run_estimation(params):
         LOGGER.info("Running mass-univariate analysis")
         if prs == 1:
             LOGGER.warning("Number of cores to use for parallel processing is set to 1.")
-        stats = lme_fit(
+        stats = fit(
             X=params.X,
             Y=params.Y,
             Zcols=params.U,
@@ -330,7 +330,7 @@ def _run_inference(params, stats):
         LOGGER.info("Running univariate inference")
         for key, value in params.C.items():
             LOGGER.info("Evaluating contrast " + key)
-            fstats[key] = lme_test(stats=stats, C=value, prs=prs, bias_correct=True, verbose=False)
+            fstats[key] = test(stats=stats, C=value, prs=prs, bias_correct=True, verbose=False)
             gamma = dict()
             F = dict()
             sig = dict()
@@ -348,7 +348,7 @@ def _run_inference(params, stats):
             LOGGER.warning("Number of cores to use for parallel processing is set to 1.")
         for key, value in params.C.items():
             LOGGER.info("Evaluating contrast " + key)
-            fstats[key] = lme_test(stats=stats, C=value, prs=prs, bias_correct=False, verbose=False)
+            fstats[key] = test(stats=stats, C=value, prs=prs, bias_correct=False, verbose=False)
             gamma = np.zeros((params.Y.shape[1], 1, 1))
             F = np.zeros((params.Y.shape[1], 1, 1))
             sig = np.zeros((params.Y.shape[1], 1, 1))
@@ -372,11 +372,11 @@ def _run_inference(params, stats):
     return fstats
 
 # ------------------------------------------------------------------------------
-# _run_fsstats
+# _run_lme
 
-def _run_fsstats(args):
+def _run_lme(args):
     """
-    a function to run the fsstats submodules
+    A function to run the lme submodules
 
     """
 
@@ -414,9 +414,9 @@ def _run_fsstats(args):
 
 
 # ------------------------------------------------------------------------------
-# run_fsstats
+# run_lme
 
-def run_fsstats(table, filename, mask, design_matrix, contrasts, random_effects, clusters, glmdir, surface=None, hemi=None, skip_estimation=False, **kwargs):
+def run_lme(table, filename, mask, design_matrix, contrasts, random_effects, clusters, glmdir, surface=None, hemi=None, skip_estimation=False, **kwargs):
     """
     Run FastSurfer statistical modeling and inference
 
@@ -486,34 +486,8 @@ def run_fsstats(table, filename, mask, design_matrix, contrasts, random_effects,
 
     #
 
-    _run_fsstats(my_args)
+    _run_lme(my_args)
 
     #
 
     return vars(my_args)
-
-
-#
-
-if __name__ == "__main__":
-
-    # message
-
-    print("")
-    print("---------------------------------------------")
-    print("FastSurfer Statistical Modeling and Inference")
-    print("---------------------------------------------")
-    print("")
-
-    print("Running directly")
-
-    # parse arguments
-
-    args = _parse_arguments()
-
-    # return help or run analysis
-
-    if args.more_help is True:
-        get_help()
-    else:
-        _run_fsstats(args)

@@ -2,7 +2,7 @@
 fsstats CLI
 """
 
-from ..fsstats import _parse_arguments, _run_fsstats, get_help
+from ..fsstats import _parse_arguments, _run_lme, get_help
 
 
 def lmefit():
@@ -23,4 +23,4 @@ def lmefit():
     if args.more_help is True:
         get_help()
     else:
-        _run_fsstats(args)
+        _run_lme(args)
