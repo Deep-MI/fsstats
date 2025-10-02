@@ -243,7 +243,7 @@
 <h1>Documentation<a class="headerlink" href="#documentation" title="Link to this heading">¶</a></h1>
 <section id="overview">
 <h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">¶</a></h2>
-<p>The <code class="docutils literal notranslate"><span class="pre">fsstats</span></code> package provides univariate and mass-univariate statistical modeling and inference tools for <a class="reference external" href="http://fastsurfer.org">FastSurfer</a> and <a class="reference external" href="https://freesurfer.org">FreeSurfer</a> imaging data. It is a revision, extension, and translation to the Python language of Freesurfer’s Matlab-based <a class="reference external" href="https://surfer.nmr.mgh.harvard.edu/fswiki/LinearMixedEffectsModels">LME</a> tools.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">fsstats</span></code> package provides univariate and mass-univariate statistical modeling and inference tools for <a class="reference external" href="http://fastsurfer.org">FastSurfer</a> and <a class="reference external" href="https://surfer.nmr.mgh.harvard.edu">FreeSurfer</a> imaging data. It is a revision, extension, and translation to the Python language of Freesurfer’s Matlab-based <a class="reference external" href="https://surfer.nmr.mgh.harvard.edu/fswiki/LinearMixedEffectsModels">LME</a> tools.</p>
 </section>
 <section id="description">
 <h2>Description<a class="headerlink" href="#description" title="Link to this heading">¶</a></h2>
@@ -280,49 +280,48 @@
 <h2>Usage<a class="headerlink" href="#usage" title="Link to this heading">¶</a></h2>
 <section id="as-a-command-line-tool">
 <h3>As a command line tool<a class="headerlink" href="#as-a-command-line-tool" title="Link to this heading">¶</a></h3>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mri_lmefit</span> <span class="o">--</span><span class="n">X</span> <span class="o">&lt;</span><span class="n">filename</span><span class="o">&gt;</span> <span class="o">--</span><span class="n">C</span> <span class="o">&lt;</span><span class="n">filename</span><span class="o">&gt;</span> <span class="p">[</span><span class="o">--</span><span class="n">C</span> <span class="o">&lt;</span><span class="n">filename</span><span class="o">&gt;</span><span class="p">]</span><span class="o">--</span><span class="n">rfx</span> <span class="o">&lt;</span><span class="nb">int</span><span class="o">&gt;</span> <span class="p">[</span><span class="o">&lt;</span><span class="nb">int</span><span class="o">&gt;</span> <span class="o">...</span><span class="p">]</span> <span class="o">--</span><span class="n">clusters</span> <span class="o">&lt;</span><span class="n">filename</span><span class="o">&gt;</span> <span class="o">--</span><span class="n">glmdir</span> <span class="o">&lt;</span><span class="n">directory</span><span class="o">&gt;</span>
-    <span class="p">[</span><span class="o">--</span><span class="n">table</span> <span class="o">&lt;</span><span class="n">filename</span><span class="o">&gt;</span><span class="p">]</span> 
-    <span class="p">[</span><span class="o">--</span><span class="n">y</span> <span class="o">&lt;</span><span class="n">filename</span><span class="o">&gt;</span> <span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">surface</span> <span class="o">&lt;</span><span class="n">surface</span> <span class="n">name</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">lh</span><span class="o">|</span><span class="n">rh</span><span class="o">&gt;</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">mask</span> <span class="o">&lt;</span><span class="n">filename</span><span class="o">&gt;</span><span class="p">]</span> 
-    <span class="p">[</span><span class="o">--</span><span class="n">cores</span> <span class="o">&lt;</span><span class="nb">int</span><span class="o">&gt;</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">iterations</span> <span class="o">&lt;</span><span class="nb">int</span><span class="o">&gt;</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">epsilon</span> <span class="o">&lt;</span><span class="nb">float</span><span class="o">&gt;</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">skip</span><span class="o">-</span><span class="n">estimation</span><span class="p">]</span> 
-    <span class="p">[</span><span class="o">--</span><span class="n">help</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">detailed</span><span class="o">-</span><span class="n">help</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">version</span><span class="p">]</span>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>mri_lmefit --X &lt;filename&gt; --C &lt;filename&gt; [--C &lt;filename&gt;]--rfx &lt;int&gt; [&lt;int&gt; ...] --clusters &lt;filename&gt; --glmdir &lt;directory&gt;
+    [--table &lt;filename&gt;]
+    [--y &lt;filename&gt; ] [--surface &lt;surface name&gt; &lt;lh|rh&gt;] [--mask &lt;filename&gt;]
+    [--cores &lt;int&gt;] [--iterations &lt;int&gt;] [--epsilon &lt;float&gt;] [--skip-estimation]
+    [--help] [--detailed-help] [--version]
 
-<span class="n">Required</span> <span class="n">arguments</span><span class="p">:</span>
-  <span class="o">--</span><span class="n">X</span> <span class="o">&lt;</span><span class="n">filename</span><span class="o">&gt;</span>        <span class="n">Filename</span> <span class="n">of</span> <span class="n">a</span> <span class="n">design</span> <span class="n">matrix</span><span class="o">.</span>
-  <span class="o">--</span><span class="n">C</span> <span class="n">filename</span>          <span class="n">Filename</span> <span class="n">of</span> <span class="n">a</span> <span class="n">contrast</span> <span class="n">matrix</span> <span class="ow">or</span> <span class="n">vector</span><span class="o">.</span> <span class="n">Can</span> <span class="n">be</span> <span class="n">used</span> <span class="n">multiple</span> <span class="n">times</span><span class="o">.</span>
-  <span class="o">--</span><span class="n">rfx</span> <span class="o">&lt;</span><span class="nb">int</span><span class="o">&gt;</span> <span class="p">[</span><span class="o">&lt;</span><span class="nb">int</span><span class="o">&gt;</span> <span class="o">...</span><span class="p">]</span>
-                        <span class="n">Column</span> <span class="n">indices</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">based</span><span class="p">)</span> <span class="n">of</span> <span class="n">random</span> <span class="n">effects</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">design</span> <span class="n">matrix</span><span class="o">.</span>
-  <span class="o">--</span><span class="n">clusters</span> <span class="o">&lt;</span><span class="n">filename</span><span class="o">&gt;</span>
-                        <span class="n">Filename</span> <span class="n">of</span> <span class="n">a</span> <span class="nb">list</span> <span class="n">of</span> <span class="n">clusters</span> <span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">g</span><span class="o">.</span><span class="p">,</span> <span class="n">case</span> <span class="n">IDs</span><span class="p">),</span> <span class="n">where</span> <span class="n">each</span> <span class="n">line</span> <span class="n">corresponds</span> <span class="n">to</span> <span class="n">the</span> <span class="n">same</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">design</span> <span class="n">matrix</span><span class="o">.</span>
-  <span class="o">--</span><span class="n">glmdir</span> <span class="o">&lt;</span><span class="n">directory</span><span class="o">&gt;</span>  <span class="n">Directory</span> <span class="n">where</span> <span class="n">the</span> <span class="n">results</span> <span class="n">will</span> <span class="n">be</span> <span class="n">written</span><span class="o">.</span>
+Required arguments:
+  --X &lt;filename&gt;        Filename of a design matrix.
+  --C filename          Filename of a contrast matrix or vector. Can be used multiple times.
+  --rfx &lt;int&gt; [&lt;int&gt; ...]
+                        Column indices (1-based) of random effects in the design matrix.
+  --clusters &lt;filename&gt;
+                        Filename of a list of clusters (e.g., case IDs), where each line corresponds to the same row in the design matrix.
+  --glmdir &lt;directory&gt;  Directory where the results will be written.
 
-<span class="n">Required</span> <span class="n">arguments</span> <span class="k">for</span> <span class="n">univariate</span> <span class="n">analysis</span><span class="p">:</span>
-  <span class="o">--</span><span class="n">table</span> <span class="o">&lt;</span><span class="n">filename</span><span class="o">&gt;</span>    <span class="n">Filename</span> <span class="n">of</span> <span class="n">a</span> <span class="n">table</span> <span class="n">output</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">g</span><span class="o">.</span> <span class="n">produced</span> <span class="n">by</span> <span class="n">asegstats2table</span> <span class="ow">or</span> <span class="n">aparcstats2table</span><span class="o">.</span>
+Required arguments for univariate analysis:
+  --table &lt;filename&gt;    Filename of a table output, e.g. produced by asegstats2table or aparcstats2table.
 
-<span class="n">Required</span> <span class="ow">and</span> <span class="n">optional</span> <span class="n">arguments</span> <span class="k">for</span> <span class="n">mass</span><span class="o">-</span><span class="n">univariate</span> <span class="n">analysis</span><span class="p">:</span>
-  <span class="o">--</span><span class="n">y</span> <span class="o">&lt;</span><span class="n">filename</span><span class="o">&gt;</span>        <span class="n">Filename</span> <span class="n">of</span> <span class="n">a</span> <span class="n">concatenated</span> <span class="n">overlay</span> <span class="n">file</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">g</span><span class="o">.</span> <span class="n">produced</span> <span class="n">by</span> <span class="n">mris_preproc</span><span class="o">.</span>
-  <span class="o">--</span><span class="n">surface</span> <span class="o">&lt;</span><span class="n">surface</span> <span class="n">name</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">lh</span><span class="o">|</span><span class="n">rh</span><span class="o">&gt;</span>
-                        <span class="n">Template</span> <span class="n">surface</span> <span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">g</span><span class="o">.</span><span class="p">,</span> <span class="n">fsaverage</span><span class="p">)</span> <span class="ow">and</span> <span class="n">hemisphere</span> <span class="p">(</span><span class="n">lh</span> <span class="ow">or</span> <span class="n">rh</span><span class="p">)</span><span class="o">.</span>              
-  <span class="o">--</span><span class="n">mask</span> <span class="o">&lt;</span><span class="n">filename</span><span class="o">&gt;</span>     <span class="n">Filename</span> <span class="n">of</span> <span class="n">a</span> <span class="n">FreeSurfer</span> <span class="n">label</span> <span class="n">file</span> <span class="n">that</span> <span class="n">will</span> <span class="n">be</span> <span class="n">used</span> <span class="n">to</span> <span class="n">select</span> <span class="n">vertices</span> <span class="k">for</span> <span class="n">analysis</span><span class="o">.</span> <span class="n">Default</span><span class="p">:</span> <span class="n">All</span> <span class="n">vertices</span><span class="o">.</span>                        
+Required and optional arguments for mass-univariate analysis:
+  --y &lt;filename&gt;        Filename of a concatenated overlay file, e.g. produced by mris_preproc.
+  --surface &lt;surface name&gt; &lt;lh|rh&gt;
+                        Template surface (e.g., fsaverage) and hemisphere (lh or rh).
+  --mask &lt;filename&gt;     Filename of a FreeSurfer label file that will be used to select vertices for analysis. Default: All vertices.
 
-<span class="n">Expert</span> <span class="n">options</span><span class="p">:</span>  
-  <span class="o">--</span><span class="n">cores</span> <span class="o">&lt;</span><span class="nb">int</span><span class="o">&gt;</span>         <span class="n">Number</span> <span class="n">of</span> <span class="n">CPU</span> <span class="n">cores</span> <span class="n">used</span> <span class="ow">in</span> <span class="n">parallel</span> <span class="n">processing</span><span class="o">.</span> <span class="n">Default</span><span class="p">:</span> <span class="mf">1.</span>
-  <span class="o">--</span><span class="n">iterations</span> <span class="o">&lt;</span><span class="nb">int</span><span class="o">&gt;</span>    <span class="n">Maximum</span> <span class="n">number</span> <span class="n">of</span> <span class="n">iterations</span> <span class="n">to</span> <span class="n">achieve</span> <span class="n">convergence</span><span class="o">.</span> <span class="n">Default</span><span class="p">:</span> <span class="mf">20.</span>
-  <span class="o">--</span><span class="n">epsilon</span> <span class="o">&lt;</span><span class="nb">float</span><span class="o">&gt;</span>     <span class="n">Epsilon</span> <span class="k">for</span> <span class="n">gradient</span> <span class="n">norm</span> <span class="n">to</span> <span class="n">determine</span> <span class="n">convergence</span><span class="o">.</span> <span class="n">Default</span><span class="p">:</span> <span class="mf">1e-1</span><span class="o">.</span>
-  <span class="o">--</span><span class="n">skip</span><span class="o">-</span><span class="n">estimation</span>     <span class="n">Skip</span> <span class="n">estimation</span><span class="o">.</span> <span class="n">Useful</span> <span class="k">for</span> <span class="n">conducting</span> <span class="n">statistical</span> <span class="n">inference</span> <span class="k">for</span> <span class="n">additional</span> <span class="n">contrasts</span> <span class="k">with</span> <span class="n">needing</span> <span class="n">to</span> <span class="n">run</span> <span class="n">model</span> <span class="n">estimation</span> <span class="n">again</span><span class="o">.</span> 
-                        <span class="n">Requires</span> <span class="n">existing</span> <span class="n">glmdir</span> <span class="k">with</span> <span class="n">estimates</span><span class="o">.</span><span class="n">pkl</span> <span class="n">file</span><span class="o">.</span> <span class="n">Default</span><span class="p">:</span> <span class="kc">False</span><span class="o">.</span>           
+Expert options:
+  --cores &lt;int&gt;         Number of CPU cores used in parallel processing. Default: 1.
+  --iterations &lt;int&gt;    Maximum number of iterations to achieve convergence. Default: 20.
+  --epsilon &lt;float&gt;     Epsilon for gradient norm to determine convergence. Default: 1e-1.
+  --skip-estimation     Skip estimation. Useful for conducting statistical inference for additional contrasts with needing to run model estimation again.
+                        Requires existing glmdir with estimates.pkl file. Default: False.
 
-<span class="n">Getting</span> <span class="n">help</span><span class="p">:</span>
-  <span class="o">--</span><span class="n">help</span>                <span class="n">Display</span> <span class="n">this</span> <span class="n">help</span> <span class="n">message</span> <span class="ow">and</span> <span class="n">exit</span>
-  <span class="o">--</span><span class="n">detailed</span><span class="o">-</span><span class="n">help</span>       <span class="n">Display</span> <span class="n">extensive</span> <span class="n">help</span> <span class="n">message</span> <span class="ow">and</span> <span class="n">exit</span>
-  <span class="o">--</span><span class="n">version</span>             <span class="n">Display</span> <span class="n">version</span> <span class="n">number</span> <span class="ow">and</span> <span class="n">exit</span>
-
+Getting help:
+  --help                Display this help message and exit
+  --detailed-help       Display extensive help message and exit
+  --version             Display version number and exit
 </pre></div>
 </div>
 <p><em>Examples:</em></p>
 <ul class="simple">
 <li><p>Univariate analysis:</p></li>
 </ul>
-<p>The following command can be used to conduct an analysis of tabular input data. This example includes two random effects via the <code class="docutils literal notranslate"><span class="pre">--rfx</span></code> argument (e.g., random intercept and random slope of time, assuming that columns 1 and 2 of the design matrix are the global intercept and the regressor for <em>Time</em>, respectively) and the evaluation of two contrasts via the <code class="docutils literal notranslate"><span class="pre">--C</span></code> arguments. Further details on the expected inputs and their formats are given in the <a class="reference internal" href="#inputs-and-outputs"><span class="std std-ref">Inputs and outputs</span></a> section.</p>
+<p>The following command can be used to conduct a linear mixed-effects analysis of tabular input data. This example includes two random effects via the <code class="docutils literal notranslate"><span class="pre">--rfx</span></code> argument (e.g., random intercept and random slope of time, assuming that columns 1 and 2 of the design matrix are the global intercept and the regressor for <em>Time</em>, respectively) and the evaluation of two contrasts via the <code class="docutils literal notranslate"><span class="pre">--C</span></code> arguments. Further details on the expected inputs and their formats are given in the <a class="reference internal" href="#inputs-and-outputs"><span class="std std-ref">Inputs and outputs</span></a> section.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>mri_lmefit<span class="w"> </span><span class="se">\</span>
 --table<span class="w"> </span>/my/input/directory/my_tabular_input_file.txt<span class="w"> </span><span class="se">\</span>
 --X<span class="w"> </span>/my/input/directory/my_design_matrix.txt<span class="w"> </span><span class="se">\</span>
@@ -336,7 +335,7 @@
 <ul class="simple">
 <li><p>Mass-univariate analysis:</p></li>
 </ul>
-<p>The following command can be used to conduct an analysis of mass-univariate input data. This example includes specification of one random effect via the <code class="docutils literal notranslate"><span class="pre">--rfx</span></code> argument (e.g., random intercept, assuming that column 1 of the design matrix is the global intercept), and the evaluation of one contrast via the <code class="docutils literal notranslate"><span class="pre">--C</span></code> argument. As specified by the <code class="docutils literal notranslate"><span class="pre">--surface</span></code> argument, the analysis will use the <code class="docutils literal notranslate"><span class="pre">fsaverage</span></code> template, and will be done for the left hemisphere. The <code class="docutils literal notranslate"><span class="pre">--cores</span></code> argument tells the program to run 4 processes in parallel, which will speed up processing, and can be increased depending on how many CPU cores are available on the system. Further details on the expected inputs and their formats are given in the <a class="reference internal" href="#inputs-and-outputs"><span class="std std-ref">Inputs and outputs</span></a> section.</p>
+<p>The following command can be used to conduct a linear mixed-effects analysis of mass-univariate input data. This example includes specification of one random effect via the <code class="docutils literal notranslate"><span class="pre">--rfx</span></code> argument (e.g., random intercept, assuming that column 1 of the design matrix is the global intercept), and the evaluation of one contrast via the <code class="docutils literal notranslate"><span class="pre">--C</span></code> argument. As specified by the <code class="docutils literal notranslate"><span class="pre">--surface</span></code> argument, the analysis will use the <code class="docutils literal notranslate"><span class="pre">fsaverage</span></code> template, and will be done for the left hemisphere. The <code class="docutils literal notranslate"><span class="pre">--cores</span></code> argument tells the program to run 4 processes in parallel, which will speed up processing, and can be increased depending on how many CPU cores are available on the system. Further details on the expected inputs and their formats are given in the <a class="reference internal" href="#inputs-and-outputs"><span class="std std-ref">Inputs and outputs</span></a> section.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>mri_lmefit<span class="w"> </span><span class="se">\</span>
 --y<span class="w"> </span>/my/input/directory/my_preprocessed_image_data.mgh<span class="w"> </span><span class="se">\</span>
 --mask<span class="w"> </span>/input/directory/my_cortical_label_file.label<span class="w"> </span><span class="se">\</span>
@@ -353,17 +352,17 @@
 <section id="as-a-python-package">
 <h3>As a Python package<a class="headerlink" href="#as-a-python-package" title="Link to this heading">¶</a></h3>
 <p>As an alternative to their command-line usage, the fsstats scripts can also be run within a pure Python environment, i.e. installed and imported as a Python package.</p>
-<p>Use <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">fsstats</span></code> (or sth. equivalent) to import the package within a Python environment, and use the <code class="docutils literal notranslate"><span class="pre">run_fsstats</span></code> function from the <code class="docutils literal notranslate"><span class="pre">fsstats</span></code> module to
-run an analysis.</p>
+<p>Use <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">fsstats</span></code> (or sth. equivalent) to import the package within a Python environment, and use the <code class="docutils literal notranslate"><span class="pre">run_lme</span></code> function to
+run a linear mixed-effcts analysis.</p>
 <ul class="simple">
 <li><p>Univariate analysis:</p></li>
 </ul>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">fsstats</span>
-<span class="n">fsstats</span><span class="o">.</span><span class="n">run_fsstats</span><span class="p">(</span>
+<span class="n">fsstats</span><span class="o">.</span><span class="n">run_lme</span><span class="p">(</span>
     <span class="n">table</span><span class="o">=</span><span class="s2">&quot;/my/input/directory/my_tabular_input_file.txt&quot;</span><span class="p">,</span>
     <span class="n">design_matrix</span><span class="o">=</span><span class="s2">&quot;/my/input/directory/my_design_matrix.txt&quot;</span><span class="p">,</span>
     <span class="n">contrasts</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;/my/input/directory/my_contrast_file_1.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;/my/input/directory/my_contrast_file_2.txt&quot;</span><span class="p">],</span>
-    <span class="n">clusters</span><span class="o">=</span><span class="s2">&quot;/my/input/directory/my_list_of_clusters.txt&quot;</span><span class="p">,</span> 
+    <span class="n">clusters</span><span class="o">=</span><span class="s2">&quot;/my/input/directory/my_list_of_clusters.txt&quot;</span><span class="p">,</span>
     <span class="n">random_effects</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
     <span class="n">glmdir</span><span class="o">=</span><span class="s2">&quot;/my/output/directory&quot;</span>
     <span class="p">)</span>
@@ -373,18 +372,48 @@ run an analysis.</p>
 <li><p>Mass-univariate analysis:</p></li>
 </ul>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">fsstats</span>
-<span class="n">fsstats</span><span class="o">.</span><span class="n">run_fsstats</span><span class="p">(</span>
+<span class="n">fsstats</span><span class="o">.</span><span class="n">run_lme</span><span class="p">(</span>
     <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;/my/input/directory/my_preprocessed_image_data.mgh&quot;</span><span class="p">,</span>
     <span class="n">mask</span><span class="o">=</span><span class="s2">&quot;/input/directory/my_cortical_label_file.label&quot;</span><span class="p">,</span>
     <span class="n">design_matrix</span><span class="o">=</span><span class="s2">&quot;/my/input/directory/my_design_matrix.txt&quot;</span><span class="p">,</span>
     <span class="n">contrasts</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;/my/input/directory/my_contrast_file.txt&quot;</span><span class="p">],</span>
-    <span class="n">clusters</span><span class="o">=</span><span class="s2">&quot;/my/input/directory/my_list_of_clusters.txt&quot;</span><span class="p">,</span> 
+    <span class="n">clusters</span><span class="o">=</span><span class="s2">&quot;/my/input/directory/my_list_of_clusters.txt&quot;</span><span class="p">,</span>
     <span class="n">random_effects</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
     <span class="n">surface</span><span class="o">=</span><span class="s2">&quot;fsaverage&quot;</span><span class="p">,</span>
     <span class="n">hemi</span><span class="o">=</span><span class="s2">&quot;lh&quot;</span><span class="p">,</span>
     <span class="n">num_cores</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
     <span class="n">glmdir</span><span class="o">=</span><span class="s2">&quot;/my/output/directory&quot;</span>
     <span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="as-python-functions">
+<h3>As Python functions<a class="headerlink" href="#as-python-functions" title="Link to this heading">¶</a></h3>
+<p>The above <code class="docutils literal notranslate"><span class="pre">fsstats.run_lme</span></code> function is  a wrapper around the two central functions for fitting linear mixed-effects models and subsequently performing statistical inference on them, i.e. <code class="docutils literal notranslate"><span class="pre">fsstats.lme.fit</span></code> and <code class="docutils literal notranslate"><span class="pre">fsstats.lme.test</span></code>. Use of the wrapper function is recommended for most cases, but in scenarios like customized analyses or processing pipelines, it may be desirable to call the low-level <code class="docutils literal notranslate"><span class="pre">fit</span></code> and <code class="docutils literal notranslate"><span class="pre">test</span></code> functions directly. We refer to the API documentation for details about the expected inputs and the resulting outputs, and give two short examples below.</p>
+<p>The following code will fit a linear mixed-effects model. We need to provide a design matrix <code class="docutils literal notranslate"><span class="pre">X</span></code>, the indices <code class="docutils literal notranslate"><span class="pre">Zcols</span></code> of the random effects in the design matrix, the concatenated thickness (or volume) data, and a vector <code class="docutils literal notranslate"><span class="pre">ni</span></code> of the cluster structure. All other inputs are optional, and are set to their default values in this example. In practice, it will make sense to increase the number of CPU cores (<code class="docutils literal notranslate"><span class="pre">prs</span></code>) to allow for parallel processing.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">fsstats.lme</span><span class="w"> </span><span class="kn">import</span> <span class="n">fit</span>
+<span class="n">stats</span> <span class="o">=</span> <span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">design_matrix</span><span class="p">,</span>
+            <span class="n">Zcols</span><span class="o">=</span><span class="n">indices_of_random_effects</span><span class="p">,</span>
+            <span class="n">Y</span><span class="o">=</span><span class="n">thickness_values</span><span class="p">,</span>
+            <span class="n">ni</span><span class="o">=</span><span class="n">cluster_structure</span><span class="p">,</span>
+            <span class="n">maskvtx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">prs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">nit</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+            <span class="n">e</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+            <span class="n">return_random_effects_estimates</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">return_minimal_information</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span>
+            <span class="p">)</span>
+</pre></div>
+</div>
+<p>The following code will perform statistical inference for a previously estimated model. This can be used repeatedly, for example for evaluating different contrasts.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">fsstats.lme</span><span class="w"> </span><span class="kn">import</span> <span class="n">test</span>
+<span class="n">fstats</span> <span class="o">=</span> <span class="n">test</span><span class="p">(</span><span class="n">stats</span><span class="p">,</span>
+              <span class="n">C</span><span class="o">=</span><span class="n">contrast_vector</span><span class="p">,</span>
+              <span class="n">bias_correct</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+              <span class="n">prs</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+              <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span>
+              <span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -584,6 +613,7 @@ for details.</p>
 <li><a class="reference internal" href="#usage">Usage</a><ul>
 <li><a class="reference internal" href="#as-a-command-line-tool">As a command line tool</a></li>
 <li><a class="reference internal" href="#as-a-python-package">As a Python package</a></li>
+<li><a class="reference internal" href="#as-python-functions">As Python functions</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#inputs-and-outputs">Inputs and outputs</a><ul>
