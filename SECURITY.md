@@ -2,7 +2,7 @@
 
 ## Supported Versions
 
-Versions of the fsstats package that are currently being supported with security 
+Versions of the fsstats package that are currently being supported with security
 updates:
 
 | Version | Supported          |
@@ -11,8 +11,8 @@ updates:
 
 ## Reporting a Vulnerability
 
-Please Report Vulnerabilities as Github Issues. Use Vulnerability in the title 
-and you can expect a quick response. If possible include a description of the 
-vulnerability and how to resolve it, e.g. by updating dependencies etc. 
+Please Report Vulnerabilities as Github Issues. Use Vulnerability in the title
+and you can expect a quick response. If possible include a description of the
+vulnerability and how to resolve it, e.g. by updating dependencies etc.
 
 Thanks for you contribution!

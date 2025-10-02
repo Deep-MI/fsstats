@@ -12,7 +12,7 @@ Please complete the following steps in advance to help us fix any potential bug 
 - Determine if your bug is really a bug and not an error on your side e.g. using incompatible environment components/versions.
 - To see if other users have experienced (and potentially already solved) the same issue you are having, check if there is not already a bug report existing for your bug or error in the [bug tracker](issues?q=label%3Abug).
 - Collect information about the bug:
-  - OS and package version 
+  - OS and package version
   - Possibly your input and the output
   - Can you reliably reproduce the issue?
 
@@ -22,7 +22,7 @@ We use GitHub issues to track bugs and errors. If you run into an issue with the
 
 - Open an [Issue](issues/new). (Since we can't be sure at this point whether it is a bug or not, we ask you not to talk about a bug yet and not to label the issue.)
 - Explain the behavior you would expect and the actual behavior.
-- Please provide as much context as possible and describe the *reproduction steps* that someone else can follow to recreate the issue on their own. 
+- Please provide as much context as possible and describe the *reproduction steps* that someone else can follow to recreate the issue on their own.
 - Provide the information you collected in the previous section.
 
 Once it's filed:

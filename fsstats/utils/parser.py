@@ -1,3 +1,7 @@
+"""
+This module provides functions to parse command-line arguments.
+"""
+
 import argparse
 import sys
 

@@ -6,6 +6,9 @@ modeling and inference package.
 
 
 def get_defaults(x):
+    """
+    Set and retrieve default values.
+    """
     defaults = dict(
         # settings that can also be changed via the cmd line / function arguments
         # will be set in _parse_arguments() for cmdline and run_lme() for module
@@ -16,13 +19,13 @@ def get_defaults(x):
         epsilon=1e-1,
         # settings that are currently hardcoded in _run_estimation and _run_inferences:
         # if univariate
-        # - compute_random_effects=True
+        # - return_random_effects_estimates=True
         # - return_minimal_information=False
         # - verbose=True
         # - max_cores=16
         # - bias_correct=True
         # if mass-univariate
-        # - compute_random_effects=False
+        # - return_random_effects_estimates=False
         # - return_minimal_information=True
         # - verbose=False
         # - bias_correct=False

@@ -1,5 +1,6 @@
 """
-
+This module provides logging functionality for the FastSurfer statistical
+modeling and inference package.
 """
 
 import logging
@@ -21,7 +22,7 @@ LOGGER = logging.getLogger(__name__)
 
 def setup_logging(args):
     """
-    Set up logging
+    Set up logging.
     """
 
     # check if output directory exists or can be created

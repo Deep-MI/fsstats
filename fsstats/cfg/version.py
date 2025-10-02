@@ -1,5 +1,6 @@
 """
-
+This module provides version information for the FastSurfer statistical
+modeling and inference package.
 """
 
 # ------------------------------------------------------------------------------
@@ -7,6 +8,9 @@
 
 
 def get_version():
+    """
+    Get version from package metadata.
+    """
     from importlib import metadata
 
     try:

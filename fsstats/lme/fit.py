@@ -264,7 +264,7 @@ def _fit_init(X, Zcols, y, ni):
     return D0, phisq0
 
 
-def _fit_fs(X, Zcols, Y, ni, nit, e, label, compute_random_effects, return_minimal_information, verbose):
+def _fit_fs(X, Zcols, Y, ni, nit, e, label, return_random_effects_estimates, return_minimal_information, verbose):
     """
     Linear mixed-effects estimation by the Fisher scoring algorithm.
 
@@ -284,7 +284,7 @@ def _fit_fs(X, Zcols, Y, ni, nit, e, label, compute_random_effects, return_minim
         Convergence epsilon (gradient norm).
     label : str
         Label used for reporting. Can be None.
-    compute_random_effects : bool
+    return_random_effects_estimates : bool
         Compute random effects estimates.
     return_minimal_information : bool
         Return minimal information.
@@ -369,7 +369,7 @@ def _fit_fs(X, Zcols, Y, ni, nit, e, label, compute_random_effects, return_minim
         # Termination
         if it == nit or eps < e:
             tf = False
-            if compute_random_effects:
+            if return_random_effects_estimates:
                 posi = 0
                 Cbihat = np.zeros((q * m, q))
                 bihat = np.zeros((m, q))
@@ -425,7 +425,7 @@ def _fit_fs(X, Zcols, Y, ni, nit, e, label, compute_random_effects, return_minim
     return stats
 
 
-def fit(X, Zcols, Y, ni, maskvtx, prs, nit, e, compute_random_effects, return_minimal_information, verbose):
+def fit(X, Zcols, Y, ni, maskvtx, prs, nit, e, return_random_effects_estimates, return_minimal_information, verbose):
     """
     Vertex/voxel-wise linear mixed-effects estimation.
 
@@ -447,7 +447,7 @@ def fit(X, Zcols, Y, ni, maskvtx, prs, nit, e, compute_random_effects, return_mi
         Number of iterations.
     e : float
         Convergence epsilon (gradient's norm).
-    compute_random_effects : bool
+    return_random_effects_estimates : bool
         Compute random effects estimates.
     return_minimal_information : bool
         Return minimal information.
@@ -484,7 +484,7 @@ def fit(X, Zcols, Y, ni, maskvtx, prs, nit, e, compute_random_effects, return_mi
                     nit=nit,
                     e=e,
                     label=str(i),
-                    compute_random_effects=compute_random_effects,
+                    return_random_effects_estimates=return_random_effects_estimates,
                     return_minimal_information=return_minimal_information,
                     verbose=verbose
                     )
@@ -503,7 +503,7 @@ def fit(X, Zcols, Y, ni, maskvtx, prs, nit, e, compute_random_effects, return_mi
                 nit=nit,
                 e=e,
                 label=str(i),
-                compute_random_effects=compute_random_effects,
+                return_random_effects_estimates=return_random_effects_estimates,
                 return_minimal_information=return_minimal_information,
                 verbose=verbose
             )

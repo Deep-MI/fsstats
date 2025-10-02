@@ -1,6 +1,5 @@
 """
-This module provides documentation for the hippocampal shape and 
-thickness analysis package.
+This module provides documentation for the fsstats package.
 
 """
 

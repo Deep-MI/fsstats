@@ -207,3 +207,10 @@ fsstats/launch.json
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Other
+fsstats/doc/bin/
+fsstats/doc/api/generated/
+remove
+ipynb
+tests

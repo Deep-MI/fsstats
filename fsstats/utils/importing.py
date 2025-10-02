@@ -1,3 +1,8 @@
+"""
+This module provides file import / export functions for the FastSurfer statistical
+modeling and inference package.
+"""
+
 import logging
 import os
 
@@ -12,6 +17,8 @@ LOGGER = logging.getLogger(__name__)
 
 def read_mgh(filename):
     """
+    Reads mgh files.
+
     expects mgh/mgz image file
     returns numpy array
     """
@@ -23,6 +30,8 @@ def read_mgh(filename):
 
 def read_label(filename):
     """
+    Reads FreeSufer label files.
+
     expects label file
     returns numpy array
     """
@@ -33,6 +42,8 @@ def read_label(filename):
 
 def read_table(filename):
     """
+    Reads tabular data.
+
     expects table with header and first column of IDs
     returns pandas df
     """
@@ -43,6 +54,8 @@ def read_table(filename):
 
 def read_design_matrix(filename):
     """
+    Reads design matrix file.
+
     expects table without header and without column of IDs
     returns numpy array
     """
@@ -53,6 +66,8 @@ def read_design_matrix(filename):
 
 def read_contrasts(list_of_filenames):
     """
+    Reads one or more contrast files.
+
     expects table without header
     returns numpy array
     """
@@ -66,6 +81,8 @@ def read_contrasts(list_of_filenames):
 
 def read_clusters(filename):
     """
+    Reads cluster file.
+
     expects table without header
     returns pandas df
     """

@@ -34,8 +34,20 @@ LOGGER = logging.getLogger(__name__)
 
 def _help(print_help=True, return_help=False):
     """
-    a function to return a help message
+    Returns a help message.
 
+    Parameters
+    ----------
+
+    print_help : bool
+        Prints the help message.
+    return_help : bool
+        Returns the help message.
+
+    Returns
+    -------
+    str or None
+        Helptext if return_help was True, otherwise None.
     """
 
     HELPTEXT = _get_help_text()
@@ -50,6 +62,20 @@ def _help(print_help=True, return_help=False):
 # create directories
 
 def _create_directories(args):
+    """
+    Create directories.
+
+    Parameters
+    ----------
+
+    args : dict
+        Input arguments.
+
+    Returns
+    -------
+    None
+        The function does not return any specific objects.
+    """
 
     # note that the main output directory has been created during
     # _start_logging() already
@@ -77,10 +103,19 @@ def _create_directories(args):
 #  convert arguments to params
 
 def _evaluate_args(args):
-
     """
-    an internal function to set and return internal parameters
+    Set and return internal parameters.
 
+    Parameters
+    ----------
+
+    args : dict
+        Input arguments.
+
+    Returns
+    -------
+    dict
+        Parameters to configure the analysis.
     """
 
     # message
@@ -128,7 +163,10 @@ def _evaluate_args(args):
 
 def _check_params(params):
     """
-    checks that input data corresponds to pre-specified formats
+    Checks that input data corresponds to pre-specified formats.
+
+    Expected formats are:
+
     Y     np.array, nm x nv
     X     np.array, nm x p
     C     np.array, nf x p
@@ -141,6 +179,17 @@ def _check_params(params):
     nf    number of rows in each contrast
     nr    number of random effects
     nc    number of clusters
+
+    Parameters
+    ----------
+
+    params : dict
+        Parameters to configure the analysis.
+
+    Returns
+    -------
+    dict
+        Parameters to configure the analysis.
     """
 
     # data
@@ -254,6 +303,23 @@ def _check_params(params):
 #  run estimation
 
 def _run_estimation(params):
+    """
+    Run the estimation submodule.
+
+    Parameters
+    ----------
+
+    params : dict
+        Parameters to configure the analysis.
+
+    Returns
+    -------
+    dict
+        Parameters to configure the analysis.
+    dict
+        Model estimation results.
+    """
+
 
     # determine cores
     if params.num_cores is None:
@@ -273,7 +339,7 @@ def _run_estimation(params):
             prs=prs,
             nit=params.num_iterations,
             e=params.epsilon,
-            compute_random_effects=True,
+            return_random_effects_estimates=True,
             return_minimal_information=False,
             verbose=True
             )
@@ -295,7 +361,7 @@ def _run_estimation(params):
             prs=prs,
             nit=params.num_iterations,
             e=params.epsilon,
-            compute_random_effects=False,
+            return_random_effects_estimates=False,
             return_minimal_information=True,
             verbose=False
             )
@@ -316,6 +382,23 @@ def _run_estimation(params):
 #  run inference
 
 def _run_inference(params, stats):
+    """
+    Run the inference submodule.
+
+    Parameters
+    ----------
+
+    params : dict
+        Parameters to configure the analysis.
+    stats : dict
+        Results obtained from the estimation submodule.
+
+    Returns
+    -------
+    dict
+        Statistical inference results.
+
+    """
 
     # determine cores
     if params.num_cores is None:
@@ -375,8 +458,18 @@ def _run_inference(params, stats):
 
 def _run_lme(args):
     """
-    A function to run the lme submodules
+    Run the lme submodules.
 
+    Parameters
+    ----------
+
+    args : dict
+        Parsed arguments.
+
+    Returns
+    -------
+    None
+        The function does not return any specific objects.
     """
 
     #
