@@ -457,7 +457,41 @@ def fit(X, Zcols, Y, ni, maskvtx, prs, nit, e, return_random_effects_estimates, 
     Returns
     -------
     stats : dict
-        A dict of dictionaries containing estimates for every voxel/vertex/variable where the model was fit. Keys will be numerical indices.
+        A dict of dictionaries containing estimates for every voxel/vertex/variable where the model was fit.
+        The indices of the voxels/vertices/variables are the keys of the outer dictionary. Each inner dictionary
+        has the following keys:
+
+            - 'X': design matrix,
+            - 'Zcols': indices of random effects,
+            - 'Bhat': beta estimates,
+            - 'CovBhat': covariance of beta estimates,
+            - 'SIGMA': stacked individual marginal covariance matrices,
+            - 'Dhat': covariance matrix of the random effects,
+            - 'phisqhat': square of within-subject standard deviation of the errors,
+            - 'W': stacked inverses of the individual marginal covariance matrices,
+            - 'ni': number of repeated measures for each subject,
+            - 'invEI': inverse of expected information matrix,
+            - 'Pth': auxiliary, precomputed matrices for useful for inferences on the fixed effects,
+            - 'Qthth': auxiliary, precomputed matrices for useful for inferences on the fixed effects,
+            - 'bihat': random effects estimates,
+            - 'Covbihat': covariance of random effects,
+            - 're': residuals,
+            - 'lreml': log restricted maximum likelihood,
+            - 'st' : status.
+
+    Notes
+    -----
+
+    The dimensions of the inputs are based on:
+
+    nm :
+        number of observations
+    p :
+        number of fixed effects in the model, including the intercepts
+    nr :
+        number of random effects in the model
+    nc :
+        number of clusters
     """
 
     LOGGER = logging.getLogger(__name__)

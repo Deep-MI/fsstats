@@ -166,7 +166,14 @@ def test(stats, C, bias_correct, prs, verbose):
     Returns
     -------
     fstats : dict
-        A dict of dictionaries containing the F-statistic, p-value, sign of the contrast, and degrees of freedom for every voxel/vertex/variable where estimation was performed. Keys are numerical indices.
+        A dict of dictionaries containing the results of statistical inference on the estimated parameters for every
+        voxel/vertex/variable where estimation was performed. The indices of the voxels/vertices/variables are the keys
+        of the outer dictionary. Each inner dictionary will contain the following keys:
+
+            - 'F' : F-statistic,
+            - 'sig' : sig-value, where sig=-log10(p-value),
+            - 'sgn' : sign of the contrast,
+            - 'df' : degrees of freedom.
     """
 
     # Processing function
