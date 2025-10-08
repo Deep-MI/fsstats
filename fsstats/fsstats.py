@@ -19,8 +19,8 @@ from .doc.documentation import _get_help_text
 from .lme.fit import fit
 from .lme.test import test
 from .utils.exporting import write_mgh
-from .utils.importing import read_clusters, read_contrasts, read_design_matrix, read_label, read_mgh, read_table
 from .utils.helper import _all_identical_elements_consecutive
+from .utils.importing import read_clusters, read_contrasts, read_design_matrix, read_label, read_mgh, read_table
 
 # ==============================================================================
 # LOGGING
