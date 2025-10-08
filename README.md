@@ -20,6 +20,7 @@ ___
 - [Usage](#usage)
   - [As a command line tool](#as-a-command-line-tool)
   - [As a Python package](#as-a-python-package)
+  - [As Python functions](#as-python-functions) 
 - [Inputs and outputs](#inputs-and-outputs)
     - [Input data and format specifications](#input-data-and-format-specifications)
     - [Output files and their interpretation](#output-files-and-their-interpretation)
