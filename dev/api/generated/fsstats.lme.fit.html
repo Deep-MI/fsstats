@@ -243,7 +243,7 @@
 <h1>fsstats.lme.fit<a class="headerlink" href="#fsstats-lme-fit" title="Link to this heading">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="fsstats.lme.fit">
-<span class="sig-prename descclassname"><span class="pre">fsstats.lme.</span></span><span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Zcols</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ni</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maskvtx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">e</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_random_effects_estimates</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_minimal_information</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fsstats.lme.fit" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">fsstats.lme.</span></span><span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Zcols</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clusters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maskvtx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">e</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_random_effects_estimates</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_minimal_information</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fsstats.lme.fit" title="Link to this definition">¶</a></dt>
 <dd><p>Vertex/voxel-wise linear mixed-effects estimation.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -254,29 +254,64 @@
 </dd>
 <dt><strong>Y</strong><span class="classifier"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code></a></span></dt><dd><p>Data matrix (nm, nv) whose columns represent the data vector for each voxel/vertex/variable. Rows must correspond to rows in X.</p>
 </dd>
-<dt><strong>ni</strong><span class="classifier"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code></a></span></dt><dd><p>List (nc,) whose entries are the number of repeated measures for each subject. Order must correspond to order of X.</p>
+<dt><strong>clusters</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">list</span></code></a></span></dt><dd><p>List of clusters (nm), where each item corresponds to the same row in the design matrix and indicates which cluster the observation belongs to. List must be sorted (not necessarily alphabetically or numerically) according to clusters, i.e. cluster elements must be in consecutive blocks.</p>
 </dd>
 <dt><strong>maskvtx</strong><span class="classifier"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code></a></span></dt><dd><p>List of zero-based mask indices (nv,). If None, all voxels/vertices/variables are included.</p>
 </dd>
-<dt><strong>prs</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">int</span></code></a></span></dt><dd><p>Number of CPU cores used for parallel computing.</p>
+<dt><strong>prs</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">int</span></code></a></span></dt><dd><p>Number of CPU cores used for parallel computing.</p>
 </dd>
-<dt><strong>nit</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">int</span></code></a></span></dt><dd><p>Number of iterations.</p>
+<dt><strong>nit</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">int</span></code></a></span></dt><dd><p>Number of iterations.</p>
 </dd>
-<dt><strong>e</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">float</span></code></a></span></dt><dd><p>Convergence epsilon (gradient’s norm).</p>
+<dt><strong>e</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">float</span></code></a></span></dt><dd><p>Convergence epsilon (gradient’s norm).</p>
 </dd>
-<dt><strong>return_random_effects_estimates</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bltin-boolean-values" title="(in Python v3.13)"><span class="xref std std-ref">bool</span></a></span></dt><dd><p>Compute random effects estimates.</p>
+<dt><strong>return_random_effects_estimates</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bltin-boolean-values" title="(in Python v3.14)"><span class="xref std std-ref">bool</span></a></span></dt><dd><p>Compute random effects estimates.</p>
 </dd>
-<dt><strong>return_minimal_information</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bltin-boolean-values" title="(in Python v3.13)"><span class="xref std std-ref">bool</span></a></span></dt><dd><p>Return minimal information.</p>
+<dt><strong>return_minimal_information</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bltin-boolean-values" title="(in Python v3.14)"><span class="xref std std-ref">bool</span></a></span></dt><dd><p>Return minimal information.</p>
 </dd>
-<dt><strong>verbose</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bltin-boolean-values" title="(in Python v3.13)"><span class="xref std std-ref">bool</span></a></span></dt><dd><p>Increase verbosity.</p>
+<dt><strong>verbose</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bltin-boolean-values" title="(in Python v3.14)"><span class="xref std std-ref">bool</span></a></span></dt><dd><p>Increase verbosity.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl>
-<dt><strong>stats</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">dict</span></code></a></span></dt><dd><p>A dict of dictionaries containing estimates for every voxel/vertex/variable where the model was fit. Keys will be numerical indices.</p>
+<dt><strong>stats</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">dict</span></code></a></span></dt><dd><p>A dict of dictionaries containing estimates for every voxel/vertex/variable where the model was fit.
+The indices of the voxels/vertices/variables are the keys of the outer dictionary. Each inner dictionary
+has the following keys:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>‘X’: design matrix,</p></li>
+<li><p>‘Zcols’: indices of random effects,</p></li>
+<li><p>‘Bhat’: beta estimates,</p></li>
+<li><p>‘CovBhat’: covariance of beta estimates,</p></li>
+<li><p>‘SIGMA’: stacked individual marginal covariance matrices,</p></li>
+<li><p>‘Dhat’: covariance matrix of the random effects,</p></li>
+<li><p>‘phisqhat’: square of within-subject standard deviation of the errors,</p></li>
+<li><p>‘W’: stacked inverses of the individual marginal covariance matrices,</p></li>
+<li><p>‘ni’: number of repeated measures for each subject,</p></li>
+<li><p>‘invEI’: inverse of expected information matrix,</p></li>
+<li><p>‘Pth’: auxiliary, precomputed matrices for useful for inferences on the fixed effects,</p></li>
+<li><p>‘Qthth’: auxiliary, precomputed matrices for useful for inferences on the fixed effects,</p></li>
+<li><p>‘bihat’: random effects estimates,</p></li>
+<li><p>‘Covbihat’: covariance of random effects,</p></li>
+<li><p>‘re’: residuals,</p></li>
+<li><p>‘lreml’: log restricted maximum likelihood,</p></li>
+<li><p>‘st’ : status.</p></li>
+</ul>
+</div></blockquote>
 </dd>
 </dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The dimensions of the inputs are based on:</p>
+<dl class="simple">
+<dt>nm :</dt><dd><p>number of observations</p>
+</dd>
+<dt>p :</dt><dd><p>number of fixed effects in the model, including the intercepts</p>
+</dd>
+<dt>nr :</dt><dd><p>number of random effects in the model</p>
+</dd>
+<dt>nc :</dt><dd><p>number of clusters</p>
 </dd>
 </dl>
 </dd></dl>
