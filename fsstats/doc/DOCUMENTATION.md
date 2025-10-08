@@ -150,14 +150,14 @@ fsstats.run_lme(
 
 The above `fsstats.run_lme` function is  a wrapper around the two central functions for fitting linear mixed-effects models and subsequently performing statistical inference on them, i.e. `fsstats.lme.fit` and `fsstats.lme.test`. Use of the wrapper function is recommended for most cases, but in scenarios like customized analyses or processing pipelines, it may be desirable to call the low-level `fit` and `test` functions directly. In contrast to the wrapper function, which in most cases takes filenames as inputs, the `fit` and `test` function directly operate on Python variables such as numpy arrays or lists. We refer to the API documentation for details about the expected inputs and the resulting outputs, and give two short examples below.
 
-The following code will fit a linear mixed-effects model. We need to provide a design matrix `X`, the indices `Zcols` of the random effects in the design matrix, the concatenated thickness (or volume) data `Y`, and a vector `ni` of the cluster structure. All other inputs are optional, and are set to their default values in this example. In practice, it will make sense to increase the number of CPU cores (`prs`) to allow for parallel processing.
+The following code will fit a linear mixed-effects model. We need to provide a design matrix `X`, the indices `Zcols` of the random effects in the design matrix, the concatenated thickness (or volume) data `Y`, and a list `clusters` of the cluster structure. All other inputs are optional, and are set to their default values in this example. In practice, it will make sense to increase the number of CPU cores (`prs`) to allow for parallel processing.
 
 ```python
 from fsstats.lme import fit
 stats = fit(X=design_matrix,
             Zcols=indices_of_random_effects,
             Y=thickness_values,
-            ni=cluster_structure,
+            clusters=cluster_structure,
             maskvtx=None,
             prs=1,
             nit=20,

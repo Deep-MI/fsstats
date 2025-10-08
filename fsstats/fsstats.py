@@ -20,6 +20,7 @@ from .lme.fit import fit
 from .lme.test import test
 from .utils.exporting import write_mgh
 from .utils.importing import read_clusters, read_contrasts, read_design_matrix, read_label, read_mgh, read_table
+from .utils.helper import _all_identical_elements_consecutive
 
 # ==============================================================================
 # LOGGING
@@ -171,14 +172,13 @@ def _check_params(params):
     X     np.array, nm x p
     C     np.array, nf x p
     U     np.array, nr
-    ni    np.array, nc
+    Z     list, nm
     with
     nm    number of observations
     nv    number of vertices / variables
     p     number of parameters
     nf    number of rows in each contrast
     nr    number of random effects
-    nc    number of clusters
 
     Parameters
     ----------
@@ -251,19 +251,14 @@ def _check_params(params):
 
     # clusters
     # entries must correspond to rows of the design matrix
+    # entries must be sorted (not necessarily alphabetically or numerically) according to clusters
     params.Z = read_clusters(params.CLUSTERS)
     if len(params.Z) != params.X.shape[0]:
         LOGGER.error("List of clusters must have as many items as rows of the design matrix.")
         raise argparse.ArgumentTypeError("List of clusters must have as many items as rows of the design matrix.")
-
-
-    # create number of observations from clusters; dictionary keys will be sorted
-    # by order of appearance (in contrast to np.unique)
-    ni = {}
-    for item in params.Z[0]:
-        ni[item] = ni.get(item, 0) + 1
-    params.ni = np.array(list(ni.values()))
-
+    if _all_identical_elements_consecutive(params.Z) is False:
+        LOGGER.error("List of clusters must be sorted (not necessarily alphabetically or numerically) according to clusters, i.e. cluster elements must be in consecutive blocks.")
+        raise argparse.ArgumentTypeError("List of clusters must be sorted (not necessarily alphabetically or numerically) according to clusters, i.e. cluster elements must be in consecutive blocks.")
     # surface
     # surface must be present in the current directory, the data directory, subjects dir, or freesurfer home (if it exists)
     if params.SURFACE is not None:
@@ -335,7 +330,7 @@ def _run_estimation(params):
             Y=params.Y,
             Zcols=params.U,
             maskvtx=None,
-            ni=params.ni,
+            clusters=params.Z,
             prs=prs,
             nit=params.num_iterations,
             e=params.epsilon,
@@ -356,7 +351,7 @@ def _run_estimation(params):
             X=params.X,
             Y=params.Y,
             Zcols=params.U,
-            ni=params.ni,
+            clusters=params.Z,
             maskvtx=params.M,
             prs=prs,
             nit=params.num_iterations,
@@ -579,7 +574,7 @@ def run_lme(table=None, filename=None, design_matrix=None, contrasts=None, rando
     my_args.clusters = clusters
     my_args.glmdir = glmdir
     if surface is not None and hemi is not None:
-        my_args.surface = surface + " " + hemi
+        my_args.surface = [surface, hemi]
     else:
         my_args.surface = None
     my_args.skip_estimation = skip_estimation

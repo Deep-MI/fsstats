@@ -425,7 +425,7 @@ def _fit_fs(X, Zcols, Y, ni, nit, e, label, return_random_effects_estimates, ret
     return stats
 
 
-def fit(X, Zcols, Y, ni, maskvtx, prs, nit, e, return_random_effects_estimates, return_minimal_information, verbose):
+def fit(X, Zcols, Y, clusters, maskvtx, prs, nit, e, return_random_effects_estimates, return_minimal_information, verbose):
     """
     Vertex/voxel-wise linear mixed-effects estimation.
 
@@ -437,8 +437,8 @@ def fit(X, Zcols, Y, ni, maskvtx, prs, nit, e, return_random_effects_estimates, 
         List of indices of the columns of X that will be considered as random effects (nr,).
     Y : ndarray
         Data matrix (nm, nv) whose columns represent the data vector for each voxel/vertex/variable. Rows must correspond to rows in X.
-    ni : ndarray
-        List (nc,) whose entries are the number of repeated measures for each subject. Order must correspond to order of X.
+    clusters : list
+        List of clusters (nm), where each item corresponds to the same row in the design matrix and indicates which cluster the observation belongs to. List must be sorted (not necessarily alphabetically or numerically) according to clusters, i.e. cluster elements must be in consecutive blocks.
     maskvtx : ndarray
         List of zero-based mask indices (nv,). If None, all voxels/vertices/variables are included.
     prs : int
@@ -495,6 +495,16 @@ def fit(X, Zcols, Y, ni, maskvtx, prs, nit, e, return_random_effects_estimates, 
     """
 
     LOGGER = logging.getLogger(__name__)
+
+    # Create number of observations from clusters; dictionary keys will be sorted by order of appearance (in contrast 
+    # to np.unique)
+
+    # TODO: checking?
+
+    ni = {}
+    for item in clusters:
+        ni[item] = ni.get(item, 0) + 1
+    ni = np.array(list(ni.values()))
 
     # Prepare inputs
 

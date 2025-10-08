@@ -155,7 +155,7 @@ def test(stats, C, bias_correct, prs, verbose):
     stats : list
         Structure array containing statistics for every voxel/vertex/variable.
     C : array-like
-        Contrast matrix.
+        Contrast matrix. Must have 2 dimensions, even for contrast vectors (1, p), where p is the number of fixed effects in the model.
     bias_correct : bool
         Bias-adjustment of covariance of fixed effects.
     prs : int

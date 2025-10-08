@@ -87,6 +87,6 @@ def read_clusters(filename):
     returns pandas df
     """
     LOGGER.info("Reading " + filename)
-    clust = pd.read_table(filename, header=None)
-    LOGGER.info("Found clusters file with shape " + str(clust.shape))
+    clust = pd.read_table(filename, header=None)[0].tolist()
+    LOGGER.info("Found clusters file with length " + str(len(clust)))
     return clust
