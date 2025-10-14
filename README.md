@@ -55,7 +55,7 @@ This software can also be downloaded from its GitHub repository at `https://gith
 git clone https://github.com/Deep-MI/fsstats
 ```
 
-The `mri_lmefit` script will then be executable from the command line, as detailed below. Note, however, that the required dependencies will have to be installed manually:
+The `fsstats_lme` script will then be executable from the command line, as detailed below. Note, however, that the required dependencies will have to be installed manually:
 ```bash
 pip install -r requirements.txt
 ```
@@ -67,7 +67,7 @@ ___
 ### As a command line tool
 
 ```text
-mri_lmefit --X <filename> --C <filename> [--C <filename>]--rfx <int> [<int> ...] --clusters <filename> --glmdir <directory>
+fsstats_lme --X <filename> --C <filename> [--C <filename>]--rfx <int> [<int> ...] --clusters <filename> --glmdir <directory>
     [--table <filename>]
     [--y <filename> ] [--surface <surface name> <lh|rh>] [--mask <filename>]
     [--cores <int>] [--iterations <int>] [--epsilon <float>] [--skip-estimation]
@@ -112,7 +112,7 @@ Getting help:
 The following command can be used to conduct a linear mixed-effects analysis of tabular input data. This example includes two random effects via the `--rfx` argument (e.g., random intercept and random slope of time, assuming that columns 1 and 2 of the design matrix are the global intercept and the regressor for *Time*, respectively) and the evaluation of two contrasts via the `--C` arguments. Further details on the expected inputs and their formats are given in the [Inputs and outputs](#inputs-and-outputs) section.
 
 ```bash
-mri_lmefit \
+fsstats_lme \
 --table /my/input/directory/my_tabular_input_file.txt \
 --X /my/input/directory/my_design_matrix.txt \
 --C /my/input/directory/my_contrast_file_1.txt \
@@ -127,7 +127,7 @@ mri_lmefit \
 The following command can be used to conduct a linear mixed-effects analysis of mass-univariate input data. This example includes specification of one random effect via the `--rfx` argument (e.g., random intercept, assuming that column 1 of the design matrix is the global intercept), and the evaluation of one contrast via the `--C` argument. As specified by the `--surface` argument, the analysis will use the `fsaverage` template, and will be done for the left hemisphere. The `--cores` argument tells the program to run 4 processes in parallel, which will speed up processing, and can be increased depending on how many CPU cores are available on the system. Further details on the expected inputs and their formats are given in the [Inputs and outputs](#inputs-and-outputs) section.
 
 ```bash
-mri_lmefit \
+fsstats_lme \
 --y /my/input/directory/my_preprocessed_image_data.mgh \
 --mask /input/directory/my_cortical_label_file.label \
 --X /my/input/directory/my_design_matrix.txt \
