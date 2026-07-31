@@ -7,7 +7,17 @@ This module provides helper functions.
 
 def _all_identical_elements_consecutive(lst):
     """
-    check if identical elements in a list are in consecutive blocks
+    Check if identical elements in a list are in consecutive blocks.
+
+    Parameters
+    ----------
+    lst : list
+        List to check.
+
+    Returns
+    -------
+    bool
+        True if identical elements occur only in consecutive blocks, False otherwise.
     """
     seen = set()
     prev = None

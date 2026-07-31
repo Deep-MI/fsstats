@@ -17,76 +17,121 @@ LOGGER = logging.getLogger(__name__)
 
 def read_mgh(filename):
     """
-    Reads mgh files.
+    Read mgh/mgz image files.
 
-    expects mgh/mgz image file
-    returns numpy array
+    Parameters
+    ----------
+    filename : str
+        Filename of an mgh/mgz image file.
+
+    Returns
+    -------
+    img : nibabel.freesurfer.mghformat.MGHImage
+        The loaded image object.
+    dat : ndarray
+        The image data.
     """
-    LOGGER.info("Reading " + filename)
+    LOGGER.info(f"Reading {filename}")
     img = nb.freesurfer.load(filename)
     dat = img.get_fdata().squeeze().T
-    LOGGER.info("Found data with shape " + str(dat.shape))
+    LOGGER.info(f"Found data with shape {dat.shape}")
     return img, dat
 
 def read_label(filename):
     """
-    Reads FreeSufer label files.
+    Read FreeSurfer label files.
 
-    expects label file
-    returns numpy array
+    Parameters
+    ----------
+    filename : str
+        Filename of a FreeSurfer label file.
+
+    Returns
+    -------
+    lbl : ndarray
+        Array of vertex indices contained in the label.
     """
-    LOGGER.info("Reading " + filename)
+    LOGGER.info(f"Reading {filename}")
     lbl = nb.freesurfer.io.read_label(filename)
-    LOGGER.info("Found label with shape " + str(lbl.shape))
+    LOGGER.info(f"Found label with shape {lbl.shape}")
     return lbl
 
 def read_table(filename):
     """
-    Reads tabular data.
+    Read tabular data with a header and a first column of IDs.
 
-    expects table with header and first column of IDs
-    returns pandas df
+    Parameters
+    ----------
+    filename : str
+        Filename of a table, e.g. produced by asegstats2table or aparcstats2table.
+
+    Returns
+    -------
+    tab : pandas.DataFrame
+        The table contents.
     """
-    LOGGER.info("Reading " + filename)
+    LOGGER.info(f"Reading {filename}")
     tab = pd.read_table(filename, sep=r'\s+|,', engine='python')
-    LOGGER.info("Found data with shape " + str(tab.shape))
+    LOGGER.info(f"Found data with shape {tab.shape}")
     return tab
 
 def read_design_matrix(filename):
     """
-    Reads design matrix file.
+    Read a design matrix file without header and without column of IDs.
 
-    expects table without header and without column of IDs
-    returns numpy array
+    Parameters
+    ----------
+    filename : str
+        Filename of a design matrix.
+
+    Returns
+    -------
+    mat : ndarray
+        The design matrix.
     """
-    LOGGER.info("Reading " + filename)
+    LOGGER.info(f"Reading {filename}")
     mat = np.array(pd.read_table(filename, sep=r'\s+|,', header=None, engine='python'))
-    LOGGER.info("Read design matrix with shape " + str(mat.shape))
+    LOGGER.info(f"Read design matrix with shape {mat.shape}")
     return mat
 
 def read_contrasts(list_of_filenames):
     """
-    Reads one or more contrast files.
+    Read one or more contrast files without header.
 
-    expects table without header
-    returns numpy array
+    Parameters
+    ----------
+    list_of_filenames : list of str
+        Filenames of one or more contrast matrix/vector files.
+
+    Returns
+    -------
+    contrasts : dict
+        Dictionary mapping each contrast's filename (without extension) to its
+        contrast matrix/vector as a numpy array.
     """
     contrasts = dict()
     for i in list_of_filenames:
-        LOGGER.info("Reading " + i)
+        LOGGER.info(f"Reading {i}")
         con = np.array(pd.read_table(i, sep=r'\s+|,', header=None, engine='python'))
-        LOGGER.info("Found contrasts file " + i + " with shape " + str(con.shape))
+        LOGGER.info(f"Found contrasts file {i} with shape {con.shape}")
         contrasts[os.path.splitext(os.path.basename(i))[0]] = con
     return contrasts
 
 def read_clusters(filename):
     """
-    Reads cluster file.
+    Read a cluster file without header.
 
-    expects table without header
-    returns pandas df
+    Parameters
+    ----------
+    filename : str
+        Filename of a list of clusters (e.g., case IDs).
+
+    Returns
+    -------
+    clust : list
+        The list of cluster identifiers.
     """
-    LOGGER.info("Reading " + filename)
+    LOGGER.info(f"Reading {filename}")
     clust = pd.read_table(filename, header=None)[0].tolist()
-    LOGGER.info("Found clusters file with length " + str(len(clust)))
+    LOGGER.info(f"Found clusters file with length {len(clust)}")
     return clust

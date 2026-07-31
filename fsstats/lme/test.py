@@ -125,7 +125,7 @@ def _test(C, Bhat, CBhat, Zcols, invEI, Pth, Qthth, X, W, ni, label, bias_correc
     CovBhat = CBhat + 2 * Bias
     Fstat_i = l * Bhat.T @ C.T @ np.linalg.inv(C @ CovBhat @ C.T) @ C @ Bhat / szC
     if Fstat_i < 0:
-        LOGGER.warning('Index ' + label + ': Negative F-values encountered, setting to zero.')
+        LOGGER.warning(f"Index {label}: Negative F-values encountered, setting to zero.")
         Fstat_i = np.array(0)
     pval_i = 1 - f_dist.cdf(Fstat_i, szC, m)
     sig_i = -np.log10(pval_i)
@@ -140,7 +140,7 @@ def _test(C, Bhat, CBhat, Zcols, invEI, Pth, Qthth, X, W, ni, label, bias_correc
 
     # Output
     if verbose:
-        LOGGER.info('Index ' + label + ': F(' + f"{df_i[0]:.2f}" + ',' + f"{df_i[1]:.2f}" + ') = ' + str(Fstat_i) + ', p = ' + str(pval_i) + ', sgn = ' + str(sgn_i))
+        LOGGER.info(f"Index {label}: F({df_i[0]:.2f},{df_i[1]:.2f}) = {Fstat_i}, p = {pval_i}, sgn = {sgn_i}")
 
     # Return
     return { 'F' : Fstat_i, 'pval' : pval_i, 'sig' : sig_i, 'sgn' : sgn_i, 'df' : df_i }

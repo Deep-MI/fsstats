@@ -161,7 +161,7 @@ def _parse_arguments():
         required=False,
     )
     help.add_argument(
-        "--version", help="Display version number and exit", action="version", version="%(prog)s " + get_version()
+        "--version", help="Display version number and exit", action="version", version=f"%(prog)s {get_version()}"
     )
 
     # check if there are any inputs; if not, print help
@@ -209,7 +209,7 @@ def _parse_arguments():
             sys.exit(1)
 
         if args.filename is not None and args.surface is None:
-            print("ERROR: the --surface argument is required when using --filename, exiting. Use --help to see details.")
+            print("ERROR: the --surface argument is required when using --y, exiting. Use --help to see details.")
             print()
             sys.exit(1)
 

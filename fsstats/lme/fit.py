@@ -417,9 +417,9 @@ def _fit_fs(X, Zcols, Y, ni, nit, e, label, return_random_effects_estimates, ret
 
     # output
     if stats['st'] and stats['lreml'][-1]>=stats['lreml'][0]:
-        LOGGER.info('Index ' + label + ': Convergence at iteration ' + str(len(stats['lreml'])) + '. Initial and final likelihoods: ' + str(stats['lreml'][0]) + ', ' + str(stats['lreml'][-1]))
+        LOGGER.info(f"Index {label}: Convergence at iteration {len(stats['lreml'])}. Initial and final likelihoods: {stats['lreml'][0]}, {stats['lreml'][-1]}")
     else:
-        LOGGER.info('Index ' + label + ': Algorithm did not converge. Initial and final likelihoods: ' + str(stats['lreml'][0]) + ', ' + str(stats['lreml'][-1]))
+        LOGGER.info(f"Index {label}: Algorithm did not converge. Initial and final likelihoods: {stats['lreml'][0]}, {stats['lreml'][-1]}")
 
     # return
     return stats
@@ -465,9 +465,6 @@ def fit(X, Zcols, Y, clusters, maskvtx, prs, nit, e, return_random_effects_estim
             - 'Zcols': indices of random effects,
             - 'Bhat': beta estimates,
             - 'CovBhat': covariance of beta estimates,
-            - 'SIGMA': stacked individual marginal covariance matrices,
-            - 'Dhat': covariance matrix of the random effects,
-            - 'phisqhat': square of within-subject standard deviation of the errors,
             - 'W': stacked inverses of the individual marginal covariance matrices,
             - 'ni': number of repeated measures for each subject,
             - 'invEI': inverse of expected information matrix,

@@ -35,4 +35,4 @@ def get_defaults(x):
     if x in defaults.keys():
         return defaults[x]
     else:
-        raise ValueError(x + " is not a valid key in the defaults dict")
+        raise ValueError(f"{x} is not a valid key in the defaults dict")

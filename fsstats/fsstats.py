@@ -90,11 +90,11 @@ def _create_directories(args):
     for directory in list_of_directories:
         if not os.path.isdir(directory):
             try:
-                LOGGER.info("Creating output directory " + directory)
+                LOGGER.info(f"Creating output directory {directory}")
                 os.mkdir(directory)
             except OSError as e:
-                LOGGER.error("Cannot create output directory " + args.glmdir)
-                LOGGER.error("Reason: " + str(e))
+                LOGGER.error(f"Cannot create output directory {args.glmdir}")
+                LOGGER.error(f"Reason: {e}")
                 raise
 
     # return
@@ -155,7 +155,7 @@ def _evaluate_args(args):
     params.num_iterations = args.num_iterations
     params.epsilon = args.epsilon
 
-    LOGGER.info("Using " + params.GLMDIR + " as output directory")
+    LOGGER.info(f"Using {params.GLMDIR} as output directory")
 
     return params
 
@@ -224,8 +224,8 @@ def _check_params(params):
         LOGGER.error("The design matrix X and the data matrix Y must have the same number of rows.")
         raise argparse.ArgumentTypeError("The design matrix X and the data matrix Y must have the same number of rows.")
     if not(np.any(np.sum(params.X==1, axis=0) == params.X.shape[0])):
-        LOGGER.error("Design matrix must contain a columns of ones.")
-        raise argparse.ArgumentTypeError("Design matrix must contain a columns of ones.")
+        LOGGER.error("Design matrix must contain a column of ones.")
+        raise argparse.ArgumentTypeError("Design matrix must contain a column of ones.")
     if np.linalg.matrix_rank(params.X) != params.X.shape[1]:
         LOGGER.error("Design matrix cannot have redundant columns.")
         raise argparse.ArgumentTypeError("Design matrix cannot have redundant columns.")
@@ -263,20 +263,20 @@ def _check_params(params):
     # surface must be present in the current directory, the data directory, subjects dir, or freesurfer home (if it exists)
     if params.SURFACE is not None:
         if os.path.exists(params.SURFACE):
-            LOGGER.info("Found template surface " + params.SURFACE)
+            LOGGER.info(f"Found template surface {params.SURFACE}")
             params.SURFACE_DIR = os.path.abspath(params.SURFACE)
         elif os.path.exists(os.path.join(os.path.dirname(params.FILENAME), params.SURFACE)):
-            LOGGER.info("Found template surface " + os.path.join(os.path.dirname(params.FILENAME), params.SURFACE))
+            LOGGER.info(f"Found template surface {os.path.join(os.path.dirname(params.FILENAME), params.SURFACE)}")
             params.SURFACE_DIR = os.path.abspath(os.path.join(os.path.dirname(params.FILENAME), params.SURFACE))
         elif os.environ.get('SUBJECTS_DIR') is not None and os.path.exists(os.path.join(os.environ.get('SUBJECTS_DIR'), params.SURFACE)):
-            LOGGER.info("Found template surface " + os.path.join(os.environ.get('SUBJECTS_DIR'), params.SURFACE))
+            LOGGER.info(f"Found template surface {os.path.join(os.environ.get('SUBJECTS_DIR'), params.SURFACE)}")
             params.SURFACE_DIR = os.path.join(os.environ.get('SUBJECTS_DIR'), params.SURFACE)
         elif os.environ.get('FREESURFER_HOME') is not None and os.path.exists(os.path.join(os.environ.get('FREESURFER_HOME'), 'subjects', params.SURFACE)):
-            LOGGER.info("Found template surface " + os.path.join(os.environ.get('FREESURFER_HOME'), params.SURFACE))
+            LOGGER.info(f"Found template surface {os.path.join(os.environ.get('FREESURFER_HOME'), params.SURFACE)}")
             params.SURFACE_DIR = os.path.join(os.environ.get('FREESURFER_HOME'), params.SURFACE)
         else:
-            LOGGER.error("Template surface " + params.SURFACE + " could not be found.")
-            raise argparse.ArgumentTypeError("Template surface " + params.SURFACE + " could not be found.")
+            LOGGER.error(f"Template surface {params.SURFACE} could not be found.")
+            raise argparse.ArgumentTypeError(f"Template surface {params.SURFACE} could not be found.")
 
     # hemi
     # hemi must be lh or rh
@@ -406,7 +406,7 @@ def _run_inference(params, stats):
     if params.ISTABLE:
         LOGGER.info("Running univariate inference")
         for key, value in params.C.items():
-            LOGGER.info("Evaluating contrast " + key)
+            LOGGER.info(f"Evaluating contrast {key}")
             fstats[key] = test(stats=stats, C=value, prs=prs, bias_correct=True, verbose=False)
             gamma = dict()
             F = dict()
@@ -424,7 +424,7 @@ def _run_inference(params, stats):
         if prs == 1:
             LOGGER.warning("Number of cores to use for parallel processing is set to 1.")
         for key, value in params.C.items():
-            LOGGER.info("Evaluating contrast " + key)
+            LOGGER.info(f"Evaluating contrast {key}")
             fstats[key] = test(stats=stats, C=value, prs=prs, bias_correct=False, verbose=False)
             gamma = np.zeros((params.Y.shape[1], 1, 1))
             F = np.zeros((params.Y.shape[1], 1, 1))
@@ -486,7 +486,7 @@ def _run_lme(args):
             params, stats = _run_estimation(params)
         else:
             with open(os.path.join(params.GLMDIR, 'estimates.pkl'), 'rb') as f:
-                LOGGER.info("Reading " + os.path.join(params.GLMDIR, 'estimates.pkl'))
+                LOGGER.info(f"Reading {os.path.join(params.GLMDIR, 'estimates.pkl')}")
                 stats = pickle.load(f)
 
         # run inference
@@ -529,7 +529,7 @@ def run_lme(table=None, filename=None, design_matrix=None, contrasts=None, rando
     surface : str
         Name of template surface (e.g., fsaverage). Default: None.
     hemi : str
-        Name of hemisphere lh or rh). Default: None.
+        Name of hemisphere (lh or rh). Default: None.
     skip_estimation : bool
         Skip estimation. Useful to compute additional contrasts. Requires existing glmdir with estimates.pkl file. Default: False.
     **kwargs : dict
@@ -559,7 +559,7 @@ def run_lme(table=None, filename=None, design_matrix=None, contrasts=None, rando
                     if key in vars(self).keys():
                         setattr(self, key, value)
                     else:
-                        raise AssertionError("Key " + key + " not included in list of default keys")
+                        raise AssertionError(f"Key {key} not included in list of default keys")
 
     #
 

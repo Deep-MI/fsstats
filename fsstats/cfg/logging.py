@@ -27,13 +27,13 @@ def setup_logging(args):
 
     # check if output directory exists or can be created
     if os.path.isdir(args.glmdir):
-        print("Found output directory " + args.glmdir)
+        print(f"Found output directory {args.glmdir}")
     else:
         try:
             os.mkdir(args.glmdir)
         except OSError as e:
-            print("Cannot create output directory " + args.glmdir)
-            print("Reason: " + str(e))
+            print(f"Cannot create output directory {args.glmdir}")
+            print(f"Reason: {e}")
             raise
 
     # check if logfile can be written in output directory
@@ -41,8 +41,8 @@ def setup_logging(args):
         testfile = tempfile.TemporaryFile(dir=args.glmdir)
         testfile.close()
     except OSError as e:
-        print(args.glmdir + " not writeable")
-        print("Reason: " + str(e))
+        print(f"{args.glmdir} not writeable")
+        print(f"Reason: {e}")
         raise
 
     # setup logging
@@ -75,4 +75,4 @@ def setup_logging(args):
     LOGGER.info("Date: %s", time.strftime("%d/%m/%Y %H:%M:%S"))
 
     # log args
-    LOGGER.info("Command: " + " ".join(sys.argv))
+    LOGGER.info(f"Command: {' '.join(sys.argv)}")
