@@ -77,7 +77,7 @@ source = 'https://github.com/Deep-MI/fsstats'
 tracker = 'https://github.com/Deep-MI/fsstats/issues'
 
 [project.scripts]
-mri_lmefit = 'fsstats.cli:lmefit_deprecated
+mri_lmefit = 'fsstats.cli:lmefit_deprecated'
 fsstats_lme = 'fsstats.cli:lmefit'
 
 [tool.setuptools.dynamic]

@@ -234,10 +234,10 @@ def _check_params(params):
     # each contrast matrix must have two dimensions
     # each contrast must have as many columns as the design matrix
     params.C = read_contrasts(params.CONTRASTS)
-    if len(params.X.shape) != 2:
-        LOGGER.error("Each contrast vector / matrix must have two dimensions (which can be of size 1).")
-        raise argparse.ArgumentTypeError("Each contrast vector / matrix must have two dimensions (which can be of size 1).")
     for i in params.C:
+        if len(params.C[i].shape) != 2:
+            LOGGER.error("Each contrast vector / matrix must have two dimensions (which can be of size 1).")
+            raise argparse.ArgumentTypeError("Each contrast vector / matrix must have two dimensions (which can be of size 1).")
         if params.C[i].shape[1] != params.X.shape[1]:
             LOGGER.error("Each contrast vector / matrix must have as many columns as the design matrix.")
             raise argparse.ArgumentTypeError("Each contrast vector / matrix must have as many columns as the design matrix.")
@@ -318,7 +318,7 @@ def _run_estimation(params):
 
     # determine cores
     if params.num_cores is None:
-        prs = np.min(multiprocessing.cpu_count(), 16)
+        prs = min(multiprocessing.cpu_count(), 16)
     else:
         prs = params.num_cores
 
@@ -397,7 +397,7 @@ def _run_inference(params, stats):
 
     # determine cores
     if params.num_cores is None:
-        prs = np.min(multiprocessing.cpu_count(), 16)
+        prs = min(multiprocessing.cpu_count(), 16)
     else:
         prs = params.num_cores
 
