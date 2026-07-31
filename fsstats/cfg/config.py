@@ -17,19 +17,20 @@ def get_defaults(x):
         num_cores=1,
         num_iterations=20,
         epsilon=1e-1,
+        # cap on the auto-detected CPU core count used when num_cores is not
+        # specified (see _get_num_cores in fsstats.py)
+        max_cores=16,
         # settings that are currently hardcoded in _run_estimation and _run_inferences:
         # if univariate
         # - return_random_effects_estimates=True
         # - return_minimal_information=False
         # - verbose=True
-        # - max_cores=16
         # - bias_correct=True
         # if mass-univariate
         # - return_random_effects_estimates=False
         # - return_minimal_information=True
         # - verbose=False
         # - bias_correct=False
-        # - max_cores=16
     )
 
     if x in defaults.keys():

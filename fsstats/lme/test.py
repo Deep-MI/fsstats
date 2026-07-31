@@ -9,6 +9,8 @@ from joblib import Parallel, delayed
 from scipy.stats import f as f_dist
 from tqdm import tqdm
 
+LOGGER = logging.getLogger(__name__)
+
 
 def _test(C, Bhat, CBhat, Zcols, invEI, Pth, Qthth, X, W, ni, label, bias_correct, verbose):
     """
@@ -51,9 +53,6 @@ def _test(C, Bhat, CBhat, Zcols, invEI, Pth, Qthth, X, W, ni, label, bias_correc
     fstats : dict
         Dictionary containing the F-statistic, p-value, sign of the contrast, and degrees of freedom.
     """
-
-    #
-    LOGGER = logging.getLogger(__name__)
 
     # Prepare inputs
     q = len(Zcols)

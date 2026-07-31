@@ -9,6 +9,8 @@ from joblib import Parallel, delayed
 from scipy.linalg import cholesky, det, solve
 from tqdm import tqdm
 
+LOGGER = logging.getLogger(__name__)
+
 
 def _ei(X, Zcols, W, CBhat, SIGMA, L, phi, ni):
     """
@@ -297,9 +299,6 @@ def _fit_fs(X, Zcols, Y, ni, nit, e, label, return_random_effects_estimates, ret
         Dictionary containing the results of the estimation.
     """
 
-    #
-    LOGGER = logging.getLogger(__name__)
-
     # Prepare inputs
     Z = X[:, Zcols]
     m = len(ni)
@@ -387,11 +386,11 @@ def _fit_fs(X, Zcols, Y, ni, nit, e, label, return_random_effects_estimates, ret
                 bihat = None
                 Cbihat = None
             if return_minimal_information:
-                X = None
-                r = None
-                ni = None
+                X_out, r_out, ni_out = None, None, None
+            else:
+                X_out, r_out, ni_out = X, r, ni
             stats = {
-                'X': X,             # optional in lme_F, (nm, p)
+                'X': X_out,         # optional in lme_F, (nm, p)
                 'Zcols': Zcols,     # required in lme_F, (nr,)
                 'Bhat': Bhat,       # required in lme_F,  (p, 1)
                 'CovBhat': invH,    # required in lme_F,  (p, p)
@@ -399,13 +398,13 @@ def _fit_fs(X, Zcols, Y, ni, nit, e, label, return_random_effects_estimates, ret
                 #'Dhat': D,          # no longer needed in lme_F, (nr, nr)
                 #'phisqhat': phisq,  # no longer needed in lme_F, (1, 1)
                 'W': W,             # optional in lme_F, (nm, p)
-                'ni': ni,           # optional in lme_F, (nc,)
+                'ni': ni_out,       # optional in lme_F, (nc,)
                 'invEI': invEI,     # required in lme_F, (2*nr, 2*nr)
                 'Pth': Pth,         # required in lme_F, (2*nr, p, p)
                 'Qthth': Qthth,     # required in lme_F, (2*nr, 2*nr, p, p)
                 'bihat': bihat,     # optional output only, (nc, 1)
                 'Covbihat': Cbihat, # optional output only (nc * nr, 1)
-                're': r,            # output only, (nm, 1)
+                're': r_out,        # output only, (nm, 1)
                 'lreml': lreml[:it],# output only, (nit,)
                 'st' : it != nit ,  # output only, (nit,)
             }
@@ -491,9 +490,7 @@ def fit(X, Zcols, Y, clusters, maskvtx, prs, nit, e, return_random_effects_estim
         number of clusters
     """
 
-    LOGGER = logging.getLogger(__name__)
-
-    # Create number of observations from clusters; dictionary keys will be sorted by order of appearance (in contrast 
+    # Create number of observations from clusters; dictionary keys will be sorted by order of appearance (in contrast
     # to np.unique)
 
     # TODO: checking?
@@ -514,40 +511,35 @@ def fit(X, Zcols, Y, clusters, maskvtx, prs, nit, e, return_random_effects_estim
 
     nv_masked = Y_masked.shape[1]
 
-    # Processing
+    # Processing function
+    def process(i, X, Zcols, Y_masked, ni, nit, e, return_random_effects_estimates, return_minimal_information, verbose):
+        return _fit_fs(
+            X=X,
+            Zcols=Zcols,
+            Y=np.expand_dims(Y_masked[:, i], axis=1),
+            ni=ni,
+            nit=nit,
+            e=e,
+            label=str(i),
+            return_random_effects_estimates=return_random_effects_estimates,
+            return_minimal_information=return_minimal_information,
+            verbose=verbose
+        )
 
+    #
     if prs > 1:
-        stats_masked = list(tqdm(Parallel(return_as="generator", n_jobs=prs)(delayed(_fit_fs)(
-                    X=X,
-                    Zcols=Zcols,
-                    Y=np.expand_dims(Y_masked[:, i], axis=1),
-                    ni=ni,
-                    nit=nit,
-                    e=e,
-                    label=str(i),
-                    return_random_effects_estimates=return_random_effects_estimates,
-                    return_minimal_information=return_minimal_information,
-                    verbose=verbose
+        stats_masked = list(tqdm(Parallel(return_as="generator", n_jobs=prs)(delayed(process)(
+                    i, X, Zcols, Y_masked, ni, nit, e, return_random_effects_estimates, return_minimal_information, verbose
                     )
                 for i in range(nv_masked)
                 ),
                 total = nv_masked
             ))
     else:
-        stats_masked = [{} for _ in range(nv_masked)]
-        for i in range(nv_masked):
-            stats_masked[i] = _fit_fs(
-                X=X,
-                Zcols=Zcols,
-                Y=np.expand_dims(Y_masked[:, i], axis=1),
-                ni=ni,
-                nit=nit,
-                e=e,
-                label=str(i),
-                return_random_effects_estimates=return_random_effects_estimates,
-                return_minimal_information=return_minimal_information,
-                verbose=verbose
-            )
+        stats_masked = [
+            process(i, X, Zcols, Y_masked, ni, nit, e, return_random_effects_estimates, return_minimal_information, verbose)
+            for i in range(nv_masked)
+        ]
 
     # Prepare outputs
 

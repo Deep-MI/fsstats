@@ -295,6 +295,37 @@ def _check_params(params):
     return params
 
 # ------------------------------------------------------------------------------
+#  determine number of cores
+
+def _get_num_cores(params, warn_if_single):
+    """
+    Determine the number of CPU cores to use for parallel processing.
+
+    Parameters
+    ----------
+
+    params : dict
+        Parameters to configure the analysis.
+    warn_if_single : bool
+        Log a warning if only a single core will be used.
+
+    Returns
+    -------
+    int
+        Number of CPU cores to use.
+    """
+
+    if params.num_cores is None:
+        prs = min(multiprocessing.cpu_count(), get_defaults("max_cores"))
+    else:
+        prs = params.num_cores
+
+    if warn_if_single and prs == 1:
+        LOGGER.warning("Number of cores to use for parallel processing is set to 1.")
+
+    return prs
+
+# ------------------------------------------------------------------------------
 #  run estimation
 
 def _run_estimation(params):
@@ -317,10 +348,7 @@ def _run_estimation(params):
 
 
     # determine cores
-    if params.num_cores is None:
-        prs = min(multiprocessing.cpu_count(), 16)
-    else:
-        prs = params.num_cores
+    prs = _get_num_cores(params, warn_if_single=not params.ISTABLE)
 
     # estimation
     if params.ISTABLE:
@@ -345,8 +373,6 @@ def _run_estimation(params):
         pd.DataFrame.from_dict(betas, orient="index").to_csv(os.path.join(params.GLMDIR, 'beta.txt'), sep=" ", header=False)
     else:
         LOGGER.info("Running mass-univariate analysis")
-        if prs == 1:
-            LOGGER.warning("Number of cores to use for parallel processing is set to 1.")
         stats = fit(
             X=params.X,
             Y=params.Y,
@@ -396,10 +422,7 @@ def _run_inference(params, stats):
     """
 
     # determine cores
-    if params.num_cores is None:
-        prs = min(multiprocessing.cpu_count(), 16)
-    else:
-        prs = params.num_cores
+    prs = _get_num_cores(params, warn_if_single=not params.ISTABLE)
 
     # inference
     fstats = dict()
@@ -421,8 +444,6 @@ def _run_inference(params, stats):
             pd.DataFrame.from_dict(sig, orient='index').to_csv(os.path.join(params.GLMDIR, key, 'sig.txt'), sep=" ", header=False)
     else:
         LOGGER.info("Running mass-univariate inference")
-        if prs == 1:
-            LOGGER.warning("Number of cores to use for parallel processing is set to 1.")
         for key, value in params.C.items():
             LOGGER.info(f"Evaluating contrast {key}")
             fstats[key] = test(stats=stats, C=value, prs=prs, bias_correct=False, verbose=False)
@@ -543,6 +564,28 @@ def run_lme(table=None, filename=None, design_matrix=None, contrasts=None, rando
     dict
         A dictionary of input arguments.
     """
+
+    # validate required argument combinations (mirrors the CLI's checks in
+    # utils/parser.py._parse_arguments, adapted for library use)
+    errors = []
+    if filename is None and table is None:
+        errors.append("either 'filename' or 'table' must be provided")
+    if filename is not None and table is not None:
+        errors.append("'filename' and 'table' cannot both be provided")
+    if design_matrix is None:
+        errors.append("'design_matrix' is required")
+    if contrasts is None:
+        errors.append("'contrasts' is required")
+    if random_effects is None:
+        errors.append("'random_effects' is required")
+    if clusters is None:
+        errors.append("'clusters' is required")
+    if glmdir is None:
+        errors.append("'glmdir' is required")
+    if filename is not None and (surface is None or hemi is None):
+        errors.append("'surface' and 'hemi' are both required when 'filename' is provided")
+    if errors:
+        raise ValueError(f"Invalid arguments to run_lme(): {'; '.join(errors)}")
 
     # define class
 
