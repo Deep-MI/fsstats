@@ -189,8 +189,8 @@ ___
 
 Argument | Description | Format
 ------|------------|------------------------
--- table | Univariate data | Table including a header that describes the variable names and a first column of IDs; can have one or more variables. Output from FreeSurfer's `asegstats2table` or `aparcstats2table` will be accepted. Only needed for univariate analysis.
---Y  | Preprocessed mass-univarate data | FreeSurfer mgh/mgz image file, can be obtained from `mris_preproc`. Only needed for mass-univariate analysis.
+--table | Univariate data | Table including a header that describes the variable names and a first column of IDs; can have one or more variables. Output from FreeSurfer's `asegstats2table` or `aparcstats2table` will be accepted. Only needed for univariate analysis.
+--y  | Preprocessed mass-univarate data | FreeSurfer mgh/mgz image file, can be obtained from `mris_preproc`. Only needed for mass-univariate analysis.
 --mask | Analysis mask for mass-univariate data | FreeSurfer label file, e.g. `lh.cortex`. Optional for mass-univariate analysis; if omitted, all data will be used.
 --X  | Design matrix | Table without header and without column of IDs; each row corresponds to one observation and each column corresponds to one parameter/variable in the model.
 --C  | Contrast vector/matrix | Table without header, with one or more rows depending on the type of contrast, and as many columns as the design matrix.  Each column refers to the same column of the design matrix. One contrast vector/matrix per file; for multiple contrasts, specify multiple `--C` arguments.
