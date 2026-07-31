@@ -523,7 +523,7 @@ def fit(X, Zcols, Y, clusters, maskvtx, prs, nit, e, return_random_effects_estim
         stats_masked = list(tqdm(Parallel(return_as="generator", n_jobs=prs)(delayed(_fit_fs)(
                     X=X,
                     Zcols=Zcols,
-                    Y=np.expand_dims(Y[:, i], axis=1),
+                    Y=np.expand_dims(Y_masked[:, i], axis=1),
                     ni=ni,
                     nit=nit,
                     e=e,
@@ -542,7 +542,7 @@ def fit(X, Zcols, Y, clusters, maskvtx, prs, nit, e, return_random_effects_estim
             stats_masked[i] = _fit_fs(
                 X=X,
                 Zcols=Zcols,
-                Y=np.expand_dims(Y[:, i], axis=1),
+                Y=np.expand_dims(Y_masked[:, i], axis=1),
                 ni=ni,
                 nit=nit,
                 e=e,
