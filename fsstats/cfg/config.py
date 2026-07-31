@@ -11,9 +11,9 @@ def get_defaults(x):
     """
     defaults = dict(
         # settings that can also be changed via the cmd line / function arguments
-        # will be set in _parse_arguments() for cmdline and run_lme() for module
-        # note: if changing these values, remember to adjust the argparse help
-        # messages as well as the run_lme docstring also
+        # will be taken from here and set in _parse_arguments() for cmdline and
+        # run_lme() for module. if changing these values here, remember to adjust
+        # the argparse help messages as well as the run_lme docstring also
         num_cores=1,
         num_iterations=20,
         epsilon=1e-1,

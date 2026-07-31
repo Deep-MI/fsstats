@@ -493,8 +493,6 @@ def fit(X, Zcols, Y, clusters, maskvtx, prs, nit, e, return_random_effects_estim
     # Create number of observations from clusters; dictionary keys will be sorted by order of appearance (in contrast
     # to np.unique)
 
-    # TODO: checking?
-
     ni = {}
     for item in clusters:
         ni[item] = ni.get(item, 0) + 1
