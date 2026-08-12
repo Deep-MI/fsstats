@@ -199,7 +199,7 @@ def _gradient(X, Zcols, W, invH, L, phi, re, ni):
     return gr
 
 
-def _fit_init(X, Zcols, y, ni):
+def _fit_init(X, Zcols, y, ni, Bhat=None):
     """
     Starting values for linear mixed-effects iterative estimation.
     These starting values are based on the ordinary least squares estimators.
@@ -214,6 +214,10 @@ def _fit_init(X, Zcols, y, ni):
         Data matrix (nm, nv) whose columns represent the data vector for each voxel/vertex. Rows must correspond to rows in X.
     ni : ndarray
         List (nc,) whose entries are the number of repeated measures for each subject. Order must correspond to order of X.
+    Bhat : ndarray, optional
+        Precomputed OLS estimate (p, nv) for y, i.e. pinv(X) @ y. Useful when this function is called
+        repeatedly for many columns of a shared y with the same X, to avoid recomputing pinv(X) each time.
+        If None (default), computed internally.
 
     Returns
     -------
@@ -228,7 +232,8 @@ def _fit_init(X, Zcols, y, ni):
     q = len(Zcols)
     n = sum(ni)
     Z = X[:, Zcols]
-    Bhat = np.linalg.pinv(X) @ y
+    if Bhat is None:
+        Bhat = np.linalg.pinv(X) @ y
     t1 = 0
     t2 = 0
     t3 = 0

@@ -108,6 +108,16 @@ def _parse_arguments():
         metavar="<filename>",
         required=False,
     )
+    mass_univariate.add_argument(
+        "--spatial-covariance",
+        dest="spatial_covariance",
+        help="Model spatial covariance of the residuals within homogeneous surface regions instead of fitting "
+             "each vertex independently. Requires --surface to resolve to an anatomical surface file with a "
+             "sibling <hemi>.sphere file. Default: False.",
+        default=False,
+        action="store_true",
+        required=False,
+    )
 
     # technical
     expert = parser.add_argument_group("Expert options")
@@ -210,6 +220,11 @@ def _parse_arguments():
 
         if args.filename is not None and args.surface is None:
             print("ERROR: the --surface argument is required when using --y, exiting. Use --help to see details.")
+            print()
+            sys.exit(1)
+
+        if args.spatial_covariance and args.table is not None:
+            print("ERROR: --spatial-covariance is only supported for mass-univariate analyses (with --y, not --table), exiting. Use --help to see details.")
             print()
             sys.exit(1)
 

@@ -37,6 +37,27 @@ def read_mgh(filename):
     LOGGER.info(f"Found data with shape {dat.shape}")
     return img, dat
 
+def read_surface(filename):
+    """
+    Read a FreeSurfer surface file.
+
+    Parameters
+    ----------
+    filename : str
+        Filename of a FreeSurfer surface file (e.g., lh.white, lh.sphere).
+
+    Returns
+    -------
+    coords : ndarray
+        Vertex coordinates (nv, 3).
+    faces : ndarray
+        Zero-based triangle vertex indices (nf, 3).
+    """
+    LOGGER.info(f"Reading {filename}")
+    coords, faces = nb.freesurfer.io.read_geometry(filename)
+    LOGGER.info(f"Found surface with {coords.shape[0]} vertices and {faces.shape[0]} faces")
+    return coords, faces
+
 def read_label(filename):
     """
     Read FreeSurfer label files.

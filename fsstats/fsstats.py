@@ -17,10 +17,19 @@ from .cfg.config import get_defaults
 from .cfg.logging import setup_logging
 from .doc.documentation import _get_help_text
 from .lme.fit import fit
+from .lme.spatial import fit_spatial
 from .lme.test import test
 from .utils.exporting import write_mgh
 from .utils.helper import _all_identical_elements_consecutive
-from .utils.importing import read_clusters, read_contrasts, read_design_matrix, read_label, read_mgh, read_table
+from .utils.importing import (
+    read_clusters,
+    read_contrasts,
+    read_design_matrix,
+    read_label,
+    read_mgh,
+    read_surface,
+    read_table,
+)
 
 # ==============================================================================
 # LOGGING
@@ -151,6 +160,7 @@ def _evaluate_args(args):
         params.SURFACE = None
         params.HEMI = None
     params.SKIP_ESTIMATION = args.skip_estimation
+    params.SPATIAL_COVARIANCE = args.spatial_covariance
     params.num_cores = args.num_cores
     params.num_iterations = args.num_iterations
     params.epsilon = args.epsilon
@@ -285,6 +295,26 @@ def _check_params(params):
             LOGGER.error('Hemisphere after <SURFACE> must be either lh or rh.')
             raise argparse.ArgumentTypeError('Hemisphere after <SURFACE> must be either lh or rh.')
 
+    # spatial covariance
+    # only available for mass-univariate analyses
+    # requires --surface to resolve to an anatomical surface file, with a sibling <hemi>.sphere file
+    if params.SPATIAL_COVARIANCE:
+        if params.ISTABLE:
+            LOGGER.error("Spatial covariance is only available for mass-univariate (--y) analyses.")
+            raise argparse.ArgumentTypeError("Spatial covariance is only available for mass-univariate (--y) analyses.")
+        if not os.path.isfile(params.SURFACE_DIR):
+            LOGGER.error("Spatial covariance requires --surface to resolve to an anatomical surface file (e.g. lh.white).")
+            raise argparse.ArgumentTypeError(
+                "Spatial covariance requires --surface to resolve to an anatomical surface file (e.g. lh.white)."
+            )
+        sphere = os.path.join(os.path.dirname(params.SURFACE_DIR), f"{params.HEMI}.sphere")
+        if not os.path.exists(sphere):
+            LOGGER.error(f"Spherical surface {sphere} could not be found; required for spatial covariance.")
+            raise argparse.ArgumentTypeError(
+                f"Spherical surface {sphere} could not be found; required for spatial covariance."
+            )
+        params.SPHERE_DIR = sphere
+
     # skip estimation
     # estimates.pkl must exist in glmdir
     if params.SKIP_ESTIMATION:
@@ -371,6 +401,30 @@ def _run_estimation(params):
         for s in stats.keys():
             betas.update({ params.L[s] : stats[s]['Bhat'].squeeze()})
         pd.DataFrame.from_dict(betas, orient="index").to_csv(os.path.join(params.GLMDIR, 'beta.txt'), sep=" ", header=False)
+    elif params.SPATIAL_COVARIANCE:
+        LOGGER.info("Running mass-univariate analysis with spatial covariance")
+        anat_coords, _ = read_surface(params.SURFACE_DIR)
+        sphere_coords, sphere_faces = read_surface(params.SPHERE_DIR)
+        stats, regions = fit_spatial(
+            X=params.X,
+            Y=params.Y,
+            Zcols=params.U,
+            clusters=params.Z,
+            maskvtx=params.M,
+            coords=anat_coords,
+            sphere_coords=sphere_coords,
+            faces=sphere_faces,
+            prs=prs,
+            nit=params.num_iterations,
+            e=params.epsilon,
+            verbose=False
+            )
+        # output
+        betas = np.zeros((params.Y.shape[1], 1, 1, params.X.shape[1]))
+        for s in stats.keys():
+            betas[s,0,0,:] = stats[s]['Bhat'].squeeze()
+        write_mgh(dat=betas, filename=os.path.join(params.GLMDIR, 'beta.mgh'))
+        write_mgh(dat=regions.reshape(-1, 1, 1).astype(np.float32), filename=os.path.join(params.GLMDIR, 'regions.mgh'))
     else:
         LOGGER.info("Running mass-univariate analysis")
         stats = fit(
@@ -524,7 +578,7 @@ def _run_lme(args):
 # ------------------------------------------------------------------------------
 # run_lme
 
-def run_lme(table=None, filename=None, design_matrix=None, contrasts=None, random_effects=None, clusters=None, glmdir=None, mask=None, surface=None, hemi=None, skip_estimation=False, **kwargs):
+def run_lme(table=None, filename=None, design_matrix=None, contrasts=None, random_effects=None, clusters=None, glmdir=None, mask=None, surface=None, hemi=None, skip_estimation=False, spatial_covariance=False, **kwargs):
     """
     Run mixed-effects modeling and inference.
 
@@ -553,6 +607,10 @@ def run_lme(table=None, filename=None, design_matrix=None, contrasts=None, rando
         Name of hemisphere (lh or rh). Default: None.
     skip_estimation : bool
         Skip estimation. Useful to compute additional contrasts. Requires existing glmdir with estimates.pkl file. Default: False.
+    spatial_covariance : bool
+        Model spatial covariance of the residuals within homogeneous surface regions instead of fitting each
+        vertex independently. Only supported for mass-univariate analyses (filename, not table). Requires
+        surface to resolve to an anatomical surface file with a sibling <hemi>.sphere file. Default: False.
     **kwargs : dict
         Additional keyword arguments, including:
         - num_cores (int):  Number of CPU cores used in parallel processing. Default: 1.
@@ -584,6 +642,8 @@ def run_lme(table=None, filename=None, design_matrix=None, contrasts=None, rando
         errors.append("'glmdir' is required")
     if filename is not None and (surface is None or hemi is None):
         errors.append("'surface' and 'hemi' are both required when 'filename' is provided")
+    if spatial_covariance and table is not None:
+        errors.append("'spatial_covariance' is only supported for mass-univariate analyses (with 'filename', not 'table')")
     if errors:
         raise ValueError(f"Invalid arguments to run_lme(): {'; '.join(errors)}")
 
@@ -621,6 +681,7 @@ def run_lme(table=None, filename=None, design_matrix=None, contrasts=None, rando
     else:
         my_args.surface = None
     my_args.skip_estimation = skip_estimation
+    my_args.spatial_covariance = spatial_covariance
 
     #
 
