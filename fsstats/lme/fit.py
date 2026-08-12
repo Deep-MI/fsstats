@@ -271,7 +271,72 @@ def _fit_init(X, Zcols, y, ni, Bhat=None):
     return D0, phisq0
 
 
-def _fit_fs(X, Zcols, Y, ni, nit, e, label, return_random_effects_estimates, return_minimal_information, verbose):
+def _fit_step(X, Z, Y, D, phisq, ni):
+    """
+    One Fisher-scoring update step: given the current random-effects covariance D and residual
+    variance phisq, compute the per-cluster inverse marginal covariance W, the stacked marginal
+    covariance SIGMA, the fixed-effects information matrix H (and its inverse), and the fixed-effects
+    estimate(s) Bhat. Shared by the per-vertex (_fit_fs, below) and per-region
+    (spatial.py::_fit_region) Fisher-scoring iterations, which differ only in whether Y (and hence
+    Bhat) has one column (a single vertex) or one column per vertex in a region.
+
+    Parameters
+    ----------
+    X : ndarray
+        Design matrix, ordered according to time for each subject (nm, p).
+    Z : ndarray
+        Random-effects design matrix, X[:, Zcols] (nm, nr).
+    Y : ndarray
+        Data matrix (nm, ncols); ncols=1 for a single vertex, or one column per vertex in a region.
+    D : ndarray
+        Current estimate of the random effects covariance matrix (nr, nr).
+    phisq : float
+        Current estimate of the within-subject residual variance.
+    ni : ndarray
+        List (nc,) whose entries are the number of repeated measures for each subject. Order must correspond to order of X.
+
+    Returns
+    -------
+    W : ndarray
+        Inverses of the estimated marginal covariance matrices for each subject, stacked (nm, max(ni)).
+    SIGMA : ndarray
+        Estimated marginal covariance matrices for each subject, stacked (nm, max(ni)).
+    H : ndarray
+        Fisher information matrix for the fixed effects (p, p).
+    invH : ndarray
+        Inverse of H, the asymptotic covariance matrix of the fixed effects (p, p).
+    Bhat : ndarray
+        Fixed-effects estimate(s) (p, ncols).
+    """
+
+    n = X.shape[0]
+    p = X.shape[1]
+    q = Z.shape[1]
+    m = len(ni)
+    W = np.zeros((n, max(ni)))
+    SIGMA = np.zeros_like(W)
+    H = np.zeros((p, p))
+    Term = np.zeros((p, Y.shape[1]))
+    scInvD = solve(D, np.eye(q)) * phisq
+    posi = 0
+    for i in range(m):
+        posf = posi + ni[i]
+        Zi = Z[posi:posf, :]
+        Wi = (np.eye(ni[i]) - Zi @ solve(Zi.T @ Zi + scInvD, Zi.T)) / phisq
+        W[posi:posf, :ni[i]] = Wi
+        SIGMA[posi:posf, :ni[i]] = Zi @ D @ Zi.T + np.eye(ni[i]) * phisq
+        Xi = X[posi:posf, :]
+        Ti = Xi.T @ Wi
+        H += Ti @ Xi
+        Term += Ti @ Y[posi:posf, :]
+        posi = posf
+    invH = solve(H, np.eye(p))
+    Bhat = invH @ Term
+
+    return W, SIGMA, H, invH, Bhat
+
+
+def _fit_fs(X, Zcols, Y, ni, nit, e, label, return_random_effects_estimates, return_minimal_information, verbose, Bhat0=None):
     """
     Linear mixed-effects estimation by the Fisher scoring algorithm.
 
@@ -297,6 +362,11 @@ def _fit_fs(X, Zcols, Y, ni, nit, e, label, return_random_effects_estimates, ret
         Return minimal information.
     verbose : bool
         Increase verbosity.
+    Bhat0 : ndarray, optional
+        Precomputed OLS estimate (p, 1) for Y, i.e. pinv(X) @ Y, forwarded to _fit_init's starting-value
+        computation. Since X (and hence pinv(X)) is the same for every vertex, callers that fit many
+        vertices against the same X can precompute it once and pass it in here to avoid recomputing
+        pinv(X) on every call. If None (default), computed internally by _fit_init.
 
     Returns
     -------
@@ -314,13 +384,10 @@ def _fit_fs(X, Zcols, Y, ni, nit, e, label, return_random_effects_estimates, ret
     for k in range(q):
         for j in range(k+1):
             ind[(k*q)+j] = True
-    n = np.sum(ni)
-    W = np.zeros((n, max(ni)))
-    SIGMA = np.zeros_like(W)
     lreml = np.zeros(nit)
 
     # Starting values
-    D, phisq = _fit_init(X, Zcols, Y, ni)
+    D, phisq = _fit_init(X, Zcols, Y, ni, Bhat=Bhat0)
     L = cholesky(D)
     phi = np.sqrt(phisq)
     theta = np.concatenate([L.flatten('F'), phi.flatten()]) # phi has dims (1,1), therefore flatten
@@ -331,25 +398,7 @@ def _fit_fs(X, Zcols, Y, ni, nit, e, label, return_random_effects_estimates, ret
     while tf:
         it += 1
         # Computation of W = SIGMA^-1 and H
-        posi = 0
-        H = np.zeros((p, p))
-        Term = np.zeros((p, 1))
-        scInvD = solve(D, np.eye(q)) * phisq
-        for i in range(m):
-            posf = posi + ni[i]
-            Zi = Z[posi:posf, :]
-            #Wi = (np.eye(ni[i]) - Zi @ inv(Zi.T @ Zi + scInvD) @ Zi.T) / phisq
-            Wi = (np.eye(ni[i]) - Zi @ solve(Zi.T @ Zi + scInvD, Zi.T)) / phisq
-            W[posi:posf, :ni[i]] = Wi
-            SIGMA[posi:posf, :ni[i]] = Zi @ D @ Zi.T + np.eye(ni[i]) * phisq
-            Xi = X[posi:posf, :]
-            Ti = Xi.T @ Wi
-            H += Ti @ Xi
-            Term += Ti @ Y[posi:posf]
-            posi = posf
-        invH = solve(H, np.eye(p))
-
-        Bhat = invH @ Term
+        W, SIGMA, H, invH, Bhat = _fit_step(X, Z, Y, D, phisq, ni)
         r = Y - X @ Bhat
         posi = 0
         lremlit = 0
@@ -514,8 +563,13 @@ def fit(X, Zcols, Y, clusters, maskvtx, prs, nit, e, return_random_effects_estim
 
     nv_masked = Y_masked.shape[1]
 
+    # pinv(X) does not depend on Y, so it is the same for every vertex; compute the OLS starting-value
+    # estimate for all (masked) vertices at once here, instead of recomputing pinv(X) inside _fit_init
+    # on every one of the nv_masked calls to _fit_fs below.
+    Bhat_ols = np.linalg.pinv(X) @ Y_masked
+
     # Processing function
-    def process(i, X, Zcols, Y_masked, ni, nit, e, return_random_effects_estimates, return_minimal_information, verbose):
+    def process(i, X, Zcols, Y_masked, Bhat_ols, ni, nit, e, return_random_effects_estimates, return_minimal_information, verbose):
         return _fit_fs(
             X=X,
             Zcols=Zcols,
@@ -526,13 +580,14 @@ def fit(X, Zcols, Y, clusters, maskvtx, prs, nit, e, return_random_effects_estim
             label=str(i),
             return_random_effects_estimates=return_random_effects_estimates,
             return_minimal_information=return_minimal_information,
-            verbose=verbose
+            verbose=verbose,
+            Bhat0=Bhat_ols[:, i:i+1]
         )
 
     #
     if prs > 1:
         stats_masked = list(tqdm(Parallel(return_as="generator", n_jobs=prs)(delayed(process)(
-                    i, X, Zcols, Y_masked, ni, nit, e, return_random_effects_estimates, return_minimal_information, verbose
+                    i, X, Zcols, Y_masked, Bhat_ols, ni, nit, e, return_random_effects_estimates, return_minimal_information, verbose
                     )
                 for i in range(nv_masked)
                 ),
@@ -540,7 +595,7 @@ def fit(X, Zcols, Y, clusters, maskvtx, prs, nit, e, return_random_effects_estim
             ))
     else:
         stats_masked = [
-            process(i, X, Zcols, Y_masked, ni, nit, e, return_random_effects_estimates, return_minimal_information, verbose)
+            process(i, X, Zcols, Y_masked, Bhat_ols, ni, nit, e, return_random_effects_estimates, return_minimal_information, verbose)
             for i in range(nv_masked)
         ]
 

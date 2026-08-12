@@ -17,7 +17,7 @@ from scipy.linalg import cholesky, det, solve
 from scipy.spatial.distance import cdist
 from tqdm import tqdm
 
-from .fit import _fit_fs, _fit_init
+from .fit import _fit_fs, _fit_init, _fit_step
 
 LOGGER = logging.getLogger(__name__)
 
@@ -859,35 +859,14 @@ def _fit_region(X, Zcols, Y, ni, Theta0, Dist, nit, e, label, verbose):
     theta = np.concatenate([L.flatten("F"), [phi, a]])
     ind = np.concatenate([ind_D, np.ones(2, dtype=bool)])
 
-    W = np.zeros((n, max(ni)))
     lreml = np.zeros(nit)
 
     tf = True
     it = 0
     while tf:
         it += 1
-        posi = 0
-        H = np.zeros((p, p))
-        scInvD = solve(D, np.eye(q)) * phisq
-        for i in range(m):
-            posf = posi + ni[i]
-            Zi = Z[posi:posf, :]
-            Wi = (np.eye(ni[i]) - Zi @ solve(Zi.T @ Zi + scInvD, Zi.T)) / phisq
-            W[posi:posf, : ni[i]] = Wi
-            Xi = X[posi:posf, :]
-            H += Xi.T @ Wi @ Xi
-            posi = posf
-        invH = solve(H, np.eye(p))
-
-        posi = 0
-        Term = np.zeros((p, nv_region))
-        for i in range(m):
-            posf = posi + ni[i]
-            Xi = X[posi:posf, :]
-            Wi = W[posi:posf, : ni[i]]
-            Term += Xi.T @ Wi @ Y[posi:posf, :]
-            posi = posf
-        Bhat = invH @ Term
+        # Computation of W = SIGMA^-1 and H (SIGMA is unused in the region-wise likelihood)
+        W, _, H, invH, Bhat = _fit_step(X, Z, Y, D, phisq, ni)
 
         G, GDa = _spatial_derivative(Dist, a)
         try:
