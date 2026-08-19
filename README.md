@@ -2,7 +2,7 @@
 
 ## Overview
 
-The `fsstats` package provides univariate and mass-univariate statistical modeling and inference tools for [FastSurfer](http://fastsurfer.org) and [FreeSurfer](https://surfer.nmr.mgh.harvard.edu) imaging data. It contains two modules: `glm`, a lean Python port of a subset of FreeSurfer's [mri_glmfit](https://surfer.nmr.mgh.harvard.edu/fswiki/mri_glmfit) tool for ordinary least squares (GLM) analyses, and `lme`, a revision, extension, and translation to the Python language of Freesurfer's Matlab-based [LME](https://surfer.nmr.mgh.harvard.edu/fswiki/LinearMixedEffectsModels) tools
+The `fsstats` package provides univariate and mass-univariate statistical modeling and inference tools for [FastSurfer](http://fastsurfer.org) and [FreeSurfer](https://surfer.nmr.mgh.harvard.edu) imaging data. It contains two modules: `glm`, a lean Python port of a subset of FreeSurfer's [mri_glmfit](https://surfer.nmr.mgh.harvard.edu/fswiki/mri_glmfit) tool for ordinary least squares (GLM) analyses, and `lme`, a revision, extension, and translation to the Python language of Freesurfer's Matlab-based [LME](https://surfer.nmr.mgh.harvard.edu/fswiki/LinearMixedEffectsModels) tools.
 
 
 ## Description
@@ -464,6 +464,13 @@ If you use these tools in your analysis please cite:
   Building Resolution-Independence into Deep Learning Segmentation Methods -
   A Solution for HighRes Brain MRI. NeuroImage 251 (2022), 118933.
   https://dx.doi.org/10.1016/j.neuroimage.2022.118933
+
+If using the GLM module, please additionally cite:
+
+- Fischl, B. (2012). FreeSurfer. NeuroImage, 62(2), 774-781. 
+ <https://dx.doi.org/10.1016/j.neuroimage.2012.01.021>
+
+If using the LME module, please additionally cite:
 
 - Bernal-Rusiel JL, Greve DN, Reuter M, Fischl B, Sabuncu MR.
   Statistical Analysis of Longitudinal Neuroimage Data with
