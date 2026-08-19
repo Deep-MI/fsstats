@@ -1,6 +1,7 @@
 """
 This module provides the main functionality of the fastsurfer statistical
-modeling and inference package.
+modeling and inference package, for both linear mixed-effects (lme) and
+ordinary least squares (glm) modeling and inference.
 
 """
 
@@ -16,16 +17,19 @@ import pandas as pd
 from .cfg.config import get_defaults
 from .cfg.logging import setup_logging
 from .doc.documentation import _get_help_text
-from .lme.fit import fit
+from .glm.fit import fit as fit_glm
+from .glm.test import test as test_glm
+from .lme.fit import fit as fit_lme
 from .lme.spatial import fit_spatial
-from .lme.test import test
+from .lme.test import test as test_lme
 from .utils.exporting import write_mgh
-from .utils.helper import _all_identical_elements_consecutive
+from .utils.helper import _all_identical_elements_consecutive, _signed_sig_and_z
 from .utils.importing import (
     read_clusters,
     read_contrasts,
     read_design_matrix,
     read_label,
+    read_mask,
     read_mgh,
     read_surface,
     read_table,
@@ -116,6 +120,11 @@ def _evaluate_args(args):
     """
     Set and return internal parameters.
 
+    Shared between the lme and glm modules, since most of the fields (input data,
+    design matrix, contrasts, output directory, surface, mask/label) are evaluated
+    identically for both; args.module ("lme" or "glm") selects the module-specific
+    fields.
+
     Parameters
     ----------
 
@@ -137,21 +146,22 @@ def _evaluate_args(args):
     class params:
         pass
 
+    params.MODULE = args.module
+
     if args.filename is not None:
         params.FILENAME = os.path.abspath(args.filename)
-        if args.mask is not None:
-            params.MASK = os.path.abspath(args.mask)
-        else:
-            params.MASK = None
+        params.LABEL = os.path.abspath(args.label) if args.label is not None else None
+        if params.MODULE == "glm":
+            params.MASK = os.path.abspath(args.mask) if args.mask is not None else None
         params.ISTABLE = False
     if args.table is not None:
         params.FILENAME = os.path.abspath(args.table)
-        params.MASK = None
+        params.LABEL = None
+        if params.MODULE == "glm":
+            params.MASK = None
         params.ISTABLE = True
     params.DESIGN_MATRIX = os.path.abspath(args.design_matrix)
     params.CONTRASTS = [ os.path.abspath(x) for x in args.contrasts ]
-    params.RFX = args.random_effects
-    params.CLUSTERS = os.path.abspath(args.clusters)
     params.GLMDIR = os.path.abspath(args.glmdir)
     if args.surface is not None:
         params.SURFACE = args.surface[0]
@@ -159,11 +169,18 @@ def _evaluate_args(args):
     else:
         params.SURFACE = None
         params.HEMI = None
-    params.SKIP_ESTIMATION = args.skip_estimation
-    params.SPATIAL_COVARIANCE = args.spatial_covariance
-    params.num_cores = args.num_cores
-    params.num_iterations = args.num_iterations
-    params.epsilon = args.epsilon
+
+    if params.MODULE == "lme":
+        params.RFX = args.random_effects
+        params.CLUSTERS = os.path.abspath(args.clusters)
+        params.SKIP_ESTIMATION = args.skip_estimation
+        params.SPATIAL_COVARIANCE = args.spatial_covariance
+        params.num_cores = args.num_cores
+        params.num_iterations = args.num_iterations
+        params.epsilon = args.epsilon
+    elif params.MODULE == "glm":
+        params.YHAT_SAVE = args.yhat_save
+        params.ERES_SAVE = args.eres_save
 
     LOGGER.info(f"Using {params.GLMDIR} as output directory")
 
@@ -176,13 +193,18 @@ def _check_params(params):
     """
     Checks that input data corresponds to pre-specified formats.
 
+    Shared between the lme and glm modules for the parts that are evaluated
+    identically (data, design matrix, contrasts, surface, mask/label); params.MODULE
+    ("lme" or "glm") selects the module-specific checks (random effects and clusters
+    for lme; the volume mask for glm).
+
     Expected formats are:
 
     Y     np.array, nm x nv
     X     np.array, nm x p
     C     np.array, nf x p
-    U     np.array, nr
-    Z     list, nm
+    U     np.array, nr           (lme only)
+    Z     list, nm               (lme only)
     with
     nm    number of observations
     nv    number of vertices / variables
@@ -212,8 +234,10 @@ def _check_params(params):
         params.H = None
     else:
         params.H, params.Y = read_mgh(params.FILENAME)
-        if params.MASK is not None:
-            params.M = read_label(params.MASK)
+        if params.LABEL is not None:
+            params.M = read_label(params.LABEL)
+        elif params.MODULE == "glm" and params.MASK is not None:
+            params.M = read_mask(params.MASK)
         else:
             params.M = None
         params.L = None
@@ -239,6 +263,9 @@ def _check_params(params):
     if np.linalg.matrix_rank(params.X) != params.X.shape[1]:
         LOGGER.error("Design matrix cannot have redundant columns.")
         raise argparse.ArgumentTypeError("Design matrix cannot have redundant columns.")
+    if params.MODULE == "glm" and params.X.shape[0] - params.X.shape[1] < 1:
+        LOGGER.error("Design matrix must have at least one more row than columns (degrees of freedom must be at least 1).")
+        raise argparse.ArgumentTypeError("Design matrix must have at least one more row than columns (degrees of freedom must be at least 1).")
 
     # contrasts
     # each contrast matrix must have two dimensions
@@ -252,23 +279,25 @@ def _check_params(params):
             LOGGER.error("Each contrast vector / matrix must have as many columns as the design matrix.")
             raise argparse.ArgumentTypeError("Each contrast vector / matrix must have as many columns as the design matrix.")
 
-    # random effects
-    # indices cannot be larger than number of columns in the design matrix
-    params.U = np.array(params.RFX) - 1 # convert from 1-based to 0-based
-    if np.max(params.U + 1) > params.X.shape[1]:
-        LOGGER.error("Indices of random effects cannot be larger than the number of columns of the design matrix.")
-        raise argparse.ArgumentTypeError("Indices of random effects cannot be larger than the number of columns of the design matrix.")
+    if params.MODULE == "lme":
+        # random effects
+        # indices cannot be larger than number of columns in the design matrix
+        params.U = np.array(params.RFX) - 1 # convert from 1-based to 0-based
+        if np.max(params.U + 1) > params.X.shape[1]:
+            LOGGER.error("Indices of random effects cannot be larger than the number of columns of the design matrix.")
+            raise argparse.ArgumentTypeError("Indices of random effects cannot be larger than the number of columns of the design matrix.")
 
-    # clusters
-    # entries must correspond to rows of the design matrix
-    # entries must be sorted (not necessarily alphabetically or numerically) according to clusters
-    params.Z = read_clusters(params.CLUSTERS)
-    if len(params.Z) != params.X.shape[0]:
-        LOGGER.error("List of clusters must have as many items as rows of the design matrix.")
-        raise argparse.ArgumentTypeError("List of clusters must have as many items as rows of the design matrix.")
-    if _all_identical_elements_consecutive(params.Z) is False:
-        LOGGER.error("List of clusters must be sorted (not necessarily alphabetically or numerically) according to clusters, i.e. cluster elements must be in consecutive blocks.")
-        raise argparse.ArgumentTypeError("List of clusters must be sorted (not necessarily alphabetically or numerically) according to clusters, i.e. cluster elements must be in consecutive blocks.")
+        # clusters
+        # entries must correspond to rows of the design matrix
+        # entries must be sorted (not necessarily alphabetically or numerically) according to clusters
+        params.Z = read_clusters(params.CLUSTERS)
+        if len(params.Z) != params.X.shape[0]:
+            LOGGER.error("List of clusters must have as many items as rows of the design matrix.")
+            raise argparse.ArgumentTypeError("List of clusters must have as many items as rows of the design matrix.")
+        if _all_identical_elements_consecutive(params.Z) is False:
+            LOGGER.error("List of clusters must be sorted (not necessarily alphabetically or numerically) according to clusters, i.e. cluster elements must be in consecutive blocks.")
+            raise argparse.ArgumentTypeError("List of clusters must be sorted (not necessarily alphabetically or numerically) according to clusters, i.e. cluster elements must be in consecutive blocks.")
+
     # surface
     # surface must be present in the current directory, the data directory, subjects dir, or freesurfer home (if it exists)
     if params.SURFACE is not None:
@@ -295,32 +324,33 @@ def _check_params(params):
             LOGGER.error('Hemisphere after <SURFACE> must be either lh or rh.')
             raise argparse.ArgumentTypeError('Hemisphere after <SURFACE> must be either lh or rh.')
 
-    # spatial covariance
-    # only available for mass-univariate analyses
-    # requires --surface to resolve to an anatomical surface file, with a sibling <hemi>.sphere file
-    if params.SPATIAL_COVARIANCE:
-        if params.ISTABLE:
-            LOGGER.error("Spatial covariance is only available for mass-univariate (--y) analyses.")
-            raise argparse.ArgumentTypeError("Spatial covariance is only available for mass-univariate (--y) analyses.")
-        if not os.path.isfile(params.SURFACE_DIR):
-            LOGGER.error("Spatial covariance requires --surface to resolve to an anatomical surface file (e.g. lh.white).")
-            raise argparse.ArgumentTypeError(
-                "Spatial covariance requires --surface to resolve to an anatomical surface file (e.g. lh.white)."
-            )
-        sphere = os.path.join(os.path.dirname(params.SURFACE_DIR), f"{params.HEMI}.sphere")
-        if not os.path.exists(sphere):
-            LOGGER.error(f"Spherical surface {sphere} could not be found; required for spatial covariance.")
-            raise argparse.ArgumentTypeError(
-                f"Spherical surface {sphere} could not be found; required for spatial covariance."
-            )
-        params.SPHERE_DIR = sphere
+    if params.MODULE == "lme":
+        # spatial covariance
+        # only available for mass-univariate analyses
+        # requires --surface to resolve to an anatomical surface file, with a sibling <hemi>.sphere file
+        if params.SPATIAL_COVARIANCE:
+            if params.ISTABLE:
+                LOGGER.error("Spatial covariance is only available for mass-univariate (--y) analyses.")
+                raise argparse.ArgumentTypeError("Spatial covariance is only available for mass-univariate (--y) analyses.")
+            if not os.path.isfile(params.SURFACE_DIR):
+                LOGGER.error("Spatial covariance requires --surface to resolve to an anatomical surface file (e.g. lh.white).")
+                raise argparse.ArgumentTypeError(
+                    "Spatial covariance requires --surface to resolve to an anatomical surface file (e.g. lh.white)."
+                )
+            sphere = os.path.join(os.path.dirname(params.SURFACE_DIR), f"{params.HEMI}.sphere")
+            if not os.path.exists(sphere):
+                LOGGER.error(f"Spherical surface {sphere} could not be found; required for spatial covariance.")
+                raise argparse.ArgumentTypeError(
+                    f"Spherical surface {sphere} could not be found; required for spatial covariance."
+                )
+            params.SPHERE_DIR = sphere
 
-    # skip estimation
-    # estimates.pkl must exist in glmdir
-    if params.SKIP_ESTIMATION:
-        if not(os.path.exists(os.path.join(params.GLMDIR, 'estimates.pkl'))):
-            LOGGER.error('Skipping estimation requires existing GLM directory with estimates.pkl file.')
-            raise argparse.ArgumentTypeError('Skipping estimation requires existing GLM directory with estimates.pkl file.')
+        # skip estimation
+        # estimates.pkl must exist in glmdir
+        if params.SKIP_ESTIMATION:
+            if not(os.path.exists(os.path.join(params.GLMDIR, 'estimates.pkl'))):
+                LOGGER.error('Skipping estimation requires existing GLM directory with estimates.pkl file.')
+                raise argparse.ArgumentTypeError('Skipping estimation requires existing GLM directory with estimates.pkl file.')
 
     return params
 
@@ -330,6 +360,9 @@ def _check_params(params):
 def _get_num_cores(params, warn_if_single):
     """
     Determine the number of CPU cores to use for parallel processing.
+
+    Only used by the lme module; glm's OLS fit/test are fully vectorized and do
+    not use parallel processing.
 
     Parameters
     ----------
@@ -356,11 +389,11 @@ def _get_num_cores(params, warn_if_single):
     return prs
 
 # ------------------------------------------------------------------------------
-#  run estimation
+#  run lme estimation
 
-def _run_estimation(params):
+def _run_lme_estimation(params):
     """
-    Run the estimation submodule.
+    Run the lme estimation submodule.
 
     Parameters
     ----------
@@ -383,7 +416,7 @@ def _run_estimation(params):
     # estimation
     if params.ISTABLE:
         LOGGER.info("Running univariate analysis")
-        stats = fit(
+        stats = fit_lme(
             X=params.X,
             Y=params.Y,
             Zcols=params.U,
@@ -427,7 +460,7 @@ def _run_estimation(params):
         write_mgh(dat=regions.reshape(-1, 1, 1).astype(np.float32), filename=os.path.join(params.GLMDIR, 'regions.mgh'))
     else:
         LOGGER.info("Running mass-univariate analysis")
-        stats = fit(
+        stats = fit_lme(
             X=params.X,
             Y=params.Y,
             Zcols=params.U,
@@ -454,11 +487,11 @@ def _run_estimation(params):
     return params, stats
 
 # ------------------------------------------------------------------------------
-#  run inference
+#  run lme inference
 
-def _run_inference(params, stats):
+def _run_lme_inference(params, stats):
     """
-    Run the inference submodule.
+    Run the lme inference submodule.
 
     Parameters
     ----------
@@ -484,37 +517,44 @@ def _run_inference(params, stats):
         LOGGER.info("Running univariate inference")
         for key, value in params.C.items():
             LOGGER.info(f"Evaluating contrast {key}")
-            fstats[key] = test(stats=stats, C=value, prs=prs, bias_correct=True, verbose=False)
+            fstats[key] = test_lme(stats=stats, C=value, prs=prs, bias_correct=True, verbose=False)
+            ncontrastrows = value.shape[0]
             gamma = dict()
             F = dict()
             sig = dict()
+            z = dict()
             for s in range(len(fstats[key])):
                 gamma.update({params.L[s] : float((params.C[key] @ stats[s]['Bhat']).item())})
                 F.update({params.L[s] : fstats[key][s]['F']})
-                sig.update({params.L[s] : float(-np.log10(fstats[key][s]['pval']))})
+                signed_sig, z_val = _signed_sig_and_z(fstats[key][s]['sig'], fstats[key][s]['sgn'], ncontrastrows)
+                sig.update({params.L[s] : signed_sig})
+                z.update({params.L[s] : z_val})
             pd.DataFrame(params.C[key]).to_csv(os.path.join(params.GLMDIR, key, 'C.dat'), header=False, index=False)
             pd.DataFrame.from_dict(gamma, orient='index').to_csv(os.path.join(params.GLMDIR, key, 'gamma.txt'), sep=" ", header=False)
             pd.DataFrame.from_dict(F, orient='index').to_csv(os.path.join(params.GLMDIR, key, 'F.txt'), sep=" ", header=False)
             pd.DataFrame.from_dict(sig, orient='index').to_csv(os.path.join(params.GLMDIR, key, 'sig.txt'), sep=" ", header=False)
+            pd.DataFrame.from_dict(z, orient='index').to_csv(os.path.join(params.GLMDIR, key, 'z.txt'), sep=" ", header=False)
     else:
         LOGGER.info("Running mass-univariate inference")
         for key, value in params.C.items():
             LOGGER.info(f"Evaluating contrast {key}")
-            fstats[key] = test(stats=stats, C=value, prs=prs, bias_correct=False, verbose=False)
+            fstats[key] = test_lme(stats=stats, C=value, prs=prs, bias_correct=False, verbose=False)
+            ncontrastrows = value.shape[0]
             gamma = np.zeros((params.Y.shape[1], 1, 1))
             F = np.zeros((params.Y.shape[1], 1, 1))
             sig = np.zeros((params.Y.shape[1], 1, 1))
-            sgn = np.zeros((params.Y.shape[1], 1, 1))
+            z = np.zeros((params.Y.shape[1], 1, 1))
             for s in fstats[key].keys():
                 gamma[s,0,0] = float((params.C[key] @ stats[s]['Bhat']).item())
                 F[s,0,0] = fstats[key][s]['F']
-                sig[s,0,0] = fstats[key][s]['sig']
-                sgn[s,0,0] = fstats[key][s]['sgn']
+                signed_sig, z_val = _signed_sig_and_z(fstats[key][s]['sig'], fstats[key][s]['sgn'], ncontrastrows)
+                sig[s,0,0] = signed_sig
+                z[s,0,0] = z_val
             pd.DataFrame(params.C[key]).to_csv(os.path.join(params.GLMDIR, key, 'C.dat'), header=False, index=False)
             write_mgh(dat=gamma, filename=os.path.join(params.GLMDIR, key, 'gamma.mgh'))
             write_mgh(dat=F, filename=os.path.join(params.GLMDIR, key, 'F.mgh'))
             write_mgh(dat=sig, filename=os.path.join(params.GLMDIR, key, 'sig.mgh'))
-            write_mgh(dat=sgn, filename=os.path.join(params.GLMDIR, key, 'sgn.mgh'))
+            write_mgh(dat=z, filename=os.path.join(params.GLMDIR, key, 'z.mgh'))
 
     # output
     with open(os.path.join(params.GLMDIR, "statistics.pkl"), "wb") as f:
@@ -558,14 +598,14 @@ def _run_lme(args):
 
         # run estimation
         if params.SKIP_ESTIMATION is False:
-            params, stats = _run_estimation(params)
+            params, stats = _run_lme_estimation(params)
         else:
             with open(os.path.join(params.GLMDIR, 'estimates.pkl'), 'rb') as f:
                 LOGGER.info(f"Reading {os.path.join(params.GLMDIR, 'estimates.pkl')}")
                 stats = pickle.load(f)
 
         # run inference
-        params = _run_inference(params, stats)
+        fstats = _run_lme_inference(params, stats)
 
     except Exception as e:
         LOGGER.error("Error Information:")
@@ -578,7 +618,7 @@ def _run_lme(args):
 # ------------------------------------------------------------------------------
 # run_lme
 
-def run_lme(table=None, filename=None, design_matrix=None, contrasts=None, random_effects=None, clusters=None, glmdir=None, mask=None, surface=None, hemi=None, skip_estimation=False, spatial_covariance=False, **kwargs):
+def run_lme(table=None, filename=None, design_matrix=None, contrasts=None, random_effects=None, clusters=None, glmdir=None, label=None, surface=None, hemi=None, skip_estimation=False, spatial_covariance=False, **kwargs):
     """
     Run mixed-effects modeling and inference.
 
@@ -599,7 +639,7 @@ def run_lme(table=None, filename=None, design_matrix=None, contrasts=None, rando
         Filename of a list of clusters (e.g., case IDs), where each line corresponds to the same row in the design matrix.
     glmdir : str
         Directory where the results will be written.
-    mask : str
+    label : str
         Filename of a FreeSurfer label file that will be used to select vertices for analysis.
     surface : str
         Name of template surface (e.g., fsaverage). Default: None.
@@ -667,10 +707,11 @@ def run_lme(table=None, filename=None, design_matrix=None, contrasts=None, rando
     #
 
     my_args = Args(kwargs)
+    my_args.module = "lme"
 
     my_args.table = table
     my_args.filename = filename
-    my_args.mask = mask
+    my_args.label = label
     my_args.design_matrix = design_matrix
     my_args.contrasts = contrasts
     my_args.random_effects = random_effects
@@ -686,6 +727,271 @@ def run_lme(table=None, filename=None, design_matrix=None, contrasts=None, rando
     #
 
     _run_lme(my_args)
+
+    #
+
+    return vars(my_args)
+
+# ------------------------------------------------------------------------------
+#  run glm estimation
+
+def _run_glm_estimation(params):
+    """
+    Run the glm estimation submodule.
+
+    Parameters
+    ----------
+
+    params : dict
+        Parameters to configure the analysis.
+
+    Returns
+    -------
+    dict
+        Parameters to configure the analysis.
+    dict
+        Model estimation results.
+    """
+
+    LOGGER.info("Running univariate analysis" if params.ISTABLE else "Running mass-univariate analysis")
+
+    stats = fit_glm(
+        X=params.X,
+        Y=params.Y,
+        maskvtx=params.M,
+        return_yhat=params.YHAT_SAVE,
+        return_eres=params.ERES_SAVE,
+        )
+
+    nv = params.Y.shape[1]
+    maskvtx = stats['maskvtx']
+
+    if params.ISTABLE:
+        pd.DataFrame(params.X).to_csv(os.path.join(params.GLMDIR, 'Xg.dat'), sep=" ", header=False, index=False)
+        labels = [params.L[i] for i in maskvtx]
+        pd.DataFrame(stats['Bhat'].T, index=labels).to_csv(os.path.join(params.GLMDIR, 'beta.txt'), sep=" ", header=False)
+        pd.Series(stats['rvar'], index=labels).to_csv(os.path.join(params.GLMDIR, 'rvar.txt'), sep=" ", header=False)
+        pd.Series(np.sqrt(stats['rvar']), index=labels).to_csv(os.path.join(params.GLMDIR, 'rstd.txt'), sep=" ", header=False)
+        if params.YHAT_SAVE:
+            pd.DataFrame(stats['yhat'].T, index=labels).to_csv(os.path.join(params.GLMDIR, 'yhat.txt'), sep=" ", header=False)
+        if params.ERES_SAVE:
+            pd.DataFrame(stats['eres'].T, index=labels).to_csv(os.path.join(params.GLMDIR, 'eres.txt'), sep=" ", header=False)
+    else:
+        beta = np.zeros((nv, 1, 1, params.X.shape[1]))
+        beta[maskvtx,0,0,:] = stats['Bhat'].T
+        write_mgh(dat=beta, filename=os.path.join(params.GLMDIR, 'beta.mgh'))
+        rvar = np.zeros((nv, 1, 1))
+        rvar[maskvtx,0,0] = stats['rvar']
+        write_mgh(dat=rvar, filename=os.path.join(params.GLMDIR, 'rvar.mgh'))
+        write_mgh(dat=np.sqrt(rvar), filename=os.path.join(params.GLMDIR, 'rstd.mgh'))
+        if params.M is not None:
+            mask = np.zeros((nv, 1, 1))
+            mask[maskvtx,0,0] = 1
+            write_mgh(dat=mask, filename=os.path.join(params.GLMDIR, 'mask.mgh'))
+        if params.YHAT_SAVE:
+            yhat = np.zeros((nv, 1, 1, params.Y.shape[0]))
+            yhat[maskvtx,0,0,:] = stats['yhat'].T
+            write_mgh(dat=yhat, filename=os.path.join(params.GLMDIR, 'yhat.mgh'))
+        if params.ERES_SAVE:
+            eres = np.zeros((nv, 1, 1, params.Y.shape[0]))
+            eres[maskvtx,0,0,:] = stats['eres'].T
+            write_mgh(dat=eres, filename=os.path.join(params.GLMDIR, 'eres.mgh'))
+
+    # return
+    return params, stats
+
+# ------------------------------------------------------------------------------
+#  run glm inference
+
+def _run_glm_inference(params, stats):
+    """
+    Run the glm inference submodule.
+
+    Parameters
+    ----------
+
+    params : dict
+        Parameters to configure the analysis.
+    stats : dict
+        Results obtained from the estimation submodule.
+
+    Returns
+    -------
+    dict
+        Statistical inference results.
+    """
+
+    LOGGER.info("Running univariate inference" if params.ISTABLE else "Running mass-univariate inference")
+
+    fstats = dict()
+    nv = params.Y.shape[1]
+    maskvtx = stats['maskvtx']
+    labels = [params.L[i] for i in maskvtx] if params.ISTABLE else None
+
+    for key, value in params.C.items():
+        LOGGER.info(f"Evaluating contrast {key}")
+        fstats[key] = test_glm(Bhat=stats['Bhat'], rvar=stats['rvar'], dof=stats['dof'], X=stats['X'], C=value)
+        ncontrastrows = value.shape[0]
+        sig, z = _signed_sig_and_z(fstats[key]['sig'], fstats[key]['sgn'], ncontrastrows)
+
+        pd.DataFrame(value).to_csv(os.path.join(params.GLMDIR, key, 'C.dat'), header=False, index=False)
+        if params.ISTABLE:
+            pd.DataFrame(fstats[key]['gamma'].T, index=labels).to_csv(os.path.join(params.GLMDIR, key, 'gamma.txt'), sep=" ", header=False)
+            pd.Series(fstats[key]['F'], index=labels).to_csv(os.path.join(params.GLMDIR, key, 'F.txt'), sep=" ", header=False)
+            pd.Series(sig, index=labels).to_csv(os.path.join(params.GLMDIR, key, 'sig.txt'), sep=" ", header=False)
+            pd.Series(z, index=labels).to_csv(os.path.join(params.GLMDIR, key, 'z.txt'), sep=" ", header=False)
+        else:
+            gamma = np.zeros((nv, 1, 1, ncontrastrows))
+            gamma[maskvtx,0,0,:] = fstats[key]['gamma'].T
+            F = np.zeros((nv, 1, 1))
+            F[maskvtx,0,0] = fstats[key]['F']
+            sig_out = np.zeros((nv, 1, 1))
+            sig_out[maskvtx,0,0] = sig
+            z_out = np.zeros((nv, 1, 1))
+            z_out[maskvtx,0,0] = z
+            write_mgh(dat=gamma, filename=os.path.join(params.GLMDIR, key, 'gamma.mgh'))
+            write_mgh(dat=F, filename=os.path.join(params.GLMDIR, key, 'F.mgh'))
+            write_mgh(dat=sig_out, filename=os.path.join(params.GLMDIR, key, 'sig.mgh'))
+            write_mgh(dat=z_out, filename=os.path.join(params.GLMDIR, key, 'z.mgh'))
+
+    # return
+    return fstats
+
+# ------------------------------------------------------------------------------
+# _run_glm
+
+def _run_glm(args):
+    """
+    Run the glm submodules.
+
+    Parameters
+    ----------
+
+    args : dict
+        Parsed arguments.
+
+    Returns
+    -------
+    None
+        The function does not return any specific objects.
+    """
+
+    #
+    try:
+        #
+        setup_logging(args)
+
+        # create directories
+        _create_directories(args)
+
+        # convert arguments to params
+        params = _evaluate_args(args)
+
+        # check params
+        params = _check_params(params)
+
+        # run estimation
+        params, stats = _run_glm_estimation(params)
+
+        # run inference
+        fstats = _run_glm_inference(params, stats)
+
+    except Exception as e:
+        LOGGER.error("Error Information:")
+        LOGGER.error("Type: %s", type(e))
+        LOGGER.error("Value: %s", e.args)
+
+        raise
+
+
+# ------------------------------------------------------------------------------
+# run_glm
+
+def run_glm(table=None, filename=None, design_matrix=None, contrasts=None, glmdir=None, mask=None, label=None, surface=None, hemi=None, yhat_save=False, eres_save=False):
+    """
+    Run GLM (ordinary least squares) modeling and inference.
+
+    Parameters
+    ----------
+
+    table : str
+        Filename of a table output, e.g. produced by asegstats2table or aparcstats2table.
+    filename : str
+        Filename of a concatenated overlay file, e.g. produced by mris_preproc.
+    design_matrix : str
+        Filename of a design matrix.
+    contrasts : list
+        Filename(s) of a contrast matrix or vector.
+    glmdir : str
+        Directory where the results will be written.
+    mask : str
+        Filename of a binary mask volume that will be used to select vertices/voxels for analysis. Mutually
+        exclusive with label.
+    label : str
+        Filename of a FreeSurfer label file that will be used to select vertices for analysis. Mutually
+        exclusive with mask.
+    surface : str
+        Name of template surface (e.g., fsaverage). Default: None.
+    hemi : str
+        Name of hemisphere (lh or rh). Default: None.
+    yhat_save : bool
+        Save the signal estimate (yhat). Default: False.
+    eres_save : bool
+        Save the residual error (eres). Default: False.
+
+    Returns
+    -------
+    dict
+        A dictionary of input arguments.
+    """
+
+    # validate required argument combinations (mirrors the CLI's checks in
+    # utils/parser.py._parse_arguments, adapted for library use)
+    errors = []
+    if filename is None and table is None:
+        errors.append("either 'filename' or 'table' must be provided")
+    if filename is not None and table is not None:
+        errors.append("'filename' and 'table' cannot both be provided")
+    if design_matrix is None:
+        errors.append("'design_matrix' is required")
+    if contrasts is None:
+        errors.append("'contrasts' is required")
+    if glmdir is None:
+        errors.append("'glmdir' is required")
+    if filename is not None and (surface is None or hemi is None):
+        errors.append("'surface' and 'hemi' are both required when 'filename' is provided")
+    if mask is not None and label is not None:
+        errors.append("'mask' and 'label' cannot both be provided")
+    if errors:
+        raise ValueError(f"Invalid arguments to run_glm(): {'; '.join(errors)}")
+
+    # define class
+
+    class Args:
+        pass
+
+    #
+
+    my_args = Args()
+    my_args.module = "glm"
+
+    my_args.table = table
+    my_args.filename = filename
+    my_args.mask = mask
+    my_args.label = label
+    my_args.design_matrix = design_matrix
+    my_args.contrasts = contrasts
+    my_args.glmdir = glmdir
+    if surface is not None and hemi is not None:
+        my_args.surface = [surface, hemi]
+    else:
+        my_args.surface = None
+    my_args.yhat_save = yhat_save
+    my_args.eres_save = eres_save
+
+    #
+
+    _run_glm(my_args)
 
     #
 

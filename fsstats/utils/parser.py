@@ -11,9 +11,16 @@ from ..cfg.version import get_version
 # ------------------------------------------------------------------------------
 # parse_arguments
 
-def _parse_arguments():
+def _parse_arguments(module):
     """
     an internal function to parse input arguments
+
+    Parameters
+    ----------
+
+    module : str
+        Which program is parsing arguments, "lme" or "glm". Determines which
+        argument groups are offered and which arguments are required.
 
     """
     # setup parser
@@ -42,24 +49,25 @@ def _parse_arguments():
         metavar="<filename>",
         required=False,
     )
-    required.add_argument(
-        "--rfx",
-        dest="random_effects",
-        help="Column indices (1-based) of random effects in the design matrix.",
-        nargs="+",
-        type=int,
-        default=None,
-        metavar="<int>",
-        required=False
-    )
-    required.add_argument(
-        "--clusters",
-        dest="clusters",
-        help="Filename of a list of clusters (e.g., case IDs), where each line corresponds to the same row in the design matrix.",
-        default=None,
-        metavar="<filename>",
-        required=False
-    )
+    if module == "lme":
+        required.add_argument(
+            "--rfx",
+            dest="random_effects",
+            help="Column indices (1-based) of random effects in the design matrix.",
+            nargs="+",
+            type=int,
+            default=None,
+            metavar="<int>",
+            required=False
+        )
+        required.add_argument(
+            "--clusters",
+            dest="clusters",
+            help="Filename of a list of clusters (e.g., case IDs), where each line corresponds to the same row in the design matrix.",
+            default=None,
+            metavar="<filename>",
+            required=False
+        )
     required.add_argument(
         "--glmdir",
         dest="glmdir",
@@ -101,62 +109,90 @@ def _parse_arguments():
         required=False,
     )
     mass_univariate.add_argument(
-        "--mask",
-        dest="mask",
+        "--label",
+        dest="label",
         help="Filename of a FreeSurfer label file that will be used to select vertices for analysis. Default: All vertices.",
         default=None,
         metavar="<filename>",
         required=False,
     )
-    mass_univariate.add_argument(
-        "--spatial-covariance",
-        dest="spatial_covariance",
-        help="Model spatial covariance of the residuals within homogeneous surface regions instead of fitting "
-             "each vertex independently. Requires --surface to resolve to an anatomical surface file with a "
-             "sibling <hemi>.sphere file. Default: False.",
-        default=False,
-        action="store_true",
-        required=False,
-    )
+    if module == "glm":
+        mass_univariate.add_argument(
+            "--mask",
+            dest="mask",
+            help="Filename of a binary mask volume that will be used to select vertices/voxels for analysis. "
+                 "Mutually exclusive with --label. Default: All vertices/voxels.",
+            default=None,
+            metavar="<filename>",
+            required=False,
+        )
+        mass_univariate.add_argument(
+            "--yhat-save",
+            dest="yhat_save",
+            help="Save the signal estimate (yhat). Default: False.",
+            default=False,
+            action="store_true",
+            required=False,
+        )
+        mass_univariate.add_argument(
+            "--eres-save",
+            dest="eres_save",
+            help="Save the residual error (eres). Default: False.",
+            default=False,
+            action="store_true",
+            required=False,
+        )
+    if module == "lme":
+        mass_univariate.add_argument(
+            "--spatial-covariance",
+            dest="spatial_covariance",
+            help="Model spatial covariance of the residuals within homogeneous surface regions instead of fitting "
+                 "each vertex independently. Requires --surface to resolve to an anatomical surface file with a "
+                 "sibling <hemi>.sphere file. Default: False.",
+            default=False,
+            action="store_true",
+            required=False,
+        )
 
     # technical
-    expert = parser.add_argument_group("Expert options")
+    if module == "lme":
+        expert = parser.add_argument_group("Expert options")
 
-    expert.add_argument(
-        "--cores",
-        dest="num_cores",
-        help="Number of CPU cores used in parallel processing. Default: 1.",
-        type=int,
-        default=get_defaults("num_cores"),
-        metavar="<int>",
-        required=False,
-    )
-    expert.add_argument(
-        "--iterations",
-        dest="num_iterations",
-        help="Maximum number of iterations to achieve convergence. Default: 20.",
-        type=int,
-        default=get_defaults("num_iterations"),
-        metavar="<int>",
-        required=False,
-    )
-    expert.add_argument(
-        "--epsilon",
-        dest="epsilon",
-        help="Epsilon for gradient norm to determine convergence. Default: 1e-1.",
-        type=float,
-        default=get_defaults("epsilon"),
-        metavar="<float>",
-        required=False,
-    )
-    expert.add_argument(
-        "--skip-estimation",
-        dest="skip_estimation",
-        help="Skip estimation. Useful to compute additional contrasts. Requires existing glmdir with estimates.pkl file. Default: False.",
-        default=False,
-        action="store_true",
-        required=False,
-    )
+        expert.add_argument(
+            "--cores",
+            dest="num_cores",
+            help="Number of CPU cores used in parallel processing. Default: 1.",
+            type=int,
+            default=get_defaults("num_cores"),
+            metavar="<int>",
+            required=False,
+        )
+        expert.add_argument(
+            "--iterations",
+            dest="num_iterations",
+            help="Maximum number of iterations to achieve convergence. Default: 20.",
+            type=int,
+            default=get_defaults("num_iterations"),
+            metavar="<int>",
+            required=False,
+        )
+        expert.add_argument(
+            "--epsilon",
+            dest="epsilon",
+            help="Epsilon for gradient norm to determine convergence. Default: 1e-1.",
+            type=float,
+            default=get_defaults("epsilon"),
+            metavar="<float>",
+            required=False,
+        )
+        expert.add_argument(
+            "--skip-estimation",
+            dest="skip_estimation",
+            help="Skip estimation. Useful to compute additional contrasts. Requires existing glmdir with estimates.pkl file. Default: False.",
+            default=False,
+            action="store_true",
+            required=False,
+        )
 
     # define help
     help = parser.add_argument_group("Getting help")
@@ -179,6 +215,11 @@ def _parse_arguments():
         args = parser.parse_args(["--help"])
     else:
         args = parser.parse_args()
+
+    # remember which program parsed these arguments, so downstream code
+    # (_evaluate_args, _check_params in fsstats.py) can branch without a
+    # second parameter threaded through every call
+    args.module = module
 
     #
     if args.more_help is False:
@@ -203,15 +244,16 @@ def _parse_arguments():
             print()
             sys.exit(1)
 
-        if args.random_effects is None:
-            print("ERROR: the --rfx argument is required, exiting. Use --help to see details.")
-            print()
-            sys.exit(1)
+        if module == "lme":
+            if args.random_effects is None:
+                print("ERROR: the --rfx argument is required, exiting. Use --help to see details.")
+                print()
+                sys.exit(1)
 
-        if args.clusters is None:
-            print("ERROR: the --clusters argument is required, exiting. Use --help to see details.")
-            print()
-            sys.exit(1)
+            if args.clusters is None:
+                print("ERROR: the --clusters argument is required, exiting. Use --help to see details.")
+                print()
+                sys.exit(1)
 
         if args.glmdir is None:
             print("ERROR: the --glmdir argument is required, exiting. Use --help to see details.")
@@ -223,10 +265,17 @@ def _parse_arguments():
             print()
             sys.exit(1)
 
-        if args.spatial_covariance and args.table is not None:
-            print("ERROR: --spatial-covariance is only supported for mass-univariate analyses (with --y, not --table), exiting. Use --help to see details.")
-            print()
-            sys.exit(1)
+        if module == "lme":
+            if args.spatial_covariance and args.table is not None:
+                print("ERROR: --spatial-covariance is only supported for mass-univariate analyses (with --y, not --table), exiting. Use --help to see details.")
+                print()
+                sys.exit(1)
+
+        if module == "glm":
+            if args.mask is not None and args.label is not None:
+                print("ERROR: --mask and --label cannot be present at the same time, exiting. Use --help to see details.")
+                print()
+                sys.exit(1)
 
     #
     return args

@@ -1,1 +1,1 @@
-from .fsstats import run_lme
+from .fsstats import run_glm, run_lme

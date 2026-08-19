@@ -79,6 +79,7 @@ tracker = 'https://github.com/Deep-MI/fsstats/issues'
 [project.scripts]
 mri_lmefit = 'fsstats.cli:lmefit_deprecated'
 fsstats_lme = 'fsstats.cli:lmefit'
+fsstats_glm = 'fsstats.cli:glmfit'
 
 [tool.setuptools.dynamic]
 version = {file = 'VERSION'}
@@ -89,7 +90,7 @@ dependencies = {file = 'requirements.txt'}
 #include-package-data = false
 
 [tool.setuptools.packages.find]
-include = ['fsstats', 'fsstats.cli', 'fsstats.cfg', 'fsstats.doc', 'fsstats.utils', 'fsstats.lme']
+include = ['fsstats', 'fsstats.cli', 'fsstats.cfg', 'fsstats.doc', 'fsstats.utils', 'fsstats.lme', 'fsstats.glm']
 exclude = ['docker', 'singularity']
 
 [tool.setuptools.package-data]

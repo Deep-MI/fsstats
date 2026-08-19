@@ -77,6 +77,26 @@ def read_label(filename):
     LOGGER.info(f"Found label with shape {lbl.shape}")
     return lbl
 
+def read_mask(filename):
+    """
+    Read a binary mask volume and return the indices of its nonzero voxels/vertices.
+
+    Parameters
+    ----------
+    filename : str
+        Filename of a binary mask volume (e.g., mgh/mgz).
+
+    Returns
+    -------
+    msk : ndarray
+        Array of zero-based voxel/vertex indices where the mask is nonzero.
+    """
+    LOGGER.info(f"Reading {filename}")
+    _, dat = read_mgh(filename)
+    msk = np.flatnonzero(dat)
+    LOGGER.info(f"Found mask with {msk.shape[0]} nonzero voxels/vertices")
+    return msk
+
 def read_table(filename):
     """
     Read tabular data with a header and a first column of IDs.
