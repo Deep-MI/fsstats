@@ -138,8 +138,8 @@ Required and optional arguments for mass-univariate analysis:
   --surface <surface name> <lh|rh>
                         Template surface (e.g., fsaverage) and hemisphere (lh or rh).
   --label <filename>    Filename of a FreeSurfer label file that will be used to select vertices for analysis. Default: All vertices.
-  --spatial-covariance  Estimate spatial among neighborhoods of vertices instead of treating all vertices independently. Default: treating all vertices
-                        as independent.
+  --spatial-covariance  Model spatial covariance of the residuals within homogeneous surface regions instead of fitting each vertex independently.
+                        Requires --surface to resolve to an anatomical surface file with a sibling <hemi>.sphere file. Default: False.
 
 Expert options:
   --cores <int>         Number of CPU cores used in parallel processing. Default: 1.
