@@ -30,4 +30,7 @@ def write_mgh(dat, filename):
         The function does not return any specific objects.
     """
     LOGGER.info(f"Writing {filename}")
+    if len(dat.shape)==4:
+        if dat.shape[3]==1:
+            dat = dat.squeeze(axis=3)
     nb.freesurfer.save(nb.MGHImage(dataobj=dat.astype(np.float32), affine=np.eye(4)), filename)

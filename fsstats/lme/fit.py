@@ -174,6 +174,7 @@ def _gradient(X, Zcols, W, invH, L, phi, re, ni):
                 a2 += rei.T @ Wi @ Maux @ rei
                 M1 += Xi.T @ Wi @ Maux @ Xi
                 posi = posf
+            a2 = np.float64(a2.item())
             a3 = np.trace(-invH @ M1)
             gr[jk - 1] = (a1 + a2 - a3) / 2
 
@@ -192,8 +193,9 @@ def _gradient(X, Zcols, W, invH, L, phi, re, ni):
         a2 += rei.T @ Maux @ rei
         M1 += Xi.T @ Maux @ Xi
         posi = posf
+    a2 = np.float64(a2.item())
     a3 = np.trace(-invH @ M1)
-    gr[nth - 1] = phi * (a1 + a2 - a3)
+    gr[nth - 1] = phi.item() * (a1 + a2 - a3)
 
     # Return
     return gr
@@ -256,7 +258,7 @@ def _fit_init(X, Zcols, y, ni, Bhat=None):
 
     phisq0 = (t2 - Bhat.T @ t3) / (n - (m - 1) * q - p)
     if phisq0 <= 0:
-        phisq0 = 1
+        phisq0 = np.array([[1]])
 
     D0 = (t4 - phisq0 * t1) / m
 
@@ -415,7 +417,7 @@ def _fit_fs(X, Zcols, Y, ni, nit, e, label, return_random_effects_estimates, ret
         theta[ind] += invEI @ gr
         lremlit = 0.5 * (lremlit - np.log(det(H)))
         eps = np.linalg.norm(gr)
-        lreml[it-1] = lremlit
+        lreml[it-1] = lremlit.item()
         if verbose:
             LOGGER.info(f'Likelihood at FS iteration {it}: {lremlit.item()}; gradient norm: {eps}')
 

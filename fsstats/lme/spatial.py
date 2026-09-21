@@ -524,7 +524,7 @@ def _fit_init_all(X, Zcols, Y, ni):
     for i in range(nv):
         D0, phisq0 = _fit_init(X, Zcols, Y[:, i : i + 1], ni, Bhat=Bhat_ols[:, i : i + 1])
         Theta0[:-1, i] = D0.flatten("F")[ind]
-        Theta0[-1, i] = phisq0
+        Theta0[-1, i] = phisq0.item()
 
     Re0 = Y - X @ Bhat_ols
 
@@ -1008,6 +1008,7 @@ def fit_spatial(X, Zcols, Y, clusters, maskvtx, coords, sphere_coords, faces, pr
     Theta0_full[:, maskvtx] = Theta0
     Re0_full = np.zeros((n, nv))
     Re0_full[:, maskvtx] = Re0
+    import pdb ; pdb.set_trace()
 
     regions, _ = _region_grow(sphere_coords, faces, Theta0_full, Re0_full, maskvtx, nst=nst, prc=prc)
     region_ids = np.unique(regions[regions != 0])
@@ -1028,6 +1029,7 @@ def fit_spatial(X, Zcols, Y, clusters, maskvtx, coords, sphere_coords, faces, pr
             verbose=verbose,
         )
         return vertex_idx, region_stats
+
 
     LOGGER.info("Starting model fitting at each region ...")
     if prs > 1:

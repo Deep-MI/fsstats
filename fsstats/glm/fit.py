@@ -9,7 +9,7 @@ import numpy as np
 LOGGER = logging.getLogger(__name__)
 
 
-def fit(X, Y, maskvtx, return_yhat, return_eres):
+def fit(X, Y, maskvtx=None, return_yhat=False, return_eres=False):
     """
     Vertex/voxel-wise ordinary least squares estimation.
 
