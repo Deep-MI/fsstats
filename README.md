@@ -4,10 +4,7 @@
 
 The `fsstats` package provides univariate and mass-univariate statistical modeling and inference tools for [FastSurfer](http://fastsurfer.org) and [FreeSurfer](https://surfer.nmr.mgh.harvard.edu) imaging data. It contains two modules: `glm`, a lean Python port of a subset of FreeSurfer's [mri_glmfit](https://surfer.nmr.mgh.harvard.edu/fswiki/mri_glmfit) tool for ordinary least squares (GLM) analyses, and `lme`, a revision, extension, and translation to the Python language of Freesurfer's Matlab-based [LME](https://surfer.nmr.mgh.harvard.edu/fswiki/LinearMixedEffectsModels) tools.
 
-
-## Description
-
-This page provides general, usage, and installation information about the `fsstats` toolbox.
+This page provides general, technical usage, and installation information about the `fsstats` toolbox. See the [tutorial](../TUTORIAL.md) for an illustrative explanation about using the software.
 
 ___
 
@@ -43,6 +40,7 @@ The core functionality of this toolbox is to conduct statistical analyses for Fa
 - `lme` provides univariate and mass-univariate linear mixed-effects analyses for clustered (e.g., longitudinal) data, where observations belonging to the same cluster (e.g., repeated visits of the same subject) are not independent.
 
 Here, *univariate analysis* refers to the analysis of one or few variables, where the input data can be represented in tabular format; a typical example is the analysis of extracted volume or thickness estimates in a limited set of larger brain regions (regions of interest). In contrast, *mass-univariate* refers to analysis of a very large number of variables, and typically means analyses of single voxels or vertices, which require dedicated, image-based preprocessing and input formats.
+
 ___
 
 ## Installation
@@ -77,9 +75,8 @@ ___
 
 ```text
 fsstats_glm --X <filename> --C <filename> [--C <filename>] --glmdir <directory>
-    [--table <filename>]
-    [--y <filename> ] [--surface <surface name> <lh|rh>] [--mask <filename>] [--label <filename>]
-    [--yhat-save] [--eres-save]
+    [--table <filename>] [--y <filename> ] [--surface <surface name> <lh|rh>] 
+    [--mask <filename>]  [--label <filename>] [--yhat-save] [--eres-save]
     [--help] [--detailed-help] [--version]
 
 Required arguments:
@@ -142,9 +139,9 @@ fsstats_glm \
 #### The LME module
 
 ```text
-fsstats_lme --X <filename> --C <filename> [--C <filename>]--rfx <int> [<int> ...] --clusters <filename> --glmdir <directory>
-    [--table <filename>]
-    [--y <filename> ] [--surface <surface name> <lh|rh>] [--label <filename>]
+fsstats_lme --X <filename> --C <filename> [--C <filename>]--rfx <int> [<int> ...]
+    --clusters <filename> --glmdir <directory> [--table <filename>] [--y <filename> ]
+    [--surface <surface name> <lh|rh>] [--label <filename>] [--spatial-covariance]
     [--cores <int>] [--iterations <int>] [--epsilon <float>] [--skip-estimation]
     [--help] [--detailed-help] [--version]
 
@@ -347,9 +344,7 @@ fstats = test(stats,
               verbose=False
               )
 ```
-
 ___
-
 
 ## Inputs and outputs
 
@@ -357,13 +352,13 @@ ___
 
 Argument | Used by | Description | Format
 ------|------|------------|------------------------
---table | lme, glm | Univariate data | Table including a header that describes the variable names and a first column of IDs; can have one or more variables. Output from FreeSurfer's `asegstats2table` or `aparcstats2table` will be accepted. Only needed for univariate analysis.
---y  | lme, glm | Preprocessed mass-univarate data | FreeSurfer mgh/mgz image file, can be obtained from `mris_preproc`. Only needed for mass-univariate analysis.
---label | lme, glm | Analysis mask for mass-univariate data | FreeSurfer label file, e.g. `lh.cortex`. Optional for mass-univariate analysis; if omitted (and, for `glm`, `--mask` is also omitted), all data will be used. Mutually exclusive with `--mask`.
---mask | glm | Analysis mask for mass-univariate data | Binary mask volume in mgh/mgz format, with the same number of voxels/vertices as `--y`. Optional; mutually exclusive with `--label`.
---X  | lme, glm | Design matrix | Table without header and without column of IDs; each row corresponds to one observation and each column corresponds to one parameter/variable in the model.
---C  | lme, glm | Contrast vector/matrix | Table without header, with one or more rows depending on the type of contrast, and as many columns as the design matrix.  Each column refers to the same column of the design matrix. One contrast vector/matrix per file; for multiple contrasts, specify multiple `--C` arguments.
---clusters | lme | Grouping structure of the data | Table without header and a single column. Must have as many rows as the design matrix, and each row corresponds to the same row in the design matrix. Indicates for every observation to which which cluster (e.g., person) it belongs; can be a list of repeated participant IDs. Not used by `glm`, which assumes independent observations.
+`--table` | lme, glm | Univariate data | Table including a header that describes the variable names and a first column of IDs; can have one or more variables. Output from FreeSurfer's `asegstats2table` or `aparcstats2table` will be accepted. Only needed for univariate analysis.
+`--y`  | lme, glm | Preprocessed mass-univarate data | FreeSurfer mgh/mgz image file, can be obtained from `mris_preproc`. Only needed for mass-univariate analysis.
+`--label` | lme, glm | Analysis mask for mass-univariate data | FreeSurfer label file, e.g. `lh.cortex`. Optional for mass-univariate analysis; if omitted (and, for `glm`, `--mask` is also omitted), all data will be used. Mutually exclusive with `--mask`.
+`--mask` | glm | Analysis mask for mass-univariate data | Binary mask volume in mgh/mgz format, with the same number of voxels/vertices as `--y`. Optional; mutually exclusive with `--label`.
+`--X`  | lme, glm | Design matrix | Table without header and without column of IDs; each row corresponds to one observation and each column corresponds to one parameter/variable in the model.
+`--C`  | lme, glm | Contrast vector/matrix | Table without header, with one or more rows depending on the type of contrast, and as many columns as the design matrix.  Each column refers to the same column of the design matrix. One contrast vector/matrix per file; for multiple contrasts, specify multiple `--C` arguments.
+`--clusters` | lme | Grouping structure of the data | Table without header and a single column. Must have as many rows as the design matrix, and each row corresponds to the same row in the design matrix. Indicates for every observation to which which cluster (e.g., person) it belongs; can be a list of repeated participant IDs. Not used by `glm`, which assumes independent observations.
 
 All tables can be separated by tab, comma, or space.
 
@@ -389,14 +384,18 @@ statistics.pkl | lme | internal file with statistics
 \<contrast_directory>/sig.{mgh,txt}   | lme, glm | sig-value of the contrast, signed for single-row (t-test-like) contrasts
 \<contrast_directory>/z.{mgh,txt}     | lme, glm | z-value corresponding to the sig-value's p-value, signed for single-row (t-test-like) contrasts
 
-The contrast estimate results from the application of the contrast vector or matrix to the model parameters. For single-row (t-test-like) contrasts, the sign of the contrast (`sign(gamma)`) is folded directly into `sig` and `z`; for multi-row (F-test) contrasts, sign is not meaningful and `sig`/`z` are left unsigned. This matches the convention used by FreeSurfer's `mri_glmfit`. The program produces `sig-values` instead of `p-values` for better representation and visualization of values that are very small or close to zero. `p-values` and `sig-values` can be converted into each other: `p = 10^(-sig)` and `sig = -log10(p)`. The following table gives a few examples.
+The contrast estimate results from the application of the contrast vector or matrix to the model parameters. For single-row (t-test-like) contrasts, the sign of the contrast (`sign(gamma)`) is folded directly into `sig` and `z`; for multi-row (F-test) contrasts, sign is not meaningful and `sig`/`z` are left unsigned. This matches the convention used by FreeSurfer's `mri_glmfit`. The program produces `sig-values` instead of `p-values` for better representation and visualization of values that are very small or close to zero. `p-values` and (unsigned) `sig-values` can be converted into each other: `p = 10^(-sig)` and `sig = -log10(p)`. The following table gives a few examples.
 
-p      |  sig
--------|-----
-0.05   | 1.3
-0.01   | 2.0
-0.001  | 3.0
-0.0001 | 4.0
+p       | sig
+--------|----
+0.05    | 1.3
+0.01    | 2.0
+0.005   | 2.3
+0.001   | 3.0
+0.0001  | 4.0
+0.00001 | 5.0
+
+___
 
 ## Deviations from original packages
 
@@ -407,14 +406,13 @@ p      |  sig
 - Weighted least squares (`--w`/`--wls`) and fixed-effects analysis (`--yffxvar`/`--ffxdof`/`--ffxdofdat`)
 - `--osgm`, `--pca`, `--sim` (permutation/Monte Carlo simulation and multiple-comparison correction), `--fsgd`, DTI and kinetic-modeling options (`--dti`, `--mrtm1`, `--mrtm2`, `--logan`)
 - Pruning (`--prune`) and smoothing (`--fwhm`/`--var-fwhm`)
-- `--skip-estimation`: since the ordinary least squares fit is closed-form and cheap to compute, `glm` does not cache estimates to disk for reuse
 
 ### Deviations from the lme toolbox
 
 Introducing the `glm` module also brought two changes to the existing `lme` module's command-line interface and outputs, made for consistency across both modules:
 
-1. **`--mask` renamed to `--label`.** The flag was always used to pass a FreeSurfer label file, so it is now named `--label` (matching `glm`, which additionally supports a distinct `--mask` for binary mask *volumes*, following `mri_glmfit`'s own convention). The Python API's `run_lme(mask=...)` parameter is now `run_lme(label=...)`.
-2. **Signed `sig` + `z`, no separate `sgn`.** Contrast output no longer includes a separate `sgn.mgh`/`sgn.txt` file. `sig.mgh`/`sig.txt` now has the contrast sign folded in directly for single-row (t-test-like) contrasts, and every contrast additionally gets a new `z.mgh`/`z.txt` (z-value) file — mirroring FreeSurfer's `mri_glmfit` convention.
+- `--mask` renamed to `--label`: the flag was always used to pass a FreeSurfer label file, so it is now named `--label` (matching `glm`, which additionally supports a distinct `--mask` for binary mask *volumes*, following `mri_glmfit`'s own convention). The Python API's `run_lme(mask=...)` parameter is now `run_lme(label=...)`.
+- Signed `sig` + `z`, no separate `sgn`: Contrast output no longer includes a separate `sgn.mgh`/`sgn.txt` file. `sig.mgh`/`sig.txt` now has the contrast sign folded in directly for single-row (t-test-like) contrasts, and every contrast additionally gets a new `z.mgh`/`z.txt` (z-value) file — mirroring FreeSurfer's `mri_glmfit` convention.
 
 ___
 
@@ -457,12 +455,12 @@ If you use these tools in your analysis please cite:
 
 - Henschel L, Conjeti S, Estrada S, Diers K, Fischl B, Reuter M, FastSurfer -
   A fast and accurate deep learning based neuroimaging pipeline, NeuroImage 219
-  (2020), 117012. https://doi.org/10.1016/j.neuroimage.2020.117012
+  (2020), 117012. <https://doi.org/10.1016/j.neuroimage.2020.117012>
 
 - Henschel L*, Kuegler D*, Reuter M. (*co-first). FastSurferVINN:
   Building Resolution-Independence into Deep Learning Segmentation Methods -
   A Solution for HighRes Brain MRI. NeuroImage 251 (2022), 118933.
-  https://dx.doi.org/10.1016/j.neuroimage.2022.118933
+  <https://dx.doi.org/10.1016/j.neuroimage.2022.118933>
 
 If using the GLM module, please additionally cite:
 
@@ -485,7 +483,7 @@ ___
 
 ## License
 
-This software is licensed under the MIT License, see associated LICENSE file
+This software is licensed under the Apache 2.0 License, see associated LICENSE file
 for details.
 
-Copyright (c) 2019 Image Analysis Group, DZNE e.V.
+Copyright (c) 2026 Artificial Intelligence in Medical Imaging Group, DZNE

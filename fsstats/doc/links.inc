@@ -17,7 +17,7 @@
 
 .. license
 
-.. _MIT license: https://opensource.org/licenses/MIT
+.. _Apache license: https://opensource.org/licenses/Apache-2-0
 
 
 .. fastsurfer

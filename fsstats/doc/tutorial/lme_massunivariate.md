@@ -4,19 +4,19 @@
 
 ## What this analysis is for
 
-This combines the previous two extensions: like [LME, univariate](lme_univariate.md), we use every longitudinal visit per subject and model subject as a random-effects cluster; like [GLM, mass-univariate](glm_massunivariate.md), the outcome is cortical thickness at every surface vertex rather than a single tabular value. This is the full analysis our running example has been building towards: does the rate of cortical thinning over time differ between MCI and CN, and where on the cortex?
+This combines the previous two extensions: like [LME, univariate](lme_univariate.md), we use every longitudinal visit per participant and model each participant as a random-effects cluster; like [GLM, mass-univariate](glm_massunivariate.md), the outcome is cortical thickness at every surface vertex rather than a single tabular value. This is the full analysis our running example has been building towards: does the rate of cortical thinning over time differ between AD and CN, and where on the cortex?
 
 Because a separate model is fit at every vertex and each fit iterates to convergence, this is the most computationally demanding of the four walkthroughs — parallelism (`--cores`) matters here.
 
 ## Inputs you need
 
-- `--y`: a concatenated cortical thickness overlay covering all subjects' visits, produced by `mris_preproc`, resampled to a common template surface.
+- `--y`: a concatenated cortical thickness overlay covering all participants' visits, produced by `mris_preproc`, resampled to a common template surface.
 - `--surface`: template surface and hemisphere, e.g. `fsaverage lh`.
 - `--label` (optional): restrict analysis to a region of interest, e.g. `lh.cortex.label`.
-- `--X`, `--C`, `--rfx`, `--clusters`: the same longitudinal design, contrasts, random-effects columns, and subject grouping as [LME, univariate](lme_univariate.md) — again, only the outcome data changes.
+- `--X`, `--C`, `--rfx`, `--clusters`: the same longitudinal design, contrasts, random-effects columns, and case grouping (`case_ids.txt`) as [LME, univariate](lme_univariate.md) — again, only the outcome data changes.
 - `--glmdir`: an output directory.
 
-See [DOCUMENTATION.md](../DOCUMENTATION.md#input-data-and-format-specifications) for exact format details.
+See the [documentation](../DOCUMENTATION.md#input-data-and-format-specifications) for exact format details.
 
 ## Building the design matrix and contrasts
 
@@ -31,20 +31,38 @@ fsstats_lme \
 --X /my/input/directory/longitudinal_design_matrix.txt \
 --C /my/input/directory/group_contrast.txt \
 --C /my/input/directory/group_by_time_contrast.txt \
---clusters /my/input/directory/subject_ids.txt \
+--clusters /my/input/directory/case_ids.txt \
 --rfx 1 2 \
 --surface fsaverage lh \
 --glmdir /my/output/directory/lme_massunivariate \
 --cores 4
 ```
 
-`--cores` distributes the per-vertex model fits across CPU cores — increase it to as many cores as you have available to speed up processing. Two related expert options are available if the default settings don't suit your data: `--iterations` (maximum iterations per vertex before giving up on convergence; default 20) and `--epsilon` (how strict the convergence criterion is; default 0.1).
+> **A note on runtimes and parallel processing:** unlike GLM's closed-form fit, a separate LME model is iteratively fit at every one of the (typically tens of thousands of) vertices, and these per-vertex fits are independent of one another — `--cores` distributes them across CPU cores to run in parallel. The default is 1 (no parallelism), which will be considerably slower. As a starting point, set `--cores` to the number of physical CPU cores available on your machine (maybe minus 1 or 2 to leave some capacity for other tasks); going beyond that rarely helps further, since the fits then have to compete for the same cores. Typical runtime for an analysis of **this ...** size, at various `--cores` settings: **to be measured and added here [...]**.
 
 ## Understanding the output
 
-Same structure as [GLM, mass-univariate](glm_massunivariate.md), but with `estimates.pkl`/`statistics.pkl` alongside the surface overlays: `beta.mgh`, and per-contrast `gamma.mgh`, `F.mgh`, `sig.mgh`, `z.mgh` in `group_contrast/` and `group_by_time_contrast/`. View them with `Freeview` or summarize clusters of significant vertices with `surfcluster`. See [DOCUMENTATION.md](../DOCUMENTATION.md#output-files-and-their-interpretation) for the full output reference.
+Same structure as [GLM, mass-univariate](glm_massunivariate.md): `beta.mgh`, and per-contrast `gamma.mgh`, `F.mgh`, `sig.mgh`, `z.mgh` in `group_contrast/` and `group_by_time_contrast/`. See [key concepts](../TUTORIAL.md#interpreting-the-output-beta-gamma-f-sig-and-z) for what these represent.
 
-Since model estimation is the expensive part here, `--skip-estimation` lets you re-run inference with new or additional contrasts against an existing `--glmdir` (which must already contain `estimates.pkl`) without re-fitting every vertex.
+Unlike the univariate analysis, mass-univariate LME does not compute per-case random-effects estimates at all (they are skipped here to keep runtime and output size manageable across tens of thousands of vertices) — only the fixed-effects results above are available.
+
+`fsstats` caches the fitted model internally, so once estimation has completed for this `--glmdir`, you can add `--skip-estimation` on a later run to evaluate new or additional contrasts without re-fitting every vertex.
+
+View the group-by-time effect's signed significance map with Freeview, for example:
+
+```bash
+freeview -f fsaverage/surf/lh.inflated:overlay=/my/output/directory/lme_massunivariate/group_by_time_contrast/sig.mgh:overlay_threshold=1.3,5
+```
+
+As in [GLM, mass-univariate](glm_massunivariate.md), this colors the surface by `sig` (here thresholded at sig ≥ 1.3, i.e. p ≤ 0.05): warm/cool colors mark where the group difference in the rate of thinning is positive/negative, and intensity reflects the strength of the effect. `sig.mgh`/`F.mgh` can also be further processed with `surfcluster` for cluster-based summaries.
+
+*(Figure to be added: a Freeview screenshot of the thresholded `sig.mgh` overlay for `group_by_time_contrast` on the inflated fsaverage surface.)*
+
+![Freeview screenshot of the group-by-time significance map](img/lme_massunivariate_sig.png)
+
+**A note on multiple comparisons:** as with [GLM, mass-univariate](glm_massunivariate.md), this map is one test per vertex and is not corrected for the many comparisons involved — see [key concepts](../TUTORIAL.md#a-note-on-multiple-comparisons) before interpreting individual vertices as significant.
+
+See the [documentation](../DOCUMENTATION.md#output-files-and-their-interpretation) for the full output reference.
 
 ## Optional: modeling spatial covariance
 
@@ -56,7 +74,7 @@ fsstats_lme \
 --label /my/input/directory/lh.cortex.label \
 --X /my/input/directory/longitudinal_design_matrix.txt \
 --C /my/input/directory/group_by_time_contrast.txt \
---clusters /my/input/directory/subject_ids.txt \
+--clusters /my/input/directory/case_ids.txt \
 --rfx 1 2 \
 --surface fsaverage lh \
 --glmdir /my/output/directory/lme_massunivariate_spatial \
@@ -64,4 +82,6 @@ fsstats_lme \
 --spatial-covariance
 ```
 
-This concludes the tutorial. For the complete argument and output reference, deviations from the original FreeSurfer/Matlab tools, and citations, see [DOCUMENTATION.md](../DOCUMENTATION.md).
+This additionally writes `regions.mgh`, showing which vertices were pooled together into each region for covariance estimation.
+
+This concludes the tutorial. For the complete argument and output reference, deviations from the original FreeSurfer/Matlab tools, and citations, see the [documentation](../DOCUMENTATION.md).
