@@ -320,7 +320,15 @@ def _compute_seeds(residuals, theta, coord2d, nst, prc):
         region_theta = theta[:, idx]
         seed_std[:, k] = region_theta.std(axis=1, ddof=1) if idx.size > 1 else 0.0
         centroid = coord2d[idx, :].mean(axis=0)
-        loc = np.argmin(np.sum(np.abs(coord2d[idx, :] - centroid), axis=1))
+        # need to introduce a caveat here: if two points are (almost) identical, i.e. close to precision,
+        # we identify all of them, and choose the one with the lower index
+        # original: loc = np.argmin(np.sum(np.abs(coord2d[idx, :] - centroid), axis=1))
+        arr = np.sum(np.abs(coord2d[idx, :] - centroid), axis=1)
+        loc = np.argmin(arr)
+        eps = 1e-12
+        if np.sum(np.abs(arr - arr[loc]) < eps) > 1:
+            loc = np.min(np.where(np.abs(arr - arr[loc]) < eps)[0]).astype(int)
+        # end caveat
         seed_local[k] = idx[loc]
 
     return labels, seed_local, seed_std
@@ -443,7 +451,7 @@ def _grow_regions(residuals, theta, coord2d, adjacency, maskvtx, nst, prc, max_r
     return labels
 
 
-def _region_grow(sphere_coords, faces, theta, residuals, maskvtx, nst=2, prc=95):
+def _create_regions(sphere_coords, faces, theta, residuals, maskvtx, nst=2, prc=95):
     """
     Segment a surface into homogeneous regions comprising locations with similar covariance components.
 
@@ -486,7 +494,7 @@ def _region_grow(sphere_coords, faces, theta, residuals, maskvtx, nst=2, prc=95)
 # whole-surface starting values
 
 
-def _fit_init_all(X, Zcols, Y, ni):
+def _fit_init_all(X, Zcols, Y, ni, prs):
     """
     Starting values at each (already masked) location for the region-wise linear mixed-effects
     iterative estimation, based on the ordinary least squares estimators.
@@ -501,6 +509,8 @@ def _fit_init_all(X, Zcols, Y, ni):
         Data matrix (nm, nv) whose columns represent the ordered data vector for each vertex.
     ni : ndarray
         List (nc,) whose entries are the number of repeated measures for each subject.
+    prs : int
+        Number of CPU cores used for parallel computing.
 
     Returns
     -------
@@ -520,11 +530,31 @@ def _fit_init_all(X, Zcols, Y, ni):
 
     Bhat_ols = np.linalg.pinv(X) @ Y
 
-    Theta0 = np.zeros((nth, nv))
-    for i in range(nv):
+    def process_compute_theta0(i):
+        Theta0 = np.zeros((nth))
         D0, phisq0 = _fit_init(X, Zcols, Y[:, i : i + 1], ni, Bhat=Bhat_ols[:, i : i + 1])
-        Theta0[:-1, i] = D0.flatten("F")[ind]
-        Theta0[-1, i] = phisq0.item()
+        Theta0[:-1] = D0.flatten("F")[ind]
+        Theta0[-1] = phisq0.item()
+        return Theta0
+
+    if prs > 1:
+        results = list(
+            tqdm(
+                Parallel(return_as="generator", n_jobs=prs)(delayed(process_compute_theta0)(nvi) for nvi in range(nv)),
+                total=nv,
+            )
+        )
+    else:
+        results = [process_compute_theta0(nvi) for nvi in range(nv)]
+
+    Theta0 = np.transpose(np.asarray(results))
+
+    # original, non-parallelized code:
+    # Theta0 = np.zeros((nth, nv))
+    # for i in range(nv):
+    #     D0, phisq0 = _fit_init(X, Zcols, Y[:, i : i + 1], ni, Bhat=Bhat_ols[:, i : i + 1])
+    #     Theta0[:-1, i] = D0.flatten("F")[ind]
+    #     Theta0[-1, i] = phisq0.item()
 
     Re0 = Y - X @ Bhat_ols
 
@@ -971,7 +1001,7 @@ def fit_spatial(X, Zcols, Y, clusters, maskvtx, coords, sphere_coords, faces, pr
     faces : ndarray
         Zero-based triangle vertex indices of the surface mesh (nf, 3).
     prs : int
-        Number of CPU cores used for parallel computing (parallelized over regions).
+        Number of CPU cores used for parallel computing.
     nit : int
         Number of iterations.
     e : float
@@ -1001,19 +1031,20 @@ def fit_spatial(X, Zcols, Y, clusters, maskvtx, coords, sphere_coords, faces, pr
         maskvtx = np.arange(nv)
 
     LOGGER.info("Computing initial values ...")
-    Theta0, Re0 = _fit_init_all(X, Zcols, Y[:, maskvtx], ni)
+    Theta0, Re0 = _fit_init_all(X, Zcols, Y[:, maskvtx], ni, prs)
     nth = Theta0.shape[0]
     n = Re0.shape[0]
     Theta0_full = np.zeros((nth, nv))
     Theta0_full[:, maskvtx] = Theta0
     Re0_full = np.zeros((n, nv))
     Re0_full[:, maskvtx] = Re0
+    # At this stage, replace Theta0_full and Re0_full
     import pdb ; pdb.set_trace()
 
-    regions, _ = _region_grow(sphere_coords, faces, Theta0_full, Re0_full, maskvtx, nst=nst, prc=prc)
+    regions, _ = _create_regions(sphere_coords, faces, Theta0_full, Re0_full, maskvtx, nst=nst, prc=prc)
     region_ids = np.unique(regions[regions != 0])
 
-    def process(region_id):
+    def process_fit_region(region_id):
         vertex_idx = np.flatnonzero(regions == region_id)
         Dist = _region_distances(coords, vertex_idx)
         region_stats = _fit_region(
@@ -1035,12 +1066,12 @@ def fit_spatial(X, Zcols, Y, clusters, maskvtx, coords, sphere_coords, faces, pr
     if prs > 1:
         results = list(
             tqdm(
-                Parallel(return_as="generator", n_jobs=prs)(delayed(process)(region_id) for region_id in region_ids),
+                Parallel(return_as="generator", n_jobs=prs)(delayed(process_fit_region)(region_id) for region_id in region_ids),
                 total=len(region_ids),
             )
         )
     else:
-        results = [process(region_id) for region_id in region_ids]
+        results = [process_fit_region(region_id) for region_id in region_ids]
 
     stats = dict()
     for vertex_idx, region_stats in results:
