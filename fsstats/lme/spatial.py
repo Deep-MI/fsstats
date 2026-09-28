@@ -10,8 +10,10 @@ distance. Singleton regions fall back to the plain per-vertex fit in
 """
 
 import logging
+import warnings
 
 import numpy as np
+
 from joblib import Parallel, delayed
 from scipy.linalg import cholesky, det, solve
 from scipy.spatial.distance import cdist
@@ -476,6 +478,8 @@ def _create_regions(sphere_coords, faces, theta, residuals, maskvtx, nst=2, prc=
     -------
     regions : ndarray
         Region label per vertex (nv,). Label 0 denotes vertices excluded from analysis.
+    region_ids : ndarray
+        Unique region labels
     region_means : ndarray
         Per-vertex mean of theta within its region, same shape as theta.
     """
@@ -487,12 +491,12 @@ def _create_regions(sphere_coords, faces, theta, residuals, maskvtx, nst=2, prc=
     region_means = _region_means(regions, theta)
     n_regions = len(np.unique(regions[regions != 0]))
     LOGGER.info(f"{n_regions} homogeneous regions were obtained.")
-    return regions, region_means
+    region_ids = np.unique(regions[regions != 0])
+    return regions, region_ids, region_means
 
 
 # ------------------------------------------------------------------------------
 # whole-surface starting values
-
 
 def _fit_init_all(X, Zcols, Y, ni, prs):
     """
@@ -530,7 +534,7 @@ def _fit_init_all(X, Zcols, Y, ni, prs):
 
     Bhat_ols = np.linalg.pinv(X) @ Y
 
-    def process_compute_theta0(i):
+    def process_compute_theta0_init(i):
         Theta0 = np.zeros((nth))
         D0, phisq0 = _fit_init(X, Zcols, Y[:, i : i + 1], ni, Bhat=Bhat_ols[:, i : i + 1])
         Theta0[:-1] = D0.flatten("F")[ind]
@@ -540,12 +544,12 @@ def _fit_init_all(X, Zcols, Y, ni, prs):
     if prs > 1:
         results = list(
             tqdm(
-                Parallel(return_as="generator", n_jobs=prs)(delayed(process_compute_theta0)(nvi) for nvi in range(nv)),
+                Parallel(return_as="generator", n_jobs=prs)(delayed(process_compute_theta0_init)(nvi) for nvi in range(nv)),
                 total=nv,
             )
         )
     else:
-        results = [process_compute_theta0(nvi) for nvi in range(nv)]
+        results = [process_compute_theta0_init(nvi) for nvi in range(nv)]
 
     Theta0 = np.transpose(np.asarray(results))
 
@@ -560,6 +564,178 @@ def _fit_init_all(X, Zcols, Y, ni, prs):
 
     return Theta0, Re0
 
+
+def _fit_em(X, Zcols, y, ni, ths, nit):
+
+    def _safe_inv(A, label="matrix"):
+        """
+        Inverse of a square matrix, falling back to the Moore-Penrose
+        pseudo-inverse if `A` is singular or numerically ill-conditioned.
+
+        Parameters
+        ----------
+        A : ndarray
+            Square matrix to invert.
+        label : str
+            Name used in the warning message if the fallback is triggered.
+
+        Returns
+        -------
+        ndarray
+            inv(A), or pinv(A) if A is (near-)singular.
+        """
+        try:
+            return np.linalg.solve(A, np.eye(A.shape[0]))
+        except np.linalg.LinAlgError:
+            warnings.warn(
+                f"{label} is singular; falling back to pseudo-inverse.",
+                RuntimeWarning,
+            )
+            return np.linalg.pinv(A)
+
+
+    # Auxiliary variables
+    m = len(ni)
+    n = np.sum(ni)
+    nimax = np.max(ni)
+    p = X.shape[1]
+    q = len(Zcols)
+    nDth = q * q
+    ind = [False] * nDth
+    for k in range(1,q+1):
+        for j in range(1,k+1):
+            ind[(k-1) * q + j - 1] = True
+
+    # Iterations
+    W = np.zeros((n, nimax))
+
+    D = np.zeros((nDth,1))
+    D[ind] = ths[:-1]
+    D = D.reshape((q, q), order='F')
+    D = D + np.triu(D, 1).T
+    phisq = ths[-1]
+
+    for k in range(nit):
+        # Computation of W = SIGMA^-1 and H.
+        posi = 0
+        H = np.zeros((p, p))
+        Term = np.zeros(p)
+
+        #scInvD = np.linalg.solve(D, np.eye(q)) * phisq
+        scInvD = _safe_inv(D, label="D") * phisq
+
+        for i in range(m):
+            posf = posi + ni[i]  # exclusive end (posf = posi+ni(i)-1 in 1-based -> posi+ni[i] exclusive in 0-based)
+            Zi = X[posi:posf, Zcols]
+            Xi = X[posi:posf, :]
+
+            M = Zi.T @ Zi + scInvD
+            Wi = (np.eye(ni[i]) - Zi @ np.linalg.solve(M, Zi.T)) / phisq
+            W[posi:posf, 0:ni[i]] = Wi
+
+            Ti = Xi.T @ Wi
+            H = H + Ti @ Xi
+            Term = Term + Ti @ y[posi:posf]
+
+            posi = posf
+
+        #invH = np.linalg.solve(H, np.eye(p))
+        invH = _safe_inv(H, label="H")
+
+        # Estimation
+        Bhat = invH @ Term
+        r = y - X @ Bhat
+
+        Dhat = np.zeros((q, q))
+        phisqhat = 0.0
+        posi = 0
+
+        for i in range(m):
+            posf = posi + ni[i]
+            Zi = X[posi:posf, Zcols]
+            Wi = W[posi:posf, 0:ni[i]]
+            Xi = X[posi:posf, :]
+            ri = r[posi:posf]
+
+            bihat = D @ Zi.T @ Wi @ ri
+            Pi = Wi - Wi @ Xi @ invH @ Xi.T @ Wi
+
+            resid = ri - Zi @ bihat
+            phisqhat = phisqhat + resid.T @ resid + phisq * np.trace(
+                np.eye(ni[i]) - phisq * Pi
+            )
+            Dhat = Dhat + np.outer(bihat, bihat) + D - D @ Zi.T @ Pi @ Zi @ D
+
+            posi = posf
+
+        D = Dhat / m
+        phisq = phisqhat / n
+
+    D_vec = D.flatten(order='F')
+    th = np.concatenate([D_vec[ind], [phisq]])
+
+    return th, r
+
+
+def _fit_em_all(X, Zcols, Y_masked, ni, prs, Theta0_masked, nit):
+    """
+    Region-wise linear mixed-effects iterative estimation of the covariance
+    components, based on Newton-Raphson updates from starting values, at
+    each (already masked) location.
+
+    Parameters
+    ----------
+    X : ndarray
+        Design matrix, ordered according to time for each subject (n, p).
+    Zcols : ndarray
+        0-based indices of the columns of X that are considered as random
+        effects (nr,).
+    Y_masked : ndarray
+        Data matrix (n, nv) whose columns represent the ordered data vector
+        for each vertex/voxel actually being processed.
+    ni : ndarray
+        List (m,) whose entries are the number of repeated measures for
+        each subject.
+    prs : int
+        Number of CPU cores used for parallel computing.
+    Theta0_masked : ndarray
+        Starting values of the covariance-component parameters at each
+        processed location (nth, nv); iteratively updated.
+    nit : int
+        Number of inner (Newton-Raphson) iterations.
+
+    Returns
+    -------
+    Theta0 : ndarray
+        Covariance-component estimates at each location (nth, nv0).
+    Re0 : ndarray
+        Residuals at each location (n, nv0).
+    """
+
+    # parallel
+
+    nvm = Y_masked.shape[1]
+
+    def process_compute_theta0_and_re0_em(i):
+        Theta0, Re0 = _fit_em(X, Zcols, Y_masked[:, i], ni, Theta0_masked[:, i], nit)
+        return Theta0, Re0
+
+    LOGGER.info("Starting EM algorithm ...")
+    if prs > 1:
+        results = list(
+            tqdm(
+                Parallel(return_as="generator", n_jobs=prs)(delayed(process_compute_theta0_and_re0_em)(nvmi) for nvmi in range(nvm)),
+                total=nvm,
+            )
+        )
+    else:
+        results = [process_compute_theta0_and_re0_em(nvmi) for nvmi in range(nvm)]
+
+    # results to array
+    Theta0 = np.transpose(np.array([x[0] for x in results]))
+    Re0 = np.transpose(np.array([x[1] for x in results]))
+
+    return Theta0, Re0
 
 # ------------------------------------------------------------------------------
 # region-wise Fisher scoring
@@ -972,6 +1148,84 @@ def _fit_region(X, Zcols, Y, ni, Theta0, Dist, nit, e, label, verbose):
     return stats
 
 
+def _fit_region_all(X, Zcols, Y, ni, Theta0, regions, region_ids, coords, nit, e, prs, verbose):
+    """
+    Linear mixed-effects estimation by the Fisher scoring algorithm for a whole region, modeling
+    the residual spatial correlation among the region's vertices with an exponential correlation
+    model based on Euclidean distance.
+
+    Parameters
+    ----------
+    X : ndarray
+        Design matrix, ordered according to time for each subject (nm, p).
+    Zcols : ndarray
+        List of indices of the columns of X that will be considered as random effects (nr,).
+    Y : ndarray
+        Data matrix (nm, nv) whose columns represent the data vector for each vertex.
+    ni : ndarray
+        List (nc,) whose entries are the number of repeated measures for each subject.
+    Theta0 : ndarray
+        ...
+    regions : ndarray
+        ...
+    region_ids : ndarray
+        ...
+    coords : ndarray
+        Anatomical surface vertex coordinates (nv, 3), used to compute within-region Euclidean distances.
+    nit : int
+        Number of iterations.
+    e : float
+        Convergence epsilon (gradient's norm).
+    prs : int
+        Number of CPU cores used for parallel computing.
+    verbose : bool
+        Increase verbosity.
+
+    Returns
+    -------
+    stats : dict
+        A dict of dictionaries containing estimates for every vertex where the model was fit, in the
+        same format as fit.py::fit's return value.
+    """
+
+    def process_fit_region(region_id):
+        vertex_idx = np.flatnonzero(regions == region_id)
+        Dist = _region_distances(coords, vertex_idx)
+        region_stats = _fit_region(
+            X=X,
+            Zcols=Zcols,
+            Y=Y[:, vertex_idx],
+            ni=ni,
+            Theta0=Theta0[:, vertex_idx],
+            Dist=Dist,
+            nit=nit,
+            e=e,
+            label=str(region_id),
+            verbose=verbose,
+        )
+        return vertex_idx, region_stats
+
+    LOGGER.info("Starting model fitting at each region ...")
+    if prs > 1:
+        results = list(
+            tqdm(
+                Parallel(return_as="generator", n_jobs=prs)(delayed(process_fit_region)(region_id) for region_id in region_ids),
+                total=len(region_ids),
+            )
+        )
+    else:
+        results = [process_fit_region(region_id) for region_id in region_ids]
+
+    # Output
+
+    stats = dict()
+    for vertex_idx, region_stats in results:
+        for local_i, global_i in enumerate(vertex_idx):
+            stats[global_i] = region_stats[local_i]
+
+    return stats
+
+
 # ------------------------------------------------------------------------------
 # top-level orchestration
 
@@ -1021,6 +1275,9 @@ def fit_spatial(X, Zcols, Y, clusters, maskvtx, coords, sphere_coords, faces, pr
     regions : ndarray
         Region label per vertex (nv,). Label 0 denotes vertices excluded from analysis.
     """
+
+    # Create auxiliary variables
+
     ni = {}
     for item in clusters:
         ni[item] = ni.get(item, 0) + 1
@@ -1030,53 +1287,33 @@ def fit_spatial(X, Zcols, Y, clusters, maskvtx, coords, sphere_coords, faces, pr
     if maskvtx is None:
         maskvtx = np.arange(nv)
 
+    # Initial estimates
+
     LOGGER.info("Computing initial values ...")
-    Theta0, Re0 = _fit_init_all(X, Zcols, Y[:, maskvtx], ni, prs)
-    nth = Theta0.shape[0]
-    n = Re0.shape[0]
-    Theta0_full = np.zeros((nth, nv))
-    Theta0_full[:, maskvtx] = Theta0
-    Re0_full = np.zeros((n, nv))
-    Re0_full[:, maskvtx] = Re0
-    # At this stage, replace Theta0_full and Re0_full
-    import pdb ; pdb.set_trace()
+    Theta0_masked_init, Re0_masked_init = _fit_init_all(X, Zcols, Y[:, maskvtx], ni, prs)
+    Theta0_init = np.zeros((Theta0_masked_init.shape[0], nv))
+    Theta0_init[:, maskvtx] = Theta0_masked_init
+    Re0_init = np.zeros((Re0_masked_init.shape[0], nv))
+    Re0_init[:, maskvtx] = Re0_masked_init
 
-    regions, _ = _create_regions(sphere_coords, faces, Theta0_full, Re0_full, maskvtx, nst=nst, prc=prc)
-    region_ids = np.unique(regions[regions != 0])
+    # EM estimates
 
-    def process_fit_region(region_id):
-        vertex_idx = np.flatnonzero(regions == region_id)
-        Dist = _region_distances(coords, vertex_idx)
-        region_stats = _fit_region(
-            X=X,
-            Zcols=Zcols,
-            Y=Y[:, vertex_idx],
-            ni=ni,
-            Theta0=Theta0_full[:, vertex_idx],
-            Dist=Dist,
-            nit=nit,
-            e=e,
-            label=str(region_id),
-            verbose=verbose,
-        )
-        return vertex_idx, region_stats
+    LOGGER.info("Running EM algorithm ...")
+    Theta0_masked_em, Re0_masked_em = _fit_em_all(X, Zcols, Y[:, maskvtx], ni, prs, Theta0_init[:, maskvtx], nit)
+    Theta0_em = np.zeros((Theta0_masked_em.shape[0], nv))
+    Theta0_em[:, maskvtx] = Theta0_masked_em
+    Re0_em = np.zeros((Re0_masked_em.shape[0], nv))
+    Re0_em[:, maskvtx] = Re0_masked_em
 
+    # Create regions
 
-    LOGGER.info("Starting model fitting at each region ...")
-    if prs > 1:
-        results = list(
-            tqdm(
-                Parallel(return_as="generator", n_jobs=prs)(delayed(process_fit_region)(region_id) for region_id in region_ids),
-                total=len(region_ids),
-            )
-        )
-    else:
-        results = [process_fit_region(region_id) for region_id in region_ids]
+    regions, region_ids, _ = _create_regions(sphere_coords, faces, Theta0_em, Re0_em, maskvtx, nst=nst, prc=prc)
 
-    stats = dict()
-    for vertex_idx, region_stats in results:
-        for local_i, global_i in enumerate(vertex_idx):
-            stats[global_i] = region_stats[local_i]
+    # Model fitting
+
+    stats = _fit_region_all(X, Zcols, Y, ni, Theta0_em, regions, region_ids, coords, nit, e, prs, verbose)
+
+    # Output
 
     converged = np.sum([stats[i]["st"] for i in stats])
     LOGGER.info(
