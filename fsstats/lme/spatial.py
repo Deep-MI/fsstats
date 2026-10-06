@@ -484,7 +484,6 @@ def _create_regions(sphere_coords, faces, theta, residuals, maskvtx, nst=2, prc=
         Per-vertex mean of theta within its region, same shape as theta.
     """
     nv = theta.shape[1]
-    LOGGER.info("Starting region growing algorithm")
     adjacency = _surface_adjacency(faces, nv, maskvtx)
     coord2d = _spherical_coordinates(sphere_coords)
     regions = _grow_regions(residuals, theta, coord2d, adjacency, maskvtx, nst, prc)
@@ -593,7 +592,6 @@ def _fit_em(X, Zcols, y, ni, ths, nit):
             )
             return np.linalg.pinv(A)
 
-
     # Auxiliary variables
     m = len(ni)
     n = np.sum(ni)
@@ -610,7 +608,7 @@ def _fit_em(X, Zcols, y, ni, ths, nit):
     W = np.zeros((n, nimax))
 
     D = np.zeros((nDth,1))
-    D[ind] = ths[:-1]
+    D[ind] = ths[:-1].reshape(-1,1)
     D = D.reshape((q, q), order='F')
     D = D + np.triu(D, 1).T
     phisq = ths[-1]
@@ -720,7 +718,6 @@ def _fit_em_all(X, Zcols, Y_masked, ni, prs, Theta0_masked, nit):
         Theta0, Re0 = _fit_em(X, Zcols, Y_masked[:, i], ni, Theta0_masked[:, i], nit)
         return Theta0, Re0
 
-    LOGGER.info("Starting EM algorithm ...")
     if prs > 1:
         results = list(
             tqdm(
@@ -732,6 +729,7 @@ def _fit_em_all(X, Zcols, Y_masked, ni, prs, Theta0_masked, nit):
         results = [process_compute_theta0_and_re0_em(nvmi) for nvmi in range(nvm)]
 
     # results to array
+
     Theta0 = np.transpose(np.array([x[0] for x in results]))
     Re0 = np.transpose(np.array([x[1] for x in results]))
 
@@ -1205,7 +1203,6 @@ def _fit_region_all(X, Zcols, Y, ni, Theta0, regions, region_ids, coords, nit, e
         )
         return vertex_idx, region_stats
 
-    LOGGER.info("Starting model fitting at each region ...")
     if prs > 1:
         results = list(
             tqdm(
@@ -1296,21 +1293,31 @@ def fit_spatial(X, Zcols, Y, clusters, maskvtx, coords, sphere_coords, faces, pr
     Re0_init = np.zeros((Re0_masked_init.shape[0], nv))
     Re0_init[:, maskvtx] = Re0_masked_init
 
+    import nibabel as nb
+    nb.save(nb.MGHImage(dataobj=np.transpose(Re0_init).reshape(-1,1,1,320).astype(np.float32), affine=np.eye(4)), filename="Re0_init.mgh")
+    nb.save(nb.MGHImage(dataobj=np.transpose(Theta0_init).reshape(-1,1,1,4).astype(np.float32), affine=np.eye(4)), filename="Theta0_init.mgh")
+
     # EM estimates
 
-    LOGGER.info("Running EM algorithm ...")
+    LOGGER.info("Starting EM algorithm ...")
     Theta0_masked_em, Re0_masked_em = _fit_em_all(X, Zcols, Y[:, maskvtx], ni, prs, Theta0_init[:, maskvtx], nit)
     Theta0_em = np.zeros((Theta0_masked_em.shape[0], nv))
     Theta0_em[:, maskvtx] = Theta0_masked_em
     Re0_em = np.zeros((Re0_masked_em.shape[0], nv))
     Re0_em[:, maskvtx] = Re0_masked_em
 
+    import nibabel as nb
+    nb.save(nb.MGHImage(dataobj=np.transpose(Re0_em).reshape(-1,1,1,320).astype(np.float32), affine=np.eye(4)), filename="Re0_em.mgh")
+    nb.save(nb.MGHImage(dataobj=np.transpose(Theta0_em).reshape(-1,1,1,4).astype(np.float32), affine=np.eye(4)), filename="Theta0_em.mgh")
+
     # Create regions
 
+    LOGGER.info("Starting region growing algorithm ...")
     regions, region_ids, _ = _create_regions(sphere_coords, faces, Theta0_em, Re0_em, maskvtx, nst=nst, prc=prc)
 
     # Model fitting
 
+    LOGGER.info("Starting model fitting at each region ...")
     stats = _fit_region_all(X, Zcols, Y, ni, Theta0_em, regions, region_ids, coords, nit, e, prs, verbose)
 
     # Output
