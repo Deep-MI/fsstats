@@ -1293,10 +1293,6 @@ def fit_spatial(X, Zcols, Y, clusters, maskvtx, coords, sphere_coords, faces, pr
     Re0_init = np.zeros((Re0_masked_init.shape[0], nv))
     Re0_init[:, maskvtx] = Re0_masked_init
 
-    import nibabel as nb
-    nb.save(nb.MGHImage(dataobj=np.transpose(Re0_init).reshape(-1,1,1,320).astype(np.float32), affine=np.eye(4)), filename="Re0_init.mgh")
-    nb.save(nb.MGHImage(dataobj=np.transpose(Theta0_init).reshape(-1,1,1,4).astype(np.float32), affine=np.eye(4)), filename="Theta0_init.mgh")
-
     # EM estimates
 
     LOGGER.info("Starting EM algorithm ...")
@@ -1305,10 +1301,6 @@ def fit_spatial(X, Zcols, Y, clusters, maskvtx, coords, sphere_coords, faces, pr
     Theta0_em[:, maskvtx] = Theta0_masked_em
     Re0_em = np.zeros((Re0_masked_em.shape[0], nv))
     Re0_em[:, maskvtx] = Re0_masked_em
-
-    import nibabel as nb
-    nb.save(nb.MGHImage(dataobj=np.transpose(Re0_em).reshape(-1,1,1,320).astype(np.float32), affine=np.eye(4)), filename="Re0_em.mgh")
-    nb.save(nb.MGHImage(dataobj=np.transpose(Theta0_em).reshape(-1,1,1,4).astype(np.float32), affine=np.eye(4)), filename="Theta0_em.mgh")
 
     # Create regions
 
