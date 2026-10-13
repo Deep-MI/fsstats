@@ -58,8 +58,6 @@ As in [GLM, mass-univariate](glm_massunivariate.md), this colors the surface by 
 
 *(Figure to be added: a Freeview screenshot of the thresholded `sig.mgh` overlay for `group_by_time_contrast` on the inflated fsaverage surface.)*
 
-![Freeview screenshot of the group-by-time significance map](img/lme_massunivariate_sig.png)
-
 **A note on multiple comparisons:** as with [GLM, mass-univariate](glm_massunivariate.md), this map is one test per vertex and is not corrected for the many comparisons involved — see [key concepts](../TUTORIAL.md#a-note-on-multiple-comparisons) before interpreting individual vertices as significant.
 
 See the [documentation](../DOCUMENTATION.md#output-files-and-their-interpretation) for the full output reference.
