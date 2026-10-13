@@ -605,7 +605,8 @@ def _run_lme(args):
                 stats = pickle.load(f)
 
         # run inference
-        fstats = _run_lme_inference(params, stats)
+        #fstats = _run_lme_inference(params, stats)
+        _run_lme_inference(params, stats)
 
     except Exception as e:
         LOGGER.error("Error Information:")
@@ -894,7 +895,8 @@ def _run_glm(args):
         params, stats = _run_glm_estimation(params)
 
         # run inference
-        fstats = _run_glm_inference(params, stats)
+        #fstats = _run_glm_inference(params, stats)
+        _run_glm_inference(params, stats)
 
     except Exception as e:
         LOGGER.error("Error Information:")

@@ -613,7 +613,7 @@ def _fit_em(X, Zcols, y, ni, ths, nit):
     D = D + np.triu(D, 1).T
     phisq = ths[-1]
 
-    for k in range(nit):
+    for _k in range(nit):
         # Computation of W = SIGMA^-1 and H.
         posi = 0
         H = np.zeros((p, p))

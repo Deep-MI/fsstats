@@ -379,7 +379,6 @@ def _fit_fs(X, Zcols, Y, ni, nit, e, label, return_random_effects_estimates, ret
     # Prepare inputs
     Z = X[:, Zcols]
     m = len(ni)
-    p = X.shape[1]
     q = len(Zcols)
     nth = int(q * (q + 1) / 2 + 1)
     ind = np.concatenate([np.zeros(q*q, dtype=bool), np.ones(1, dtype=bool)])
