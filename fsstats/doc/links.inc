@@ -17,7 +17,7 @@
 
 .. license
 
-.. _Apache license: https://opensource.org/licenses/Apache-2-0
+.. _Apache 2.0 license: https://www.apache.org/licenses/LICENSE-2.0
 
 
 .. fastsurfer
@@ -43,3 +43,4 @@
 .. scipy
 
 .. _scipy: https://scipy.org/
+
