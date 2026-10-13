@@ -19,7 +19,7 @@ See the [documentation](../DOCUMENTATION.md#input-data-and-format-specifications
 
 We start with creating the design matrix, which contain all variables the we want to relate to the outcome (or that we want to control for):
 
-- For this cross-sectional comparison, the design matrix has one row per participant and three columns. The first column is the intercept (all 1s), the second colum is the group indicator (0 = CN, 1 = AD), and the third column is Age at baseline.
+- For this cross-sectional comparison, the design matrix has one row per participant and three columns. The first column is the intercept (all 1s), the second column is the group indicator (0 = CN, 1 = AD), and the third column is Age at baseline.
 
   ```text
   1   0   53
