@@ -13,7 +13,6 @@ import logging
 import warnings
 
 import numpy as np
-
 from joblib import Parallel, delayed
 from scipy.linalg import cholesky, det, solve
 from scipy.spatial.distance import cdist
@@ -534,7 +533,7 @@ def _fit_init_all(X, Zcols, Y, ni, prs):
     Bhat_ols = np.linalg.pinv(X) @ Y
 
     def process_compute_theta0_init(i):
-        Theta0 = np.zeros((nth))
+        Theta0 = np.zeros(nth)
         D0, phisq0 = _fit_init(X, Zcols, Y[:, i : i + 1], ni, Bhat=Bhat_ols[:, i : i + 1])
         Theta0[:-1] = D0.flatten("F")[ind]
         Theta0[-1] = phisq0.item()
@@ -589,6 +588,7 @@ def _fit_em(X, Zcols, y, ni, ths, nit):
             warnings.warn(
                 f"{label} is singular; falling back to pseudo-inverse.",
                 RuntimeWarning,
+                stacklevel=2
             )
             return np.linalg.pinv(A)
 
