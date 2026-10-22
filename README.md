@@ -364,7 +364,7 @@ All tables can be separated by tab, comma, or space.
 
 ### Output files and their interpretation
 
-The program will compute the following statistics, and produce text- or image-based output files. Text files can be accessed with any text editor. Image files follow the FreeSurfer format and conventions, and are intended to be used with visualization and post-processing tools like `Freeview` and `surfcluster`, which are available from any FreeSurfer distribution.
+The program will compute the following statistics, and produce text- or image-based output files. Text files can be accessed with any text editor. Image files follow the FreeSurfer format and conventions, and are intended to be used with visualization and post-processing tools like `Freeview` and `mri_surfcluster`, which are available from any FreeSurfer distribution.
 
 file           | used by | description
 ---------------|---------|----------------------------------------------------------------
