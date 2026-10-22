@@ -67,11 +67,9 @@ fsstats_glm \
 
 See [key concepts](tutorial_model-outputs) for what these mean and how the sign is derived, and the [documentation](documentation_output-files) for the full output reference and the sig/p conversion table.
 
-*(Figure to be added: a boxplot of baseline hippocampal volume by group, illustrating the effect tested by `group_contrast`.)*
+The following screenshots show plots of baseline hippocampal volume by group, illustrating the effect tested by `group_contrast`, and baseline hippocampal volume by group, illustrating the effect tested by `age_contrast`.
 
-![Boxplot of baseline hippocampal volume by group](glm_univ_dementia.png)
-
-*(Figure to be added: a boxplot of baseline hippocampal volume by group, illustrating the effect tested by `age_contrast`.)*
+![Scatterplot of baseline hippocampal volume by group](glm_univ_dementia.png)
 
 ![Scatterplot of baseline hippocampal volume versus age](glm_univ_age.png)
 
