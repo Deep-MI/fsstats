@@ -16,7 +16,7 @@ Here we illustrate an example analysis with the `fsstats` command-line tools, `f
 
 The tutorial deliberately keeps things shorter and only explains what is needed to follow the example. For the full, authoritative description of every argument, input format, and output file, see the [documentation](DOCUMENTATION.md).
 
-The tutorial covers command-line usage only. For using `fsstats` as a Python package or calling its low-level functions directly, see the sections for running the fsstats tools [as a Python package](DOCUMENTATION.md#as-a-python-package) and [as Python functions](DOCUMENTATION.md#as-python-functions).
+The tutorial covers command-line usage only. For using `fsstats` as a Python package or calling its low-level functions directly, see the sections for running the fsstats tools [as a Python package](documentation_as-a-python-package) and [as Python functions](documentation_as-python-functions).
 
 ___
 
@@ -31,6 +31,7 @@ This tutorial provides walkthroughs for four analysis scenarios:
 
 ___
 
+(tutorial_key-concepts)=
 ## Key concepts
 
 The four walkthroughs share the concepts below. Read them once here; each section then only explains what's specific to that analysis.
@@ -49,6 +50,7 @@ A **contrast vector** encodes the specific hypothesis that you want to test; it 
 
 A **contrast matrix** is a generalization of the contrast vector and serves the same purpose. Unlike the the contrast vector, it consists of two or more rows of numerical values (typically 0, -1, or +1), but still has as many columns as the design matrix. A multi-row contrast matrix behaves like a joint F-test across several effects at once: this can be useful if you want to test the overall effect of a group with more than 2 levels, for example to evaluate if there is a difference between *any* pair of subgroups while not primarily being interested between which specific pairs. Note that for testing multiple independent research questions -- e.g. testing effects of group as well as age -- we use multiple independent (possibly single-row) contrasts rather than one multi-row contrast, because the latter still encodes just a single research question.
 
+(tutorial_model-outputs)=
 ### Model outputs: parameter estimates and statistical significance
 
 The software uses the design matrix to fit the model to the data, and uses the contrasts to determine statistical significance for the effects of interest. This results in the following outputs:
@@ -60,12 +62,14 @@ The software uses the design matrix to fit the model to the data, and uses the c
 
 > **Sign:** for single-row contrasts, `sig` and `z` carry the sign of the estimated effect (`gamma`) — a positive value means the effect went in the direction the contrast defines as positive, a negative value the opposite. Multi-row (F-test) contrasts are left unsigned, since "direction" isn't a single number once more than one parameter is being tested jointly. This means flipping a contrast's sign (e.g. using `0 -1 0` instead of `0 1 0`) doesn't change the F-statistic or p-value at all — it only flips which direction is reported as positive. For single-row contrasts, the transformation between p-values and sig-values therefore is `sig = sign(gamma) * -log10(p)`. For multi-row contrasts, the transform is just `sig = -log10(p)`. To derive (unsigned) p-values from sig-values, use `p = 10^-abs(sig)`.
 
+(tutorial_multiple-comparisons)=
 ### Multiple comparisons
 
 A mass-univariate analysis runs one test per vertex — typically tens of thousands of tests at once. `fsstats` does not currently perform any multiple-comparison correction itself. Uncorrected `sig`/`z` values at individual vertices should therefore not be interpreted as significant on their own — apply an appropriate correction such as false discovery rate control (e.g. using FreeSurfer's `mri_fdr`), or a cluster-based approach (e.g. using FreeSurfer's `mri_glmfit-sim`) before drawing conclusions from a mass-univariate result. 
 
 ___
 
+(tutorial_example)=
 ## Example analysis
 
 All four [analysis scenarios](#contents) analyze the same hypothetical study: a longitudinal aging study comparing participants with dementia (AD) against cognitively normal (CN) controls, each scanned at multiple visits, and processed with the FastSurfer or FreeSurfer software. Two outcomes are used throughout:

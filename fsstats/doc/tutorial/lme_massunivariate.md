@@ -16,7 +16,7 @@ Because a separate model is fit at every vertex and each fit iterates to converg
 - `--X`, `--C`, `--rfx`, `--clusters`: the same longitudinal design, contrasts, random-effects columns, and case grouping (`case_ids.txt`) as [LME, univariate](lme_univariate.md) — again, only the outcome data changes.
 - `--glmdir`: an output directory.
 
-See the [documentation](../DOCUMENTATION.md#input-data-and-format-specifications) for exact format details.
+See the [documentation](documentation_input-data-format-specs) for exact format details.
 
 ## Building the design matrix and contrasts
 
@@ -42,7 +42,7 @@ fsstats_lme \
 
 ## Understanding the output
 
-Same structure as [GLM, mass-univariate](glm_massunivariate.md): `beta.mgh`, and per-contrast `gamma.mgh`, `F.mgh`, `sig.mgh`, `z.mgh` in `group_contrast/` and `group_by_time_contrast/`. See [key concepts](../TUTORIAL.md#interpreting-the-output-beta-gamma-f-sig-and-z) for what these represent.
+Same structure as [GLM, mass-univariate](glm_massunivariate.md): `beta.mgh`, and per-contrast `gamma.mgh`, `F.mgh`, `sig.mgh`, `z.mgh` in `group_contrast/` and `group_by_time_contrast/`. See [key concepts](tutorial_model-outputs) for what these represent.
 
 Unlike the univariate analysis, mass-univariate LME does not compute per-case random-effects estimates at all (they are skipped here to keep runtime and output size manageable across tens of thousands of vertices) — only the fixed-effects results above are available.
 
@@ -58,9 +58,9 @@ As in [GLM, mass-univariate](glm_massunivariate.md), this colors the surface by 
 
 *(Figure to be added: a Freeview screenshot of the thresholded `sig.mgh` overlay for `group_by_time_contrast` on the inflated fsaverage surface.)*
 
-**A note on multiple comparisons:** as with [GLM, mass-univariate](glm_massunivariate.md), this map is one test per vertex and is not corrected for the many comparisons involved — see [key concepts](../TUTORIAL.md#a-note-on-multiple-comparisons) before interpreting individual vertices as significant.
+**A note on multiple comparisons:** as with [GLM, mass-univariate](glm_massunivariate.md), this map is one test per vertex and is not corrected for the many comparisons involved — see [key concepts](tutorial_multiple-comparisons) before interpreting individual vertices as significant.
 
-See the [documentation](../DOCUMENTATION.md#output-files-and-their-interpretation) for the full output reference.
+See the [documentation](documentation_output-files) for the full output reference.
 
 ## Optional: modeling spatial covariance
 

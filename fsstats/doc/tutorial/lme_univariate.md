@@ -21,7 +21,7 @@ In practice, a random intercept alone (`--rfx 1`) is often the more conservative
 - `--clusters`: a file naming, for each row of `--X`, which participant (case) it belongs to. It must have as many rows as the tables supplied with `--X` and `--table`, and the ordering **must strictly** be the same across `--X`, `--table`, and `--clusters`.
 - `--glmdir`: an output directory.
 
-See the [documentation](../DOCUMENTATION.md#input-data-and-format-specifications) for exact format details.
+See the [documentation](documentation_input-data-format-specs) for exact format details.
 
 ## Building the design matrix and contrasts
 
@@ -92,7 +92,7 @@ fsstats_lme \
 `fsstats_lme` writes results into `/my/output/directory/lme_univariate`:
 
 - `beta.txt` -- the fitted fixed-effects coefficients.
-- One subdirectory per contrast (`group_contrast/`, `group_by_time_contrast/`), each with `gamma.txt`, `F.txt`, `sig.txt`, and `z.txt` -- same meaning as in the GLM walkthroughs (see [key concepts](../TUTORIAL.md#interpreting-the-output-beta-gamma-f-sig-and-z)).
+- One subdirectory per contrast (`group_contrast/`, `group_by_time_contrast/`), each with `gamma.txt`, `F.txt`, `sig.txt`, and `z.txt` -- same meaning as in the GLM walkthroughs (see [key concepts](tutorial_model-outputs)).
 
 The `group_by_time_contrast/sig.txt` result is the one that answers our motivating question: whether AD and CN differ in their rate of hippocampal decline.
 

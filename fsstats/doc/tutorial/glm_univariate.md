@@ -4,7 +4,7 @@
 
 ## What this analysis is for
 
-We start with the simplest version of our [running example](../TUTORIAL.md#the-running-example): comparing baseline hippocampal volume between the AD and CN groups, using one visit (baseline) per participant. Because each participant contributes a single, independent observation, an ordinary least squares (GLM) model is appropriate — `fsstats_lme`'s clustered/repeated-measures machinery isn't needed here. This is the same kind of comparison FreeSurfer's `mri_glmfit` is used for. See [key concepts](../TUTORIAL.md#key-concepts) if you'd like a reminder of what a GLM, a design matrix, or a contrast is before starting.
+We start with the simplest version of our [example](tutorial_example): comparing baseline hippocampal volume between the AD and CN groups, using one visit (baseline) per participant. Because each participant contributes a single, independent observation, an ordinary least squares (GLM) model is appropriate — `fsstats_lme`'s clustered/repeated-measures machinery isn't needed here. This is the same kind of comparison FreeSurfer's `mri_glmfit` is used for. See [key concepts](tutorial_key-concepts) if you'd like a reminder of what a GLM, a design matrix, or a contrast is before starting.
 
 ## Inputs you need
 
@@ -13,7 +13,7 @@ We start with the simplest version of our [running example](../TUTORIAL.md#the-r
 - `--C`: two contrast files (below).
 - `--glmdir`: an output directory for `fsstats_glm` to write results into.
 
-See the [documentation](../DOCUMENTATION.md#input-data-and-format-specifications) for the exact expected file format of each.
+See the [documentation](documentation_input-data-format-specs) for the exact expected file format of each.
 
 ## Building the design matrix and contrasts
 
@@ -42,7 +42,7 @@ We're interested in two questions, so we use two contrasts, each a single row se
   ```
   This test is also an undirected test, i.e. it will detect positive correlations between age and brain region as well as negative correlations. When looking at the `beta`, `gamma`, `z`, and `sig` values, positive correlations will have a positive sign, and negative correlations will have a negative sign.
 
-Both contrasts are single-row, t-test-like contrasts. If for the first contrast you instead wanted CN-minus-AD to be the "positive" direction for the group effect, you could flip its sign to `0 -1 0` — this changes the sign of the beta, gamma, z, and sig values, but does not change the F-statistic or p-value, only which direction is reported as positive in the signed output (see [key concepts](../TUTORIAL.md#interpreting-the-output-beta-gamma-f-sig-and-z)).
+Both contrasts are single-row, t-test-like contrasts. If for the first contrast you instead wanted CN-minus-AD to be the "positive" direction for the group effect, you could flip its sign to `0 -1 0` — this changes the sign of the beta, gamma, z, and sig values, but does not change the F-statistic or p-value, only which direction is reported as positive in the signed output (see [key concepts](tutorial_model-outputs)).
 
 >**Note:** This is just one example how to build a statistical design matrix. In practice, you may have more variables / covariates that you are interested in; for example, you could add 'sex' and 'intracranial volume' -- and possibly also selected interaction terms -- as additional columns to the matrix.
 
@@ -65,7 +65,7 @@ fsstats_glm \
 - `Xg.dat` — the design matrix actually used, for reference.
 - One subdirectory per contrast, `group_contrast/` and `age_contrast/`, each containing `gamma.txt`, `F.txt`, `sig.txt`, and `z.txt` for that effect.
 
-See [key concepts](../TUTORIAL.md#interpreting-the-output-beta-gamma-f-sig-and-z) for what these mean and how the sign is derived, and the [documentation](../DOCUMENTATION.md#output-files-and-their-interpretation) for the full output reference and the sig/p conversion table.
+See [key concepts](tutorial_model-outputs) for what these mean and how the sign is derived, and the [documentation](documentation_output-files) for the full output reference and the sig/p conversion table.
 
 *(Figure to be added: a boxplot of baseline hippocampal volume by group, illustrating the effect tested by `group_contrast`.)*
 

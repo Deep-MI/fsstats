@@ -16,7 +16,7 @@ Because the OLS fit is closed-form, `fsstats_glm` fits all vertices in a single 
 - `--X` and `--C`: the same design matrix and two contrasts as [GLM, univariate](glm_univariate.md) — the model doesn't change, only the outcome data does.
 - `--glmdir`: an output directory.
 
-See the [documentation](../DOCUMENTATION.md#input-data-and-format-specifications) for exact format details.
+See the [documentation](documentation_input-data-format-specs) for exact format details.
 
 ## Building the design matrix and contrasts
 
@@ -41,7 +41,7 @@ fsstats_glm \
 
 ## Understanding the output
 
-The output has the same structure as the univariate case, but every file is a surface overlay (`.mgh`) instead of a text table: `beta.mgh`, `mask.mgh` (the label actually used), and, per contrast (`group_contrast/`, `age_contrast/`), `gamma.mgh`, `F.mgh`, `sig.mgh`, and `z.mgh` — one value per vertex. See [key concepts](../TUTORIAL.md#interpreting-the-output-beta-gamma-f-sig-and-z) for what these represent and how the sign is derived.
+The output has the same structure as the univariate case, but every file is a surface overlay (`.mgh`) instead of a text table: `beta.mgh`, `mask.mgh` (the label actually used), and, per contrast (`group_contrast/`, `age_contrast/`), `gamma.mgh`, `F.mgh`, `sig.mgh`, and `z.mgh` — one value per vertex. See [key concepts](tutorial_model-outputs) for what these represent and how the sign is derived.
 
 These are FreeSurfer-format overlays. View the group effect's signed significance map with Freeview, for example:
 
@@ -55,8 +55,8 @@ This colors the inflated left-hemisphere surface by `sig` (here thresholded to s
 
 ![Freeview screenshot of the group-contrast contrast estimate, f statistical parameter, and significance map](glm_mass_stats.png)
 
-**A note on multiple comparisons:** this map contains one test per vertex — the significance map above is *not* corrected for the many comparisons being made at once, and individual vertices should not be interpreted as significant on this basis alone. See [key concepts](../TUTORIAL.md#a-note-on-multiple-comparisons).
+**A note on multiple comparisons:** this map contains one test per vertex — the significance map above is *not* corrected for the many comparisons being made at once, and individual vertices should not be interpreted as significant on this basis alone. See [key concepts](tutorial_multiple-comparisons).
 
-See the [documentation](../DOCUMENTATION.md#output-files-and-their-interpretation) for the full output reference.
+See the [documentation](documentation_output-files) for the full output reference.
 
 Next: [LME, univariate](lme_univariate.md), which brings back the repeated visits per participant that this cross-sectional analysis set aside.

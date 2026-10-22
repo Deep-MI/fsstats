@@ -182,12 +182,14 @@ fsstats_lme \
 --cores 4
 ```
 
+(documentation_as-a-python-package)=
 ### As a Python package
 
 As an alternative to their command-line usage, the fsstats scripts can also be run within a pure Python environment, i.e. installed and imported as a Python package.
 
 Use `import fsstats` (or sth. equivalent) to import the package within a Python environment, and use the `run_glm` or `run_lme` function to run a ordinary least squares (GLM) or linear mixed-effects analysis, respectively.
 
+(documentation_package-glm)=
 #### The GLM module
 
 - Univariate analysis:
@@ -218,6 +220,7 @@ fsstats.run_glm(
     )
 ```
 
+(documentation_package-lme)=
 #### The LME module
 
 - Univariate analysis:
@@ -251,10 +254,12 @@ fsstats.run_lme(
     )
 ```
 
+(documentation_as-python-functions)=
 ### As Python functions
 
 The above `fsstats.run_glm` and `fsstats.run_lme` functions are wrappers around the two central functions of each module for fitting a model and subsequently performing statistical inference on it, i.e. `fsstats.glm.fit`/`fsstats.glm.test` and `fsstats.lme.fit`/`fsstats.lme.test`. Use of the wrapper functions is recommended for most cases, but in scenarios like customized analyses or processing pipelines, it may be desirable to call the low-level `fit` and `test` functions directly. In contrast to the wrapper functions, which in most cases take filenames as inputs, the `fit` and `test` functions directly operate on Python variables such as numpy arrays or lists. We refer to the API documentation for details about the expected inputs and the resulting outputs, and give short examples below.
 
+(documentation_functions-glm)=
 #### The GLM module
 
 The following code will fit an ordinary least squares model for all (or a masked subset of) voxels/vertices/variables in a single vectorized computation. We need to provide a design matrix `X` and the data `Y`. `maskvtx` is optional (`None` fits every column of `Y`); `return_yhat`/`return_eres` control whether the signal estimate and residual error are additionally returned.
@@ -281,6 +286,7 @@ fstats = test(Bhat=stats['Bhat'],
               )
 ```
 
+(documentation_functions-lme)=
 #### The LME module
 
 The following code will fit a linear mixed-effects model. We need to provide a design matrix `X`, the indices `Zcols` of the random effects in the design matrix, the concatenated thickness (or volume) data `Y`, and a list `clusters` of the cluster structure. All other inputs are optional, and are set to their default values in this example. In practice, it will make sense to increase the number of CPU cores (`prs`) to allow for parallel processing.
@@ -317,6 +323,7 @@ ___
 
 ## Inputs and outputs
 
+(documentation_input-data-format-specs)=
 ### Input data and format specifications
 
 Argument | Used by | Description | Format
@@ -331,6 +338,7 @@ Argument | Used by | Description | Format
 
 All tables can be separated by tab, comma, or space.
 
+(documentation_output-files)=
 ### Output files and their interpretation
 
 The program will compute the following statistics, and produce text- or image-based output files. Text files can be accessed with any text editor. Image files follow the FreeSurfer format and conventions, and are intended to be used with visualization and post-processing tools like `Freeview` and `surfcluster`, which are available from any FreeSurfer distribution.
