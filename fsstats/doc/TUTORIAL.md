@@ -14,7 +14,7 @@ tutorial/lme_massunivariate
 
 Here we illustrate an example analysis with the `fsstats` command-line tools, `fsstats_glm` and `fsstats_lme`. 
 
-The tutorial deliberately keeps things shorter and only explains what is needed to follow the example. For the full, authoritative description of every argument, input format, and output file, see the [documentation](DOCUMENTATION.md).
+The tutorial deliberately keeps things shorter and only explains what is needed to follow the example. For the full, authoritative description of every argument, input format, and output file, see the [documentation](documentation).
 
 The tutorial covers command-line usage only. For using `fsstats` as a Python package or calling its low-level functions directly, see the sections for running the fsstats tools [as a Python package](documentation_as-a-python-package) and [as Python functions](documentation_as-python-functions).
 

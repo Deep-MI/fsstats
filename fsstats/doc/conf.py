@@ -40,7 +40,7 @@ root_doc = "index"
 # ones.
 extensions = [
     "sphinx.ext.autodoc",
-    "sphinx.ext.autosectionlabel",
+    #"sphinx.ext.autosectionlabel",
     "sphinx.ext.autosummary",
     "sphinx.ext.intersphinx",
     "sphinx.ext.linkcode",
@@ -56,7 +56,7 @@ extensions = [
 ]
 
 templates_path = ["_templates"]
-exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", "**.ipynb_checkpoints", "tutorials/examples/README.rst"]
+exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", "**.ipynb_checkpoints", "DOCUMENTATION.md", "tutorials/examples/README.rst"]
 
 # Sphinx will warn about all references where the target cannot be found.
 nitpicky = True
@@ -118,7 +118,7 @@ intersphinx_timeout = 5
 issues_github_path = gh_url.split("https://github.com/")[-1]
 
 # -- autosectionlabels -------------------------------------------------------
-autosectionlabel_prefix_document = True
+#autosectionlabel_prefix_document = True
 
 # -- numpydoc ----------------------------------------------------------------
 numpydoc_class_members_toctree = False

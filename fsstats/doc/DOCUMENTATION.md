@@ -1,3 +1,4 @@
+(documentation)=
 # Documentation
 
 ## Overview

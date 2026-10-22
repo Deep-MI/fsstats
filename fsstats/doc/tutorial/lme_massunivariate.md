@@ -82,4 +82,4 @@ fsstats_lme \
 
 This additionally writes `regions.mgh`, showing which vertices were pooled together into each region for covariance estimation.
 
-This concludes the tutorial. For the complete argument and output reference, deviations from the original FreeSurfer/Matlab tools, and citations, see the [documentation](../DOCUMENTATION.md).
+This concludes the tutorial. For the complete argument and output reference, deviations from the original FreeSurfer/Matlab tools, and citations, see the [documentation](documentation).
