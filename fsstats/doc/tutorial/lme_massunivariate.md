@@ -54,9 +54,7 @@ View the group-by-time effect's signed significance map with Freeview, for examp
 freeview -f fsaverage/surf/lh.inflated:overlay=/my/output/directory/lme_massunivariate/group_by_time_contrast/sig.mgh:overlay_threshold=1.3,5
 ```
 
-As in [GLM, mass-univariate](glm_massunivariate.md), this colors the surface by `sig` (here thresholded at sig ≥ 1.3, i.e. p ≤ 0.05): warm/cool colors mark where the group difference in the rate of thinning is positive/negative, and intensity reflects the strength of the effect. `sig.mgh`/`F.mgh` can also be further processed with `surfcluster` for cluster-based summaries.
-
-*(Figure to be added: a Freeview screenshot of the thresholded `sig.mgh` overlay for `group_by_time_contrast` on the inflated fsaverage surface.)*
+As in [GLM, mass-univariate](glm_massunivariate.md), this colors the surface by `sig` (here thresholded at sig ≥ 1.3, i.e. p ≤ 0.05): warm/cool colors mark where the group difference in the rate of thinning is positive/negative, and intensity reflects the strength of the effect. `sig.mgh`/`F.mgh` can also be further processed with `mri_surfcluster` for cluster-based summaries.
 
 **A note on multiple comparisons:** as with [GLM, mass-univariate](glm_massunivariate.md), this map is one test per vertex and is not corrected for the many comparisons involved — see [key concepts](tutorial_multiple-comparisons) before interpreting individual vertices as significant.
 

@@ -100,7 +100,7 @@ The `group_by_time_contrast/sig.txt` result is the one that answers our motivati
 
 `fsstats_lme` caches the fitted model internally, so if you later want to evaluate additional contrasts against this same fit without re-running the (for a univariate analysis, quick) estimation step, you can add `--skip-estimation` on a subsequent run with the same `--glmdir`.
 
-*(Figure to be added: individual hippocampal-volume trajectories over time, one line per participant, colored by group, with fitted average trends overlaid.)*
+The following plots show individual hippocampal-volume trajectories over time, one line per participant, colored by group, with raw data in the first plot and fitted slopes in the second plot:
 
 ![Individual hippocampal-volume trajectories over time by group](lme_univ_points.png)
 

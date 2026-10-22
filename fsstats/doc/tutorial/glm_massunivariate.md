@@ -49,9 +49,9 @@ These are FreeSurfer-format overlays. View the group effect's signed significanc
 freeview -f fsaverage/surf/lh.inflated:overlay=/my/output/directory/glm_massunivariate/group_contrast/sig.mgh:overlay_threshold=1.3,5
 ```
 
-This colors the inflated left-hemisphere surface by `sig` (here thresholded to show vertices with sig ≥ 1.3, i.e. p ≤ 0.05): warm/cool colors mark where the effect is positive/negative (AD greater/less than CN, given the sign of `group_contrast`), and color intensity reflects the strength of the effect. `sig.mgh`/`F.mgh` can also be further processed with `surfcluster` for cluster-based summaries.
+This colors the inflated left-hemisphere surface by `sig` (here thresholded to show vertices with sig ≥ 1.3, i.e. p ≤ 0.05): warm/cool colors mark where the effect is positive/negative (AD greater/less than CN, given the sign of `group_contrast`), and color intensity reflects the strength of the effect. `sig.mgh`/`F.mgh` can also be further processed with `mri_surfcluster` for cluster-based summaries.
 
-*(Figure to be added: a Freeview screenshot of contrast estimate, f statistical parameter, and the unthresholded `sig.mgh` overlay for `group_contrast` on the inflated fsaverage surface.)*
+The following screenshots show the contrast estimate gamma, the statistical parameter F, and the unthresholded `sig.mgh` overlay for `group_contrast` on the inflated fsaverage surface.
 
 ![Freeview screenshot of the group-contrast contrast estimate, f statistical parameter, and significance map](glm_mass_stats.png)
 

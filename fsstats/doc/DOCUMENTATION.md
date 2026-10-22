@@ -385,9 +385,9 @@ ___
 - `--osgm`, `--pca`, `--sim` (permutation/Monte Carlo simulation and multiple-comparison correction), `--fsgd`, DTI and kinetic-modeling options (`--dti`, `--mrtm1`, `--mrtm2`, `--logan`)
 - Pruning (`--prune`) and smoothing (`--fwhm`/`--var-fwhm`)
 
-### Deviations from the lme toolbox
+### Deviations from the lme toolbox (Matlab)
 
-Introducing the `glm` module also brought two changes to the existing `lme` module's command-line interface and outputs, made for consistency across both modules:
+Introducing the `glm` module also brought two changes to the `lme` module's command-line interface and outputs, made for consistency across both modules:
 
 - `--mask` renamed to `--label`: the flag was always used to pass a FreeSurfer label file, so it is now named `--label` (matching `glm`, which additionally supports a distinct `--mask` for binary mask *volumes*, following `mri_glmfit`'s own convention). The Python API's `run_lme(mask=...)` parameter is now `run_lme(label=...)`.
 - Signed `sig` + `z`, no separate `sgn`: contrast output no longer includes a separate `sgn.mgh`/`sgn.txt` file. `sig.mgh`/`sig.txt` now has the contrast sign folded in directly for single-row (t-test-like) contrasts, and every contrast additionally gets a new `z.mgh`/`z.txt` (z-value) file — mirroring FreeSurfer's `mri_glmfit` convention.
