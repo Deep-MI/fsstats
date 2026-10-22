@@ -1,0 +1,6 @@
+﻿fsstats.glm.test
+================
+
+.. currentmodule:: fsstats.glm
+
+.. autofunction:: test

@@ -1,0 +1,430 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="./">
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="GLM, univariate" href="tutorial/glm_univariate.html"><link rel="prev" title="Documentation" href="documentation/index.html">
+
+    <!-- Generated with Sphinx 8.1.3 and Furo 2025.12.19 -->
+        <title>Tutorial - fsstats</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d111a655" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=7bdb33bb" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=8dab3a3b" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f2f2f2;
+  --color-code-foreground: #1e1e1e;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="index.html"><div class="brand">fsstats</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
+  
+  <span class="sidebar-brand-text">fsstats</span>
+  
+</a><form class="sidebar-search-container" method="get" action="search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="documentation/index.html">Documentation</a></li>
+<li class="toctree-l1 current has-children current-page"><a class="current reference internal" href="#">Tutorial</a><input aria-label="Toggle navigation of Tutorial" checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorial/glm_univariate.html">GLM, univariate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial/glm_massunivariate.html">GLM, mass-univariate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial/lme_univariate.html">LME, univariate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial/lme_massunivariate.html">LME, mass-univariate</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="changes/index.html">Changes</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="api/index.html">API Reference</a><input aria-label="Toggle navigation of API Reference" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/generated/fsstats.run_glm.html">fsstats.run_glm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/generated/fsstats.glm.fit.html">fsstats.glm.fit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/generated/fsstats.glm.test.html">fsstats.glm.test</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/generated/fsstats.run_lme.html">fsstats.run_lme</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/generated/fsstats.lme.fit.html">fsstats.lme.fit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/generated/fsstats.lme.test.html">fsstats.lme.test</a></li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="view-this-page">
+  <a class="muted-link" href="_sources/TUTORIAL.md.txt" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div>
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <section id="tutorial">
+<h1>Tutorial<a class="headerlink" href="#tutorial" title="Link to this heading">¶</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">¶</a></h2>
+<p>Here we illustrate an example analysis with the <code class="docutils literal notranslate"><span class="pre">fsstats</span></code> command-line tools, <code class="docutils literal notranslate"><span class="pre">fsstats_glm</span></code> and <code class="docutils literal notranslate"><span class="pre">fsstats_lme</span></code>.</p>
+<p>The tutorial deliberately keeps things shorter and only explains what is needed to follow the example. For the full, authoritative description of every argument, input format, and output file, see the <a class="reference internal" href="documentation/index.html#documentation"><span class="std std-ref">documentation</span></a>.</p>
+<p>The tutorial covers command-line usage only. For using <code class="docutils literal notranslate"><span class="pre">fsstats</span></code> as a Python package or calling its low-level functions directly, see the sections for running the fsstats tools <a class="reference internal" href="documentation/index.html#documentation-as-a-python-package"><span class="std std-ref">as a Python package</span></a> and <a class="reference internal" href="documentation/index.html#documentation-as-python-functions"><span class="std std-ref">as Python functions</span></a>.</p>
+</section>
+<hr class="docutils" />
+<section id="contents">
+<h2>Contents<a class="headerlink" href="#contents" title="Link to this heading">¶</a></h2>
+<p>This tutorial provides walkthroughs for four analysis scenarios:</p>
+<ol class="arabic simple">
+<li><p>Cross-sectional analysis for extracted, tabular data (<a class="reference internal" href="tutorial/glm_univariate.html"><span class="std std-doc">GLM, univariate</span></a>)</p></li>
+<li><p>Cross-sectional analysis for whole-brain, vertex-based data (<a class="reference internal" href="tutorial/glm_massunivariate.html"><span class="std std-doc">GLM, mass-univariate</span></a>)</p></li>
+<li><p>Longitudinal analysis for extracted, tabular data (<a class="reference internal" href="tutorial/lme_univariate.html"><span class="std std-doc">LME, univariate</span></a>)</p></li>
+<li><p>Longitudinal analysis for whole-brain, vertex-based data (<a class="reference internal" href="tutorial/lme_massunivariate.html"><span class="std std-doc">LME, mass-univariate</span></a>)</p></li>
+</ol>
+<hr class="docutils" />
+</section>
+<section id="key-concepts">
+<span id="tutorial-key-concepts"></span><h2>Key concepts<a class="headerlink" href="#key-concepts" title="Link to this heading">¶</a></h2>
+<p>The four walkthroughs share the concepts below. Read them once here; each section then only explains what’s specific to that analysis.</p>
+<section id="general-linear-and-linear-mixed-effects-models">
+<h3>General linear and linear mixed-effects models<a class="headerlink" href="#general-linear-and-linear-mixed-effects-models" title="Link to this heading">¶</a></h3>
+<p>A <strong>general linear model (GLM)</strong> relates an outcome (e.g. a brain measure) to one or more predictors (e.g. group, age) through a set of fixed coefficients. These coefficients, also called beta estimates, quantify the contribution of each predictor in the prediction of the outcome in a model of the form <code class="docutils literal notranslate"><span class="pre">Y</span> <span class="pre">=</span> <span class="pre">beta_1</span> <span class="pre">*</span> <span class="pre">X_1</span> <span class="pre">+</span> <span class="pre">...</span> <span class="pre">+</span> <span class="pre">beta_n</span> <span class="pre">*</span> <span class="pre">X_n</span> <span class="pre">+</span> <span class="pre">error</span></code>, where <code class="docutils literal notranslate"><span class="pre">Y</span></code> represents the outcome, <code class="docutils literal notranslate"><span class="pre">beta_1</span></code> to <code class="docutils literal notranslate"><span class="pre">beta_n</span></code> are the model coefficients, and <code class="docutils literal notranslate"><span class="pre">X_1</span></code> to <code class="docutils literal notranslate"><span class="pre">X_n</span></code> represent <code class="docutils literal notranslate"><span class="pre">n</span></code> predictors in the model. This model assumes that observations are independent of one another.</p>
+<p>A <strong>linear mixed-effects (LME) model</strong> extends the GLM with <em>random effects</em>: in addition to the fixed, population-average coefficients, each case is allowed its own deviation from that average. This is what makes it possible to correctly analyze <em>clustered</em> data, such as repeated visits from the same person, where observations within a cluster are not independent. Ignoring that non-independence (e.g. by using a plain GLM on longitudinal data) tends to produce overconfident, artificially small p-values. LME also lets you directly ask questions a GLM cannot, such as whether individuals’ <em>rates of change</em> differ by group.</p>
+</section>
+<section id="model-inputs-design-matrix-and-contrasts">
+<h3>Model inputs: design matrix and contrasts<a class="headerlink" href="#model-inputs-design-matrix-and-contrasts" title="Link to this heading">¶</a></h3>
+<p>The <strong>design matrix</strong> contains – in numerical form – all variables that you want to use as predictors (or control variables) in your model. It typically contains an intercept (i.e., a column of ones) in addition to the variables of interest. The design matrix has one row per observation and one column per variable (e.g. intercept, group, age), and for each column / variable one beta estimate will be available after the model has been estimated. Categorical variables need to be recoded into one or more group indicator variables that can take values of either <code class="docutils literal notranslate"><span class="pre">0</span></code> or <code class="docutils literal notranslate"><span class="pre">1</span></code>; in models with a global intercept, categorical variables with <code class="docutils literal notranslate"><span class="pre">n</span></code> levels will result in <code class="docutils literal notranslate"><span class="pre">n-1</span></code> indicator variables, since one of the <code class="docutils literal notranslate"><span class="pre">n</span></code> groups serves as a reference group that will be modeled through the global intercept and therefore does not need its own indicator variable.</p>
+<p>A <strong>contrast vector</strong> encodes the specific hypothesis that you want to test; it is a single row of numerical values (typically 0, -1, or +1) and has as many columns as the design matrix. The columns of the design matrix, the columns of the contrast vector, and the beta estimates all correspond to each other. A contrast selects those model parameters (beta estimates) that you want to test – e.g. “is the group coefficient different from zero?” It then implements a linear combination of these parameters, resulting in the contrast estimate <code class="docutils literal notranslate"><span class="pre">gamma</span></code> – a single number that represents an effect estimate and can be evaluated for statistical significance. A single-row contrast vector corresponds to a t-test that evaluates a single effect.</p>
+<p>A <strong>contrast matrix</strong> is a generalization of the contrast vector and serves the same purpose. Unlike the the contrast vector, it consists of two or more rows of numerical values (typically 0, -1, or +1), but still has as many columns as the design matrix. A multi-row contrast matrix behaves like a joint F-test across several effects at once: this can be useful if you want to test the overall effect of a group with more than 2 levels, for example to evaluate if there is a difference between <em>any</em> pair of subgroups while not primarily being interested between which specific pairs. Note that for testing multiple independent research questions – e.g. testing effects of group as well as age – we use multiple independent (possibly single-row) contrasts rather than one multi-row contrast, because the latter still encodes just a single research question.</p>
+</section>
+<section id="model-outputs-parameter-estimates-and-statistical-significance">
+<span id="tutorial-model-outputs"></span><h3>Model outputs: parameter estimates and statistical significance<a class="headerlink" href="#model-outputs-parameter-estimates-and-statistical-significance" title="Link to this heading">¶</a></h3>
+<p>The software uses the design matrix to fit the model to the data, and uses the contrasts to determine statistical significance for the effects of interest. This results in the following outputs:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">beta</span></code>/<code class="docutils literal notranslate"><span class="pre">gamma</span></code> are regression coefficients / effect estimates — <code class="docutils literal notranslate"><span class="pre">gamma</span></code> is obtained by the applying the contrast vector or matrix to the fitted <code class="docutils literal notranslate"><span class="pre">beta</span></code> coefficients, and represents the estimated effect that the contrast is testing.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">F</span></code> is an F-statistic. For a single-row (t-test-like) contrast, F is simply the square of the corresponding t-statistic (F = t²).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">z</span></code> is the t-value expressed as a standard-normal quantile (a z-score), and its value will approach the t-value as sample size increases; z-values and t-values will be identical for practical purposes when df ≳ 30.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sig</span></code> is – for numerical readability – a transformation of the p-value rather than the p-value itself (smaller p-value → larger absolute sig-value: p = 0.05 → abs(sig) = 1.3; p = 0.01 → abs(sig) = 2; p = 0.001 → abs(sig) = 3).</p></li>
+</ul>
+<blockquote>
+<div><p><strong>Sign:</strong> for single-row contrasts, <code class="docutils literal notranslate"><span class="pre">sig</span></code> and <code class="docutils literal notranslate"><span class="pre">z</span></code> carry the sign of the estimated effect (<code class="docutils literal notranslate"><span class="pre">gamma</span></code>) — a positive value means the effect went in the direction the contrast defines as positive, a negative value the opposite. Multi-row (F-test) contrasts are left unsigned, since “direction” isn’t a single number once more than one parameter is being tested jointly. This means flipping a contrast’s sign (e.g. using <code class="docutils literal notranslate"><span class="pre">0</span> <span class="pre">-1</span> <span class="pre">0</span></code> instead of <code class="docutils literal notranslate"><span class="pre">0</span> <span class="pre">1</span> <span class="pre">0</span></code>) doesn’t change the F-statistic or p-value at all — it only flips which direction is reported as positive. For single-row contrasts, the transformation between p-values and sig-values therefore is <code class="docutils literal notranslate"><span class="pre">sig</span> <span class="pre">=</span> <span class="pre">sign(gamma)</span> <span class="pre">*</span> <span class="pre">-log10(p)</span></code>. For multi-row contrasts, the transform is just <code class="docutils literal notranslate"><span class="pre">sig</span> <span class="pre">=</span> <span class="pre">-log10(p)</span></code>. To derive (unsigned) p-values from sig-values, use <code class="docutils literal notranslate"><span class="pre">p</span> <span class="pre">=</span> <span class="pre">10^-abs(sig)</span></code>.</p>
+</div></blockquote>
+</section>
+<section id="multiple-comparisons">
+<span id="tutorial-multiple-comparisons"></span><h3>Multiple comparisons<a class="headerlink" href="#multiple-comparisons" title="Link to this heading">¶</a></h3>
+<p>A mass-univariate analysis runs one test per vertex — typically tens of thousands of tests at once. <code class="docutils literal notranslate"><span class="pre">fsstats</span></code> does not currently perform any multiple-comparison correction itself. Uncorrected <code class="docutils literal notranslate"><span class="pre">sig</span></code>/<code class="docutils literal notranslate"><span class="pre">z</span></code> values at individual vertices should therefore not be interpreted as significant on their own — apply an appropriate correction such as false discovery rate control (e.g. using FreeSurfer’s <code class="docutils literal notranslate"><span class="pre">mri_fdr</span></code>), or a cluster-based approach (e.g. using FreeSurfer’s <code class="docutils literal notranslate"><span class="pre">mri_glmfit-sim</span></code>) before drawing conclusions from a mass-univariate result.</p>
+<hr class="docutils" />
+</section>
+</section>
+<section id="example-analysis">
+<span id="tutorial-example"></span><h2>Example analysis<a class="headerlink" href="#example-analysis" title="Link to this heading">¶</a></h2>
+<p>All four <a class="reference internal" href="#contents"><span class="std std-ref">analysis scenarios</span></a> analyze the same hypothetical study: a longitudinal aging study comparing participants with dementia (AD) against cognitively normal (CN) controls, each scanned at multiple visits, and processed with the FastSurfer or FreeSurfer software. Two outcomes are used throughout:</p>
+<ul class="simple">
+<li><p><strong>Hippocampal volume</strong>, a single value per participant per visit – this is a <em>univariate</em> analysis, i.e. analysis of one or a few tabular variables —.</p></li>
+<li><p><strong>Cortical thickness</strong>, estimated at every vertex of a cortical surface — this is a <em>mass-univariate</em> analysis, i.e. an analysis of a very large number of variables (here, thousands of vertices) at once.</p></li>
+</ul>
+<p>The four walkthroughs form a deliberate progression:</p>
+<ul class="simple">
+<li><p>The <strong>GLM</strong> walkthroughs (1-2) treat one visit per participant as an independent observation — a simple cross-sectional comparison of AD vs. CN at baseline.</p></li>
+<li><p>The <strong>LME</strong> walkthroughs (3-4) use the full longitudinal data, with multiple visits per participant. Because repeated visits from the same person are not independent observations, this requires a linear mixed-effects model rather than ordinary least squares, and lets us additionally ask whether AD and CN differ in their <em>rate of change</em> over time.</p></li>
+</ul>
+<p>Working through all four in order (GLM before LME, univariate before mass-univariate) is a good way to build up from the simplest case to the full analysis, but each page is also self-contained if you only need one of the four.</p>
+<blockquote>
+<div><p><strong>Note:</strong> <code class="docutils literal notranslate"><span class="pre">fsstats</span></code> does not contain an example dataset. Therefore, every command below uses placeholder paths (e.g. <code class="docutils literal notranslate"><span class="pre">/my/input/directory/...</span></code>), and these have to be substituted with your own paths and files for an analysis of your own data.</p>
+</div></blockquote>
+</section>
+<hr class="docutils" />
+<section id="requirements">
+<h2>Requirements<a class="headerlink" href="#requirements" title="Link to this heading">¶</a></h2>
+<p>All four walkthroughs assume your data has already been processed with FastSurfer or FreeSurfer, and that you have prepared the inputs <code class="docutils literal notranslate"><span class="pre">fsstats</span></code> expects:</p>
+<ul class="simple">
+<li><p>For univariate analyses: a table of per-participant values, such as the output of FreeSurfer’s <code class="docutils literal notranslate"><span class="pre">asegstats2table</span></code> (for hippocampal volume, an <code class="docutils literal notranslate"><span class="pre">aseg</span></code> measure) or <code class="docutils literal notranslate"><span class="pre">aparcstats2table</span></code> (for a parcellation-based thickness summary).</p></li>
+<li><p>For mass-univariate analyses: a concatenated surface overlay file produced by <code class="docutils literal notranslate"><span class="pre">mris_preproc</span></code>, containing cortical thickness at every vertex for every participant/visit, resampled to a common template surface (e.g. <code class="docutils literal notranslate"><span class="pre">fsaverage</span></code>).</p></li>
+<li><p>In both cases: a design matrix and one or more contrast files describing your model (built by hand or with your own scripts — <code class="docutils literal notranslate"><span class="pre">fsstats</span></code> does not build these for you), and, for the LME walkthroughs, a list identifying which rows belong to which case.</p></li>
+</ul>
+<p>Each walkthrough describes the specific files it needs as they come up.</p>
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="tutorial/glm_univariate.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">GLM, univariate</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="documentation/index.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Documentation</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2026, Kersten Diers
+            </div>
+            Made with 
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              <a class="muted-link " href="https://github.com/Deep-MI/fsstats" aria-label="GitHub">
+                <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path>
+                </svg>
+            </a>
+              
+            </div>
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Tutorial</a><ul>
+<li><a class="reference internal" href="#overview">Overview</a></li>
+<li><a class="reference internal" href="#contents">Contents</a></li>
+<li><a class="reference internal" href="#key-concepts">Key concepts</a><ul>
+<li><a class="reference internal" href="#general-linear-and-linear-mixed-effects-models">General linear and linear mixed-effects models</a></li>
+<li><a class="reference internal" href="#model-inputs-design-matrix-and-contrasts">Model inputs: design matrix and contrasts</a></li>
+<li><a class="reference internal" href="#model-outputs-parameter-estimates-and-statistical-significance">Model outputs: parameter estimates and statistical significance</a></li>
+<li><a class="reference internal" href="#multiple-comparisons">Multiple comparisons</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#example-analysis">Example analysis</a></li>
+<li><a class="reference internal" href="#requirements">Requirements</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="_static/documentation_options.js?v=d45e8c67"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/scripts/furo.js?v=46bd48cc"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    </body>
+</html>

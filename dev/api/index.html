@@ -3,7 +3,7 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="fsstats.run_lme" href="generated/fsstats.run_lme.html"><link rel="prev" title="Changes" href="../changes/index.html">
+<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="fsstats.run_glm" href="generated/fsstats.run_glm.html"><link rel="prev" title="Changes" href="../changes/index.html">
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.12.19 -->
         <title>API Reference - fsstats</title>
@@ -194,8 +194,18 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../documentation/index.html">Documentation</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../TUTORIAL.html">Tutorial</a><input aria-label="Toggle navigation of Tutorial" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial/glm_univariate.html">GLM, univariate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial/glm_massunivariate.html">GLM, mass-univariate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial/lme_univariate.html">LME, univariate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial/lme_massunivariate.html">LME, mass-univariate</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../changes/index.html">Changes</a></li>
-<li class="toctree-l1 current has-children current-page"><a class="current reference internal" href="#">API Reference</a><input aria-label="Toggle navigation of API Reference" checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l1 current has-children current-page"><a class="current reference internal" href="#">API Reference</a><input aria-label="Toggle navigation of API Reference" checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="generated/fsstats.run_glm.html">fsstats.run_glm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/fsstats.glm.fit.html">fsstats.glm.fit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/fsstats.glm.test.html">fsstats.glm.test</a></li>
 <li class="toctree-l2"><a class="reference internal" href="generated/fsstats.run_lme.html">fsstats.run_lme</a></li>
 <li class="toctree-l2"><a class="reference internal" href="generated/fsstats.lme.fit.html">fsstats.lme.fit</a></li>
 <li class="toctree-l2"><a class="reference internal" href="generated/fsstats.lme.test.html">fsstats.lme.test</a></li>
@@ -244,13 +254,22 @@
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/fsstats.run_lme.html#fsstats.run_lme" title="fsstats.run_lme"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run_lme</span></code></a>([table, filename, design_matrix, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/fsstats.run_glm.html#fsstats.run_glm" title="fsstats.run_glm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run_glm</span></code></a>([table, filename, design_matrix, ...])</p></td>
+<td><p>Run GLM (ordinary least squares) modeling and inference.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/fsstats.glm.fit.html#fsstats.glm.fit" title="fsstats.glm.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">glm.fit</span></code></a>(X, Y[, maskvtx, return_yhat, ...])</p></td>
+<td><p>Vertex/voxel-wise ordinary least squares estimation.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/fsstats.glm.test.html#fsstats.glm.test" title="fsstats.glm.test"><code class="xref py py-obj docutils literal notranslate"><span class="pre">glm.test</span></code></a>(Bhat, rvar, dof, X, C)</p></td>
+<td><p>Vertex/voxel-wise inference for the fixed effects in the ordinary least squares model.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/fsstats.run_lme.html#fsstats.run_lme" title="fsstats.run_lme"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run_lme</span></code></a>([table, filename, design_matrix, ...])</p></td>
 <td><p>Run mixed-effects modeling and inference.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/fsstats.lme.fit.html#fsstats.lme.fit" title="fsstats.lme.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lme.fit</span></code></a>(X, Zcols, Y, clusters, maskvtx, prs, ...)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/fsstats.lme.fit.html#fsstats.lme.fit" title="fsstats.lme.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lme.fit</span></code></a>(X, Zcols, Y, clusters, maskvtx, prs, ...)</p></td>
 <td><p>Vertex/voxel-wise linear mixed-effects estimation.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/fsstats.lme.test.html#fsstats.lme.test" title="fsstats.lme.test"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lme.test</span></code></a>(stats, C, bias_correct, prs, verbose)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/fsstats.lme.test.html#fsstats.lme.test" title="fsstats.lme.test"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lme.test</span></code></a>(stats, C, bias_correct, prs, verbose)</p></td>
 <td><p>Inference for the fixed-effects in the linear mixed-effects model.</p></td>
 </tr>
 </tbody>
@@ -263,12 +282,12 @@
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="generated/fsstats.run_lme.html">
+          <a class="next-page" href="generated/fsstats.run_glm.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">fsstats.run_lme</div>
+                <div class="title">fsstats.run_glm</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>

@@ -1,0 +1,6 @@
+﻿fsstats.glm.fit
+===============
+
+.. currentmodule:: fsstats.glm
+
+.. autofunction:: fit

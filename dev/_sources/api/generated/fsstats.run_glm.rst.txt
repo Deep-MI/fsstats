@@ -1,0 +1,6 @@
+﻿fsstats.run\_glm
+================
+
+.. currentmodule:: fsstats
+
+.. autofunction:: run_glm

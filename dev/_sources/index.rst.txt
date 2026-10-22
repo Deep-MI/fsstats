@@ -9,6 +9,7 @@ fsstats is an `open-source Python package <project github_>`_ for univariate and
     :maxdepth: 1
     
     documentation/index
+    TUTORIAL
     changes/index
     api/index
 
@@ -35,5 +36,5 @@ source.
 License
 -------
 
-``fsstats`` is licensed under the `MIT license`_.
+``fsstats`` is licensed under the `Apache 2.0 license`_.
 A full copy of the license can be found `on GitHub <project license_>`_.

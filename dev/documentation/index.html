@@ -3,7 +3,7 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="Changes" href="../changes/index.html"><link rel="prev" title="fsstats" href="../index.html">
+<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="Tutorial" href="../TUTORIAL.html"><link rel="prev" title="fsstats" href="../index.html">
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.12.19 -->
         <title>Documentation - fsstats</title>
@@ -194,8 +194,18 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul class="current">
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Documentation</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../TUTORIAL.html">Tutorial</a><input aria-label="Toggle navigation of Tutorial" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial/glm_univariate.html">GLM, univariate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial/glm_massunivariate.html">GLM, mass-univariate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial/lme_univariate.html">LME, univariate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial/lme_massunivariate.html">LME, mass-univariate</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../changes/index.html">Changes</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../api/index.html">API Reference</a><input aria-label="Toggle navigation of API Reference" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../api/index.html">API Reference</a><input aria-label="Toggle navigation of API Reference" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/fsstats.run_glm.html">fsstats.run_glm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/fsstats.glm.fit.html">fsstats.glm.fit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/generated/fsstats.glm.test.html">fsstats.glm.test</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/generated/fsstats.run_lme.html">fsstats.run_lme</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/generated/fsstats.lme.fit.html">fsstats.lme.fit</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/generated/fsstats.lme.test.html">fsstats.lme.test</a></li>
@@ -240,14 +250,11 @@
         </div>
         <article role="main" id="furo-main-content">
           <section id="documentation">
-<h1>Documentation<a class="headerlink" href="#documentation" title="Link to this heading">¶</a></h1>
+<span id="id1"></span><h1>Documentation<a class="headerlink" href="#documentation" title="Link to this heading">¶</a></h1>
 <section id="overview">
 <h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">¶</a></h2>
-<p>The <code class="docutils literal notranslate"><span class="pre">fsstats</span></code> package provides univariate and mass-univariate statistical modeling and inference tools for <a class="reference external" href="http://fastsurfer.org">FastSurfer</a> and <a class="reference external" href="https://surfer.nmr.mgh.harvard.edu">FreeSurfer</a> imaging data. It is a revision, extension, and translation to the Python language of Freesurfer’s Matlab-based <a class="reference external" href="https://surfer.nmr.mgh.harvard.edu/fswiki/LinearMixedEffectsModels">LME</a> tools.</p>
-</section>
-<section id="description">
-<h2>Description<a class="headerlink" href="#description" title="Link to this heading">¶</a></h2>
-<p>This page provides general, usage, and installation information about the <code class="docutils literal notranslate"><span class="pre">fsstats</span></code> toolbox.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">fsstats</span></code> package provides univariate and mass-univariate statistical modeling and inference tools for <a class="reference external" href="http://fastsurfer.org">FastSurfer</a> and <a class="reference external" href="https://surfer.nmr.mgh.harvard.edu">FreeSurfer</a> imaging data. It contains two modules: <code class="docutils literal notranslate"><span class="pre">glm</span></code>, a lean Python port of a subset of FreeSurfer’s <a class="reference external" href="https://surfer.nmr.mgh.harvard.edu/fswiki/mri_glmfit">mri_glmfit</a> tool for ordinary least squares (GLM) analyses, and <code class="docutils literal notranslate"><span class="pre">lme</span></code>, a revision, extension, and translation to the Python language of Freesurfer’s Matlab-based <a class="reference external" href="https://surfer.nmr.mgh.harvard.edu/fswiki/LinearMixedEffectsModels">LME</a> tools.</p>
+<p>This page provides general, technical usage, and installation information about the <code class="docutils literal notranslate"><span class="pre">fsstats</span></code> toolbox. See the tutorial for an illustrative explanation about using the software.</p>
 </section>
 <hr class="docutils" />
 <section id="contents">
@@ -258,12 +265,19 @@
 <ul>
 <li><p><a class="reference internal" href="#as-a-command-line-tool"><span class="std std-ref">As a command line tool</span></a></p></li>
 <li><p><a class="reference internal" href="#as-a-python-package"><span class="std std-ref">As a Python package</span></a></p></li>
+<li><p><a class="reference internal" href="#as-python-functions"><span class="std std-ref">As Python functions</span></a></p></li>
 </ul>
 </li>
 <li><p><a class="reference internal" href="#inputs-and-outputs"><span class="std std-ref">Inputs and outputs</span></a></p>
 <ul>
 <li><p><a class="reference internal" href="#input-data-and-format-specifications"><span class="std std-ref">Input data and format specifications</span></a></p></li>
 <li><p><a class="reference internal" href="#output-files-and-their-interpretation"><span class="std std-ref">Output files and their interpretation</span></a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#deviations-from-original-packages"><span class="std std-ref">Deviations from original packages</span></a></p>
+<ul>
+<li><p><a class="reference internal" href="#deviations-from-mri-glmfit"><span class="std std-ref">Deviations from mri_glmfit</span></a></p></li>
+<li><p><a class="reference internal" href="#deviations-from-the-lme-toolbox"><span class="std std-ref">Deviations from the lme toolbox</span></a></p></li>
 </ul>
 </li>
 <li><p><a class="reference internal" href="#citations"><span class="std std-ref">Citations</span></a></p></li>
@@ -273,16 +287,84 @@
 <hr class="docutils" />
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
-<p>The core functionality of this toolbox is to conduct statistical analyses for FastSurfer- and FreeSurfer-based imaging data. Its current focus is on providing univariate and mass-univariate linear mixed-effects analyses for clustered (e.g., longitudinal) data. Here, <em>univariate analysis</em> refers to the nalysis of one or few variables, where the input data can be represented in tabular format; a typical example is the analysis of extracted volume or thickness estimates in a limited set of larger brain regions (regions of interest). In contrast, <em>mass-univariate</em> refers to analysis of a very large number of variables, and typically means analyses of single voxels or vertices, which require dedicated, image-based preprocessing and input formats.</p>
+<p>The core functionality of this toolbox is to conduct statistical analyses for FastSurfer- and FreeSurfer-based imaging data, via two modules:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">glm</span></code> provides univariate and mass-univariate ordinary least squares (general linear model) analyses for independent observations, following the conventions of FreeSurfer’s <code class="docutils literal notranslate"><span class="pre">mri_glmfit</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">lme</span></code> provides univariate and mass-univariate linear mixed-effects analyses for clustered (e.g., longitudinal) data, where observations belonging to the same cluster (e.g., repeated visits of the same subject) are not independent.</p></li>
+</ul>
+<p>Here, <em>univariate analysis</em> refers to the analysis of one or few variables, where the input data can be represented in tabular format; a typical example is the analysis of extracted volume or thickness estimates in a limited set of larger brain regions (regions of interest). In contrast, <em>mass-univariate</em> refers to analysis of a very large number of variables, and typically means analyses of single voxels or vertices, which require dedicated, image-based preprocessing and input formats.</p>
 </section>
 <hr class="docutils" />
 <section id="usage">
 <h2>Usage<a class="headerlink" href="#usage" title="Link to this heading">¶</a></h2>
 <section id="as-a-command-line-tool">
 <h3>As a command line tool<a class="headerlink" href="#as-a-command-line-tool" title="Link to this heading">¶</a></h3>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>fsstats_lme --X &lt;filename&gt; --C &lt;filename&gt; [--C &lt;filename&gt;]--rfx &lt;int&gt; [&lt;int&gt; ...] --clusters &lt;filename&gt; --glmdir &lt;directory&gt;
-    [--table &lt;filename&gt;]
-    [--y &lt;filename&gt; ] [--surface &lt;surface name&gt; &lt;lh|rh&gt;] [--mask &lt;filename&gt;]
+<section id="the-glm-module">
+<h4>The GLM module<a class="headerlink" href="#the-glm-module" title="Link to this heading">¶</a></h4>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>fsstats_glm --X &lt;filename&gt; --C &lt;filename&gt; [--C &lt;filename&gt;] --glmdir &lt;directory&gt;
+    [--table &lt;filename&gt;] [--y &lt;filename&gt; ] [--surface &lt;surface name&gt; &lt;lh|rh&gt;] 
+    [--mask &lt;filename&gt;]  [--label &lt;filename&gt;] [--yhat-save] [--eres-save]
+    [--help] [--detailed-help] [--version]
+
+Required arguments:
+  --X &lt;filename&gt;        Filename of a design matrix.
+  --C filename          Filename of a contrast matrix or vector. Can be used multiple times.
+  --glmdir &lt;directory&gt;  Directory where the results will be written.
+
+Required arguments for univariate analysis:
+  --table &lt;filename&gt;    Filename of a table output, e.g. produced by asegstats2table or aparcstats2table.
+
+Required and optional arguments for mass-univariate analysis:
+  --y &lt;filename&gt;        Filename of a concatenated overlay file, e.g. produced by mris_preproc.
+  --surface &lt;surface name&gt; &lt;lh|rh&gt;
+                        Template surface (e.g., fsaverage) and hemisphere (lh or rh).
+  --mask &lt;filename&gt;     Filename of a binary mask volume that will be used to select vertices/voxels for analysis.
+                        Mutually exclusive with --label. Default: All vertices/voxels.
+  --label &lt;filename&gt;    Filename of a FreeSurfer label file that will be used to select vertices for analysis.
+                        Mutually exclusive with --mask. Default: All vertices.
+  --yhat-save           Save the signal estimate (yhat). Default: False.
+  --eres-save           Save the residual error (eres). Default: False.
+
+Getting help:
+  --help                Display this help message and exit
+  --detailed-help       Display extensive help message and exit
+  --version             Display version number and exit
+</pre></div>
+</div>
+<p><em>Examples:</em></p>
+<ul class="simple">
+<li><p>Univariate analysis:</p></li>
+</ul>
+<p>The following command can be used to conduct an ordinary least squares analysis of tabular input data, evaluating two contrasts via the <code class="docutils literal notranslate"><span class="pre">--C</span></code> arguments. Further details on the expected inputs and their formats are given in the <a class="reference internal" href="#inputs-and-outputs"><span class="std std-ref">Inputs and outputs</span></a> section.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>fsstats_glm<span class="w"> </span><span class="se">\</span>
+--table<span class="w"> </span>/my/input/directory/my_tabular_input_file.txt<span class="w"> </span><span class="se">\</span>
+--X<span class="w"> </span>/my/input/directory/my_design_matrix.txt<span class="w"> </span><span class="se">\</span>
+--C<span class="w"> </span>/my/input/directory/my_contrast_file_1.txt<span class="w"> </span><span class="se">\</span>
+--C<span class="w"> </span>/my/input/directory/my_contrast_file_2.txt<span class="w"> </span><span class="se">\</span>
+--glmdir<span class="w"> </span>/my/output/directory
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Mass-univariate analysis:</p></li>
+</ul>
+<p>The following command can be used to conduct an ordinary least squares analysis of mass-univariate input data, evaluating one contrast via the <code class="docutils literal notranslate"><span class="pre">--C</span></code> argument. As specified by the <code class="docutils literal notranslate"><span class="pre">--surface</span></code> argument, the analysis will use the <code class="docutils literal notranslate"><span class="pre">fsaverage</span></code> template, and will be done for the left hemisphere. The <code class="docutils literal notranslate"><span class="pre">--yhat-save</span></code> and <code class="docutils literal notranslate"><span class="pre">--eres-save</span></code> flags additionally save the model’s signal estimate and residual error. Further details on the expected inputs and their formats are given in the <a class="reference internal" href="#inputs-and-outputs"><span class="std std-ref">Inputs and outputs</span></a> section.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>fsstats_glm<span class="w"> </span><span class="se">\</span>
+--y<span class="w"> </span>/my/input/directory/my_preprocessed_image_data.mgh<span class="w"> </span><span class="se">\</span>
+--label<span class="w"> </span>/input/directory/my_cortical_label_file.label<span class="w"> </span><span class="se">\</span>
+--X<span class="w"> </span>/my/input/directory/my_design_matrix.txt<span class="w"> </span><span class="se">\</span>
+--C<span class="w"> </span>/my/input/directory/my_contrast_file.txt<span class="w"> </span><span class="se">\</span>
+--surface<span class="w"> </span>fsaverage<span class="w"> </span>lh<span class="w"> </span><span class="se">\</span>
+--glmdir<span class="w"> </span>/my/output/directory<span class="w"> </span><span class="se">\</span>
+--yhat-save<span class="w"> </span><span class="se">\</span>
+--eres-save
+</pre></div>
+</div>
+</section>
+<section id="the-lme-module">
+<h4>The LME module<a class="headerlink" href="#the-lme-module" title="Link to this heading">¶</a></h4>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>fsstats_lme --X &lt;filename&gt; --C &lt;filename&gt; [--C &lt;filename&gt;]--rfx &lt;int&gt; [&lt;int&gt; ...]
+    --clusters &lt;filename&gt; --glmdir &lt;directory&gt; [--table &lt;filename&gt;] [--y &lt;filename&gt; ]
+    [--surface &lt;surface name&gt; &lt;lh|rh&gt;] [--label &lt;filename&gt;] [--spatial-covariance]
     [--cores &lt;int&gt;] [--iterations &lt;int&gt;] [--epsilon &lt;float&gt;] [--skip-estimation]
     [--help] [--detailed-help] [--version]
 
@@ -302,7 +384,9 @@ Required and optional arguments for mass-univariate analysis:
   --y &lt;filename&gt;        Filename of a concatenated overlay file, e.g. produced by mris_preproc.
   --surface &lt;surface name&gt; &lt;lh|rh&gt;
                         Template surface (e.g., fsaverage) and hemisphere (lh or rh).
-  --mask &lt;filename&gt;     Filename of a FreeSurfer label file that will be used to select vertices for analysis. Default: All vertices.
+  --label &lt;filename&gt;    Filename of a FreeSurfer label file that will be used to select vertices for analysis. Default: All vertices.
+  --spatial-covariance  Model spatial covariance of the residuals within homogeneous surface regions instead of fitting each vertex independently.
+                        Requires --surface to resolve to an anatomical surface file with a sibling &lt;hemi&gt;.sphere file. Default: False.
 
 Expert options:
   --cores &lt;int&gt;         Number of CPU cores used in parallel processing. Default: 1.
@@ -338,7 +422,7 @@ Getting help:
 <p>The following command can be used to conduct a linear mixed-effects analysis of mass-univariate input data. This example includes specification of one random effect via the <code class="docutils literal notranslate"><span class="pre">--rfx</span></code> argument (e.g., random intercept, assuming that column 1 of the design matrix is the global intercept), and the evaluation of one contrast via the <code class="docutils literal notranslate"><span class="pre">--C</span></code> argument. As specified by the <code class="docutils literal notranslate"><span class="pre">--surface</span></code> argument, the analysis will use the <code class="docutils literal notranslate"><span class="pre">fsaverage</span></code> template, and will be done for the left hemisphere. The <code class="docutils literal notranslate"><span class="pre">--cores</span></code> argument tells the program to run 4 processes in parallel, which will speed up processing, and can be increased depending on how many CPU cores are available on the system. Further details on the expected inputs and their formats are given in the <a class="reference internal" href="#inputs-and-outputs"><span class="std std-ref">Inputs and outputs</span></a> section.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>fsstats_lme<span class="w"> </span><span class="se">\</span>
 --y<span class="w"> </span>/my/input/directory/my_preprocessed_image_data.mgh<span class="w"> </span><span class="se">\</span>
---mask<span class="w"> </span>/input/directory/my_cortical_label_file.label<span class="w"> </span><span class="se">\</span>
+--label<span class="w"> </span>/input/directory/my_cortical_label_file.label<span class="w"> </span><span class="se">\</span>
 --X<span class="w"> </span>/my/input/directory/my_design_matrix.txt<span class="w"> </span><span class="se">\</span>
 --C<span class="w"> </span>/my/input/directory/my_contrast_file.txt<span class="w"> </span><span class="se">\</span>
 --clusters<span class="w"> </span>/my/input/directory/my_list_of_clusters.txt<span class="w"> </span><span class="se">\</span>
@@ -349,22 +433,56 @@ Getting help:
 </pre></div>
 </div>
 </section>
+</section>
 <section id="as-a-python-package">
-<h3>As a Python package<a class="headerlink" href="#as-a-python-package" title="Link to this heading">¶</a></h3>
+<span id="documentation-as-a-python-package"></span><h3>As a Python package<a class="headerlink" href="#as-a-python-package" title="Link to this heading">¶</a></h3>
 <p>As an alternative to their command-line usage, the fsstats scripts can also be run within a pure Python environment, i.e. installed and imported as a Python package.</p>
-<p>Use <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">fsstats</span></code> (or sth. equivalent) to import the package within a Python environment, and use the <code class="docutils literal notranslate"><span class="pre">run_lme</span></code> function to
-run a linear mixed-effcts analysis.</p>
+<p>Use <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">fsstats</span></code> (or sth. equivalent) to import the package within a Python environment, and use the <code class="docutils literal notranslate"><span class="pre">run_glm</span></code> or <code class="docutils literal notranslate"><span class="pre">run_lme</span></code> function to run a ordinary least squares (GLM) or linear mixed-effects analysis, respectively.</p>
+<section id="documentation-package-glm">
+<span id="id2"></span><h4>The GLM module<a class="headerlink" href="#documentation-package-glm" title="Link to this heading">¶</a></h4>
+<ul class="simple">
+<li><p>Univariate analysis:</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">fsstats</span>
+<span class="n">fsstats</span><span class="o">.</span><span class="n">run_glm</span><span class="p">(</span>
+    <span class="n">table</span><span class="o">=</span><span class="s2">"/my/input/directory/my_tabular_input_file.txt"</span><span class="p">,</span>
+    <span class="n">design_matrix</span><span class="o">=</span><span class="s2">"/my/input/directory/my_design_matrix.txt"</span><span class="p">,</span>
+    <span class="n">contrasts</span><span class="o">=</span><span class="p">[</span><span class="s2">"/my/input/directory/my_contrast_file_1.txt"</span><span class="p">,</span> <span class="s2">"/my/input/directory/my_contrast_file_2.txt"</span><span class="p">],</span>
+    <span class="n">glmdir</span><span class="o">=</span><span class="s2">"/my/output/directory"</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Mass-univariate analysis:</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">fsstats</span>
+<span class="n">fsstats</span><span class="o">.</span><span class="n">run_glm</span><span class="p">(</span>
+    <span class="n">filename</span><span class="o">=</span><span class="s2">"/my/input/directory/my_preprocessed_image_data.mgh"</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">"/input/directory/my_cortical_label_file.label"</span><span class="p">,</span>
+    <span class="n">design_matrix</span><span class="o">=</span><span class="s2">"/my/input/directory/my_design_matrix.txt"</span><span class="p">,</span>
+    <span class="n">contrasts</span><span class="o">=</span><span class="p">[</span><span class="s2">"/my/input/directory/my_contrast_file.txt"</span><span class="p">],</span>
+    <span class="n">surface</span><span class="o">=</span><span class="s2">"fsaverage"</span><span class="p">,</span>
+    <span class="n">hemi</span><span class="o">=</span><span class="s2">"lh"</span><span class="p">,</span>
+    <span class="n">glmdir</span><span class="o">=</span><span class="s2">"/my/output/directory"</span><span class="p">,</span>
+    <span class="n">yhat_save</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">eres_save</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="documentation-package-lme">
+<span id="id3"></span><h4>The LME module<a class="headerlink" href="#documentation-package-lme" title="Link to this heading">¶</a></h4>
 <ul class="simple">
 <li><p>Univariate analysis:</p></li>
 </ul>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">fsstats</span>
 <span class="n">fsstats</span><span class="o">.</span><span class="n">run_lme</span><span class="p">(</span>
-    <span class="n">table</span><span class="o">=</span><span class="s2">&quot;/my/input/directory/my_tabular_input_file.txt&quot;</span><span class="p">,</span>
-    <span class="n">design_matrix</span><span class="o">=</span><span class="s2">&quot;/my/input/directory/my_design_matrix.txt&quot;</span><span class="p">,</span>
-    <span class="n">contrasts</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;/my/input/directory/my_contrast_file_1.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;/my/input/directory/my_contrast_file_2.txt&quot;</span><span class="p">],</span>
-    <span class="n">clusters</span><span class="o">=</span><span class="s2">&quot;/my/input/directory/my_list_of_clusters.txt&quot;</span><span class="p">,</span>
+    <span class="n">table</span><span class="o">=</span><span class="s2">"/my/input/directory/my_tabular_input_file.txt"</span><span class="p">,</span>
+    <span class="n">design_matrix</span><span class="o">=</span><span class="s2">"/my/input/directory/my_design_matrix.txt"</span><span class="p">,</span>
+    <span class="n">contrasts</span><span class="o">=</span><span class="p">[</span><span class="s2">"/my/input/directory/my_contrast_file_1.txt"</span><span class="p">,</span> <span class="s2">"/my/input/directory/my_contrast_file_2.txt"</span><span class="p">],</span>
+    <span class="n">clusters</span><span class="o">=</span><span class="s2">"/my/input/directory/my_list_of_clusters.txt"</span><span class="p">,</span>
     <span class="n">random_effects</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
-    <span class="n">glmdir</span><span class="o">=</span><span class="s2">&quot;/my/output/directory&quot;</span>
+    <span class="n">glmdir</span><span class="o">=</span><span class="s2">"/my/output/directory"</span>
     <span class="p">)</span>
 </pre></div>
 </div>
@@ -373,23 +491,49 @@ run a linear mixed-effcts analysis.</p>
 </ul>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">fsstats</span>
 <span class="n">fsstats</span><span class="o">.</span><span class="n">run_lme</span><span class="p">(</span>
-    <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;/my/input/directory/my_preprocessed_image_data.mgh&quot;</span><span class="p">,</span>
-    <span class="n">mask</span><span class="o">=</span><span class="s2">&quot;/input/directory/my_cortical_label_file.label&quot;</span><span class="p">,</span>
-    <span class="n">design_matrix</span><span class="o">=</span><span class="s2">&quot;/my/input/directory/my_design_matrix.txt&quot;</span><span class="p">,</span>
-    <span class="n">contrasts</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;/my/input/directory/my_contrast_file.txt&quot;</span><span class="p">],</span>
-    <span class="n">clusters</span><span class="o">=</span><span class="s2">&quot;/my/input/directory/my_list_of_clusters.txt&quot;</span><span class="p">,</span>
+    <span class="n">filename</span><span class="o">=</span><span class="s2">"/my/input/directory/my_preprocessed_image_data.mgh"</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">"/input/directory/my_cortical_label_file.label"</span><span class="p">,</span>
+    <span class="n">design_matrix</span><span class="o">=</span><span class="s2">"/my/input/directory/my_design_matrix.txt"</span><span class="p">,</span>
+    <span class="n">contrasts</span><span class="o">=</span><span class="p">[</span><span class="s2">"/my/input/directory/my_contrast_file.txt"</span><span class="p">],</span>
+    <span class="n">clusters</span><span class="o">=</span><span class="s2">"/my/input/directory/my_list_of_clusters.txt"</span><span class="p">,</span>
     <span class="n">random_effects</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
-    <span class="n">surface</span><span class="o">=</span><span class="s2">&quot;fsaverage&quot;</span><span class="p">,</span>
-    <span class="n">hemi</span><span class="o">=</span><span class="s2">&quot;lh&quot;</span><span class="p">,</span>
+    <span class="n">surface</span><span class="o">=</span><span class="s2">"fsaverage"</span><span class="p">,</span>
+    <span class="n">hemi</span><span class="o">=</span><span class="s2">"lh"</span><span class="p">,</span>
     <span class="n">num_cores</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
-    <span class="n">glmdir</span><span class="o">=</span><span class="s2">&quot;/my/output/directory&quot;</span>
+    <span class="n">glmdir</span><span class="o">=</span><span class="s2">"/my/output/directory"</span>
     <span class="p">)</span>
 </pre></div>
 </div>
 </section>
+</section>
 <section id="as-python-functions">
-<h3>As Python functions<a class="headerlink" href="#as-python-functions" title="Link to this heading">¶</a></h3>
-<p>The above <code class="docutils literal notranslate"><span class="pre">fsstats.run_lme</span></code> function is  a wrapper around the two central functions for fitting linear mixed-effects models and subsequently performing statistical inference on them, i.e. <code class="docutils literal notranslate"><span class="pre">fsstats.lme.fit</span></code> and <code class="docutils literal notranslate"><span class="pre">fsstats.lme.test</span></code>. Use of the wrapper function is recommended for most cases, but in scenarios like customized analyses or processing pipelines, it may be desirable to call the low-level <code class="docutils literal notranslate"><span class="pre">fit</span></code> and <code class="docutils literal notranslate"><span class="pre">test</span></code> functions directly. In contrast to the wrapper function, which in most cases takes filenames as inputs, the <code class="docutils literal notranslate"><span class="pre">fit</span></code> and <code class="docutils literal notranslate"><span class="pre">test</span></code> function directly operate on Python variables such as numpy arrays or lists. We refer to the API documentation for details about the expected inputs and the resulting outputs, and give two short examples below.</p>
+<span id="documentation-as-python-functions"></span><h3>As Python functions<a class="headerlink" href="#as-python-functions" title="Link to this heading">¶</a></h3>
+<p>The above <code class="docutils literal notranslate"><span class="pre">fsstats.run_glm</span></code> and <code class="docutils literal notranslate"><span class="pre">fsstats.run_lme</span></code> functions are wrappers around the two central functions of each module for fitting a model and subsequently performing statistical inference on it, i.e. <code class="docutils literal notranslate"><span class="pre">fsstats.glm.fit</span></code>/<code class="docutils literal notranslate"><span class="pre">fsstats.glm.test</span></code> and <code class="docutils literal notranslate"><span class="pre">fsstats.lme.fit</span></code>/<code class="docutils literal notranslate"><span class="pre">fsstats.lme.test</span></code>. Use of the wrapper functions is recommended for most cases, but in scenarios like customized analyses or processing pipelines, it may be desirable to call the low-level <code class="docutils literal notranslate"><span class="pre">fit</span></code> and <code class="docutils literal notranslate"><span class="pre">test</span></code> functions directly. In contrast to the wrapper functions, which in most cases take filenames as inputs, the <code class="docutils literal notranslate"><span class="pre">fit</span></code> and <code class="docutils literal notranslate"><span class="pre">test</span></code> functions directly operate on Python variables such as numpy arrays or lists. We refer to the API documentation for details about the expected inputs and the resulting outputs, and give short examples below.</p>
+<section id="documentation-functions-glm">
+<span id="id4"></span><h4>The GLM module<a class="headerlink" href="#documentation-functions-glm" title="Link to this heading">¶</a></h4>
+<p>The following code will fit an ordinary least squares model for all (or a masked subset of) voxels/vertices/variables in a single vectorized computation. We need to provide a design matrix <code class="docutils literal notranslate"><span class="pre">X</span></code> and the data <code class="docutils literal notranslate"><span class="pre">Y</span></code>. <code class="docutils literal notranslate"><span class="pre">maskvtx</span></code> is optional (<code class="docutils literal notranslate"><span class="pre">None</span></code> fits every column of <code class="docutils literal notranslate"><span class="pre">Y</span></code>); <code class="docutils literal notranslate"><span class="pre">return_yhat</span></code>/<code class="docutils literal notranslate"><span class="pre">return_eres</span></code> control whether the signal estimate and residual error are additionally returned.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">fsstats.glm</span><span class="w"> </span><span class="kn">import</span> <span class="n">fit</span>
+<span class="n">stats</span> <span class="o">=</span> <span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">design_matrix</span><span class="p">,</span>
+            <span class="n">Y</span><span class="o">=</span><span class="n">thickness_values</span><span class="p">,</span>
+            <span class="n">maskvtx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">return_yhat</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">return_eres</span><span class="o">=</span><span class="kc">False</span>
+            <span class="p">)</span>
+</pre></div>
+</div>
+<p>After model estimation, the following code will perform statistical inference for a previously estimated model, again for all voxels/vertices/variables in a single vectorized computation. We need to specify the estimated regression coefficients (<code class="docutils literal notranslate"><span class="pre">Bhat</span></code>), residual variance (<code class="docutils literal notranslate"><span class="pre">rvar</span></code>), degrees of freedom (<code class="docutils literal notranslate"><span class="pre">dof</span></code>), and design matrix (<code class="docutils literal notranslate"><span class="pre">X</span></code>) from <code class="docutils literal notranslate"><span class="pre">stats</span></code>, and a contrast matrix <code class="docutils literal notranslate"><span class="pre">C</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">fsstats.glm</span><span class="w"> </span><span class="kn">import</span> <span class="n">test</span>
+<span class="n">fstats</span> <span class="o">=</span> <span class="n">test</span><span class="p">(</span><span class="n">Bhat</span><span class="o">=</span><span class="n">stats</span><span class="p">[</span><span class="s1">'Bhat'</span><span class="p">],</span>
+              <span class="n">rvar</span><span class="o">=</span><span class="n">stats</span><span class="p">[</span><span class="s1">'rvar'</span><span class="p">],</span>
+              <span class="n">dof</span><span class="o">=</span><span class="n">stats</span><span class="p">[</span><span class="s1">'dof'</span><span class="p">],</span>
+              <span class="n">X</span><span class="o">=</span><span class="n">stats</span><span class="p">[</span><span class="s1">'X'</span><span class="p">],</span>
+              <span class="n">C</span><span class="o">=</span><span class="n">contrast_matrix</span>
+              <span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="documentation-functions-lme">
+<span id="id5"></span><h4>The LME module<a class="headerlink" href="#documentation-functions-lme" title="Link to this heading">¶</a></h4>
 <p>The following code will fit a linear mixed-effects model. We need to provide a design matrix <code class="docutils literal notranslate"><span class="pre">X</span></code>, the indices <code class="docutils literal notranslate"><span class="pre">Zcols</span></code> of the random effects in the design matrix, the concatenated thickness (or volume) data <code class="docutils literal notranslate"><span class="pre">Y</span></code>, and a list <code class="docutils literal notranslate"><span class="pre">clusters</span></code> of the cluster structure. All other inputs are optional, and are set to their default values in this example. In practice, it will make sense to increase the number of CPU cores (<code class="docutils literal notranslate"><span class="pre">prs</span></code>) to allow for parallel processing.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">fsstats.lme</span><span class="w"> </span><span class="kn">import</span> <span class="n">fit</span>
 <span class="n">stats</span> <span class="o">=</span> <span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">design_matrix</span><span class="p">,</span>
@@ -418,43 +562,56 @@ run a linear mixed-effcts analysis.</p>
 </div>
 </section>
 </section>
+</section>
 <hr class="docutils" />
 <section id="inputs-and-outputs">
 <h2>Inputs and outputs<a class="headerlink" href="#inputs-and-outputs" title="Link to this heading">¶</a></h2>
 <section id="input-data-and-format-specifications">
-<h3>Input data and format specifications<a class="headerlink" href="#input-data-and-format-specifications" title="Link to this heading">¶</a></h3>
+<span id="documentation-input-data-format-specs"></span><h3>Input data and format specifications<a class="headerlink" href="#input-data-and-format-specifications" title="Link to this heading">¶</a></h3>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
 <tr class="row-odd"><th class="head"><p>Argument</p></th>
+<th class="head"><p>Used by</p></th>
 <th class="head"><p>Description</p></th>
 <th class="head"><p>Format</p></th>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p>–table</p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--table</span></code></p></td>
+<td><p>lme, glm</p></td>
 <td><p>Univariate data</p></td>
 <td><p>Table including a header that describes the variable names and a first column of IDs; can have one or more variables. Output from FreeSurfer’s <code class="docutils literal notranslate"><span class="pre">asegstats2table</span></code> or <code class="docutils literal notranslate"><span class="pre">aparcstats2table</span></code> will be accepted. Only needed for univariate analysis.</p></td>
 </tr>
-<tr class="row-odd"><td><p>–y</p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--y</span></code></p></td>
+<td><p>lme, glm</p></td>
 <td><p>Preprocessed mass-univarate data</p></td>
 <td><p>FreeSurfer mgh/mgz image file, can be obtained from <code class="docutils literal notranslate"><span class="pre">mris_preproc</span></code>. Only needed for mass-univariate analysis.</p></td>
 </tr>
-<tr class="row-even"><td><p>–mask</p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--label</span></code></p></td>
+<td><p>lme, glm</p></td>
 <td><p>Analysis mask for mass-univariate data</p></td>
-<td><p>FreeSurfer label file, e.g. <code class="docutils literal notranslate"><span class="pre">lh.cortex</span></code>. Optional for mass-univariate analysis; if omitted, all data will be used.</p></td>
+<td><p>FreeSurfer label file, e.g. <code class="docutils literal notranslate"><span class="pre">lh.cortex</span></code>. Optional for mass-univariate analysis; if omitted (and, for <code class="docutils literal notranslate"><span class="pre">glm</span></code>, <code class="docutils literal notranslate"><span class="pre">--mask</span></code> is also omitted), all data will be used. Mutually exclusive with <code class="docutils literal notranslate"><span class="pre">--mask</span></code>.</p></td>
 </tr>
-<tr class="row-odd"><td><p>–X</p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--mask</span></code></p></td>
+<td><p>glm</p></td>
+<td><p>Analysis mask for mass-univariate data</p></td>
+<td><p>Binary mask volume in mgh/mgz format, with the same number of voxels/vertices as <code class="docutils literal notranslate"><span class="pre">--y</span></code>. Optional; mutually exclusive with <code class="docutils literal notranslate"><span class="pre">--label</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--X</span></code></p></td>
+<td><p>lme, glm</p></td>
 <td><p>Design matrix</p></td>
 <td><p>Table without header and without column of IDs; each row corresponds to one observation and each column corresponds to one parameter/variable in the model.</p></td>
 </tr>
-<tr class="row-even"><td><p>–C</p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--C</span></code></p></td>
+<td><p>lme, glm</p></td>
 <td><p>Contrast vector/matrix</p></td>
 <td><p>Table without header, with one or more rows depending on the type of contrast, and as many columns as the design matrix.  Each column refers to the same column of the design matrix. One contrast vector/matrix per file; for multiple contrasts, specify multiple <code class="docutils literal notranslate"><span class="pre">--C</span></code> arguments.</p></td>
 </tr>
-<tr class="row-odd"><td><p>–clusters</p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--clusters</span></code></p></td>
+<td><p>lme</p></td>
 <td><p>Grouping structure of the data</p></td>
-<td><p>Table without header and a single column. Must have as many rows as the design matrix, and each row corresponds to the same row in the design matrix. Indicates for every observation to which which cluster (e.g., person) it belongs; can be a list of repeated participant IDs.</p></td>
+<td><p>Table without header and a single column. Must have as many rows as the design matrix, and each row corresponds to the same row in the design matrix. Indicates for every observation to which which cluster (e.g., person) it belongs; can be a list of repeated participant IDs. Not used by <code class="docutils literal notranslate"><span class="pre">glm</span></code>, which assumes independent observations.</p></td>
 </tr>
 </tbody>
 </table>
@@ -462,50 +619,81 @@ run a linear mixed-effcts analysis.</p>
 <p>All tables can be separated by tab, comma, or space.</p>
 </section>
 <section id="output-files-and-their-interpretation">
-<h3>Output files and their interpretation<a class="headerlink" href="#output-files-and-their-interpretation" title="Link to this heading">¶</a></h3>
+<span id="documentation-output-files"></span><h3>Output files and their interpretation<a class="headerlink" href="#output-files-and-their-interpretation" title="Link to this heading">¶</a></h3>
 <p>The program will compute the following statistics, and produce text- or image-based output files. Text files can be accessed with any text editor. Image files follow the FreeSurfer format and conventions, and are intended to be used with visualization and post-processing tools like <code class="docutils literal notranslate"><span class="pre">Freeview</span></code> and <code class="docutils literal notranslate"><span class="pre">surfcluster</span></code>, which are available from any FreeSurfer distribution.</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
 <tr class="row-odd"><th class="head"><p>file</p></th>
+<th class="head"><p>used by</p></th>
 <th class="head"><p>description</p></th>
 </tr>
 </thead>
 <tbody>
 <tr class="row-even"><td><p>logfile.txt</p></td>
+<td><p>lme, glm</p></td>
 <td><p>logfile</p></td>
 </tr>
 <tr class="row-odd"><td><p>Xg.dat</p></td>
-<td><p>design matrix</p></td>
+<td><p>lme, glm</p></td>
+<td><p>design matrix (univariate analysis only)</p></td>
 </tr>
-<tr class="row-even"><td><p>beta.mgh</p></td>
+<tr class="row-even"><td><p>beta.{mgh,txt}</p></td>
+<td><p>lme, glm</p></td>
 <td><p>model parameters</p></td>
 </tr>
-<tr class="row-odd"><td><p>estimates.pkl</p></td>
-<td><p>internal file with parameter estimates</p></td>
+<tr class="row-odd"><td><p>rvar.{mgh,txt}</p></td>
+<td><p>glm</p></td>
+<td><p>residual error variance</p></td>
 </tr>
-<tr class="row-even"><td><p>statistics.pkl</p></td>
+<tr class="row-even"><td><p>rstd.{mgh,txt}</p></td>
+<td><p>glm</p></td>
+<td><p>residual error standard deviation (square root of rvar)</p></td>
+</tr>
+<tr class="row-odd"><td><p>mask.mgh</p></td>
+<td><p>glm</p></td>
+<td><p>the final mask/label used, if <code class="docutils literal notranslate"><span class="pre">--mask</span></code> or <code class="docutils literal notranslate"><span class="pre">--label</span></code> was given</p></td>
+</tr>
+<tr class="row-even"><td><p>yhat.{mgh,txt}</p></td>
+<td><p>glm</p></td>
+<td><p>signal estimate, only with <code class="docutils literal notranslate"><span class="pre">--yhat-save</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>eres.{mgh,txt}</p></td>
+<td><p>glm</p></td>
+<td><p>residual error, only with <code class="docutils literal notranslate"><span class="pre">--eres-save</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>estimates.pkl</p></td>
+<td><p>lme</p></td>
+<td><p>internal file with parameter estimates (not written by <code class="docutils literal notranslate"><span class="pre">glm</span></code>, which re-fits its closed-form solution on demand instead of caching it)</p></td>
+</tr>
+<tr class="row-odd"><td><p>statistics.pkl</p></td>
+<td><p>lme</p></td>
 <td><p>internal file with statistics</p></td>
 </tr>
-<tr class="row-odd"><td><p>&lt;contrast_directory&gt;/C.dat</p></td>
+<tr class="row-even"><td><p>&lt;contrast_directory&gt;/C.dat</p></td>
+<td><p>lme, glm</p></td>
 <td><p>contrast vector or matrix</p></td>
 </tr>
-<tr class="row-even"><td><p>&lt;contrast_directory&gt;/gamma.mgh</p></td>
+<tr class="row-odd"><td><p>&lt;contrast_directory&gt;/gamma.{mgh,txt}</p></td>
+<td><p>lme, glm</p></td>
 <td><p>contrast estimate</p></td>
 </tr>
-<tr class="row-odd"><td><p>&lt;contrast_directory&gt;/sgn.mgh</p></td>
-<td><p>sign of the contrast</p></td>
-</tr>
-<tr class="row-even"><td><p>&lt;contrast_directory&gt;/F.mgh</p></td>
+<tr class="row-even"><td><p>&lt;contrast_directory&gt;/F.{mgh,txt}</p></td>
+<td><p>lme, glm</p></td>
 <td><p>F-value of the contrast</p></td>
 </tr>
-<tr class="row-odd"><td><p>&lt;contrast_directory&gt;/sig.mgh</p></td>
-<td><p>Sig-value of the contrast</p></td>
+<tr class="row-odd"><td><p>&lt;contrast_directory&gt;/sig.{mgh,txt}</p></td>
+<td><p>lme, glm</p></td>
+<td><p>sig-value of the contrast, signed for single-row (t-test-like) contrasts</p></td>
+</tr>
+<tr class="row-even"><td><p>&lt;contrast_directory&gt;/z.{mgh,txt}</p></td>
+<td><p>lme, glm</p></td>
+<td><p>z-value corresponding to the sig-value’s p-value, signed for single-row (t-test-like) contrasts</p></td>
 </tr>
 </tbody>
 </table>
 </div>
-<p>The contrast estimate results from the application of the contrast vector or matrix to the model parameters. The sign of the contrast is computed as <code class="docutils literal notranslate"><span class="pre">sign(gamma)</span></code> and can be used for the interpretation of the results of the undirected <em>F</em> - test. The program produces <code class="docutils literal notranslate"><span class="pre">sig-values</span></code> instead of <code class="docutils literal notranslate"><span class="pre">p-values</span></code> for better representation and visualization of values that are very small or close to zero. <code class="docutils literal notranslate"><span class="pre">p-values</span></code> and <code class="docutils literal notranslate"><span class="pre">sig-values</span></code> can be converted into each other: <code class="docutils literal notranslate"><span class="pre">p</span> <span class="pre">=</span> <span class="pre">10^(-sig)</span></code> and <code class="docutils literal notranslate"><span class="pre">sig</span> <span class="pre">=</span> <span class="pre">-log10(p)</span></code>. The following table gives a few examples.</p>
+<p>The contrast estimate results from the application of the contrast vector or matrix to the model parameters. For single-row (t-test-like) contrasts, the sign of the contrast (<code class="docutils literal notranslate"><span class="pre">sign(gamma)</span></code>) is folded directly into <code class="docutils literal notranslate"><span class="pre">sig</span></code> and <code class="docutils literal notranslate"><span class="pre">z</span></code>; for multi-row (F-test) contrasts, sign is not meaningful and <code class="docutils literal notranslate"><span class="pre">sig</span></code>/<code class="docutils literal notranslate"><span class="pre">z</span></code> are left unsigned. This matches the convention used by FreeSurfer’s <code class="docutils literal notranslate"><span class="pre">mri_glmfit</span></code>. The program produces <code class="docutils literal notranslate"><span class="pre">sig-values</span></code> instead of <code class="docutils literal notranslate"><span class="pre">p-values</span></code> for better representation and visualization of values that are very small or close to zero. <code class="docutils literal notranslate"><span class="pre">p-values</span></code> and (unsigned) <code class="docutils literal notranslate"><span class="pre">sig-values</span></code> can be converted into each other: <code class="docutils literal notranslate"><span class="pre">p</span> <span class="pre">=</span> <span class="pre">10^(-sig)</span></code> and <code class="docutils literal notranslate"><span class="pre">sig</span> <span class="pre">=</span> <span class="pre">-log10(p)</span></code>. The following table gives a few examples.</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -520,15 +708,42 @@ run a linear mixed-effcts analysis.</p>
 <tr class="row-odd"><td><p>0.01</p></td>
 <td><p>2.0</p></td>
 </tr>
-<tr class="row-even"><td><p>0.001</p></td>
+<tr class="row-even"><td><p>0.005</p></td>
+<td><p>2.3</p></td>
+</tr>
+<tr class="row-odd"><td><p>0.001</p></td>
 <td><p>3.0</p></td>
 </tr>
-<tr class="row-odd"><td><p>0.0001</p></td>
+<tr class="row-even"><td><p>0.0001</p></td>
 <td><p>4.0</p></td>
+</tr>
+<tr class="row-odd"><td><p>0.00001</p></td>
+<td><p>5.0</p></td>
 </tr>
 </tbody>
 </table>
 </div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="deviations-from-original-packages">
+<h2>Deviations from original packages<a class="headerlink" href="#deviations-from-original-packages" title="Link to this heading">¶</a></h2>
+<section id="deviations-from-mri-glmfit">
+<h3>Deviations from mri_glmfit<a class="headerlink" href="#deviations-from-mri-glmfit" title="Link to this heading">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">glm</span></code> implements a lean subset of FreeSurfer’s <code class="docutils literal notranslate"><span class="pre">mri_glmfit</span></code>. Relative to <code class="docutils literal notranslate"><span class="pre">mri_glmfit</span></code>, the following are intentionally <strong>not</strong> implemented:</p>
+<ul class="simple">
+<li><p>Weighted least squares (<code class="docutils literal notranslate"><span class="pre">--w</span></code>/<code class="docutils literal notranslate"><span class="pre">--wls</span></code>) and fixed-effects analysis (<code class="docutils literal notranslate"><span class="pre">--yffxvar</span></code>/<code class="docutils literal notranslate"><span class="pre">--ffxdof</span></code>/<code class="docutils literal notranslate"><span class="pre">--ffxdofdat</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--osgm</span></code>, <code class="docutils literal notranslate"><span class="pre">--pca</span></code>, <code class="docutils literal notranslate"><span class="pre">--sim</span></code> (permutation/Monte Carlo simulation and multiple-comparison correction), <code class="docutils literal notranslate"><span class="pre">--fsgd</span></code>, DTI and kinetic-modeling options (<code class="docutils literal notranslate"><span class="pre">--dti</span></code>, <code class="docutils literal notranslate"><span class="pre">--mrtm1</span></code>, <code class="docutils literal notranslate"><span class="pre">--mrtm2</span></code>, <code class="docutils literal notranslate"><span class="pre">--logan</span></code>)</p></li>
+<li><p>Pruning (<code class="docutils literal notranslate"><span class="pre">--prune</span></code>) and smoothing (<code class="docutils literal notranslate"><span class="pre">--fwhm</span></code>/<code class="docutils literal notranslate"><span class="pre">--var-fwhm</span></code>)</p></li>
+</ul>
+</section>
+<section id="deviations-from-the-lme-toolbox">
+<h3>Deviations from the lme toolbox<a class="headerlink" href="#deviations-from-the-lme-toolbox" title="Link to this heading">¶</a></h3>
+<p>Introducing the <code class="docutils literal notranslate"><span class="pre">glm</span></code> module also brought two changes to the existing <code class="docutils literal notranslate"><span class="pre">lme</span></code> module’s command-line interface and outputs, made for consistency across both modules:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--mask</span></code> renamed to <code class="docutils literal notranslate"><span class="pre">--label</span></code>: the flag was always used to pass a FreeSurfer label file, so it is now named <code class="docutils literal notranslate"><span class="pre">--label</span></code> (matching <code class="docutils literal notranslate"><span class="pre">glm</span></code>, which additionally supports a distinct <code class="docutils literal notranslate"><span class="pre">--mask</span></code> for binary mask <em>volumes</em>, following <code class="docutils literal notranslate"><span class="pre">mri_glmfit</span></code>’s own convention). The Python API’s <code class="docutils literal notranslate"><span class="pre">run_lme(mask=...)</span></code> parameter is now <code class="docutils literal notranslate"><span class="pre">run_lme(label=...)</span></code>.</p></li>
+<li><p>Signed <code class="docutils literal notranslate"><span class="pre">sig</span></code> + <code class="docutils literal notranslate"><span class="pre">z</span></code>, no separate <code class="docutils literal notranslate"><span class="pre">sgn</span></code>: contrast output no longer includes a separate <code class="docutils literal notranslate"><span class="pre">sgn.mgh</span></code>/<code class="docutils literal notranslate"><span class="pre">sgn.txt</span></code> file. <code class="docutils literal notranslate"><span class="pre">sig.mgh</span></code>/<code class="docutils literal notranslate"><span class="pre">sig.txt</span></code> now has the contrast sign folded in directly for single-row (t-test-like) contrasts, and every contrast additionally gets a new <code class="docutils literal notranslate"><span class="pre">z.mgh</span></code>/<code class="docutils literal notranslate"><span class="pre">z.txt</span></code> (z-value) file — mirroring FreeSurfer’s <code class="docutils literal notranslate"><span class="pre">mri_glmfit</span></code> convention.</p></li>
+</ul>
 </section>
 </section>
 <hr class="docutils" />
@@ -538,11 +753,19 @@ run a linear mixed-effcts analysis.</p>
 <ul class="simple">
 <li><p>Henschel L, Conjeti S, Estrada S, Diers K, Fischl B, Reuter M, FastSurfer -
 A fast and accurate deep learning based neuroimaging pipeline, NeuroImage 219
-(2020), 117012. https://doi.org/10.1016/j.neuroimage.2020.117012</p></li>
+(2020), 117012. <a class="reference external" href="https://doi.org/10.1016/j.neuroimage.2020.117012">https://doi.org/10.1016/j.neuroimage.2020.117012</a></p></li>
 <li><p>Henschel L*, Kuegler D*, Reuter M. (*co-first). FastSurferVINN:
 Building Resolution-Independence into Deep Learning Segmentation Methods -
 A Solution for HighRes Brain MRI. NeuroImage 251 (2022), 118933.
-https://dx.doi.org/10.1016/j.neuroimage.2022.118933</p></li>
+<a class="reference external" href="https://dx.doi.org/10.1016/j.neuroimage.2022.118933">https://dx.doi.org/10.1016/j.neuroimage.2022.118933</a></p></li>
+</ul>
+<p>If using the GLM module, please additionally cite:</p>
+<ul class="simple">
+<li><p>Fischl, B. (2012). FreeSurfer. NeuroImage, 62(2), 774-781.
+<a class="reference external" href="https://dx.doi.org/10.1016/j.neuroimage.2012.01.021">https://dx.doi.org/10.1016/j.neuroimage.2012.01.021</a></p></li>
+</ul>
+<p>If using the LME module, please additionally cite:</p>
+<ul class="simple">
 <li><p>Bernal-Rusiel JL, Greve DN, Reuter M, Fischl B, Sabuncu MR.
 Statistical Analysis of Longitudinal Neuroimage Data with
 Linear Mixed Effects Models, NeuroImage 66 (2012), 249-260.
@@ -556,9 +779,9 @@ Mass-univariate Analysis of Longitudinal Neuroimage Data, NeuroImage
 <hr class="docutils" />
 <section id="license">
 <h2>License<a class="headerlink" href="#license" title="Link to this heading">¶</a></h2>
-<p>This software is licensed under the MIT License, see associated LICENSE file
+<p>This software is licensed under the Apache 2.0 License, see associated LICENSE file
 for details.</p>
-<p>Copyright (c) 2019 Image Analysis Group, DZNE e.V.</p>
+<p>Copyright (c) 2026 Artificial Intelligence in Medical Imaging Group, DZNE</p>
 </section>
 </section>
 
@@ -567,12 +790,12 @@ for details.</p>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="../changes/index.html">
+          <a class="next-page" href="../TUTORIAL.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Changes</div>
+                <div class="title">Tutorial</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
@@ -625,18 +848,34 @@ for details.</p>
             <ul>
 <li><a class="reference internal" href="#">Documentation</a><ul>
 <li><a class="reference internal" href="#overview">Overview</a></li>
-<li><a class="reference internal" href="#description">Description</a></li>
 <li><a class="reference internal" href="#contents">Contents</a></li>
 <li><a class="reference internal" href="#functionality">Functionality</a></li>
 <li><a class="reference internal" href="#usage">Usage</a><ul>
-<li><a class="reference internal" href="#as-a-command-line-tool">As a command line tool</a></li>
-<li><a class="reference internal" href="#as-a-python-package">As a Python package</a></li>
-<li><a class="reference internal" href="#as-python-functions">As Python functions</a></li>
+<li><a class="reference internal" href="#as-a-command-line-tool">As a command line tool</a><ul>
+<li><a class="reference internal" href="#the-glm-module">The GLM module</a></li>
+<li><a class="reference internal" href="#the-lme-module">The LME module</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#as-a-python-package">As a Python package</a><ul>
+<li><a class="reference internal" href="#documentation-package-glm">The GLM module</a></li>
+<li><a class="reference internal" href="#documentation-package-lme">The LME module</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#as-python-functions">As Python functions</a><ul>
+<li><a class="reference internal" href="#documentation-functions-glm">The GLM module</a></li>
+<li><a class="reference internal" href="#documentation-functions-lme">The LME module</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a class="reference internal" href="#inputs-and-outputs">Inputs and outputs</a><ul>
 <li><a class="reference internal" href="#input-data-and-format-specifications">Input data and format specifications</a></li>
 <li><a class="reference internal" href="#output-files-and-their-interpretation">Output files and their interpretation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#deviations-from-original-packages">Deviations from original packages</a><ul>
+<li><a class="reference internal" href="#deviations-from-mri-glmfit">Deviations from mri_glmfit</a></li>
+<li><a class="reference internal" href="#deviations-from-the-lme-toolbox">Deviations from the lme toolbox</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#citations">Citations</a></li>

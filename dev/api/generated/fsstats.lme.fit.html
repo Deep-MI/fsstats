@@ -194,8 +194,18 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../documentation/index.html">Documentation</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../TUTORIAL.html">Tutorial</a><input aria-label="Toggle navigation of Tutorial" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorial/glm_univariate.html">GLM, univariate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorial/glm_massunivariate.html">GLM, mass-univariate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorial/lme_univariate.html">LME, univariate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorial/lme_massunivariate.html">LME, mass-univariate</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../../changes/index.html">Changes</a></li>
-<li class="toctree-l1 current has-children"><a class="reference internal" href="../index.html">API Reference</a><input aria-label="Toggle navigation of API Reference" checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../index.html">API Reference</a><input aria-label="Toggle navigation of API Reference" checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="fsstats.run_glm.html">fsstats.run_glm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fsstats.glm.fit.html">fsstats.glm.fit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fsstats.glm.test.html">fsstats.glm.test</a></li>
 <li class="toctree-l2"><a class="reference internal" href="fsstats.run_lme.html">fsstats.run_lme</a></li>
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">fsstats.lme.fit</a></li>
 <li class="toctree-l2"><a class="reference internal" href="fsstats.lme.test.html">fsstats.lme.test</a></li>
@@ -254,27 +264,27 @@
 </dd>
 <dt><strong>Y</strong><span class="classifier"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code></a></span></dt><dd><p>Data matrix (nm, nv) whose columns represent the data vector for each voxel/vertex/variable. Rows must correspond to rows in X.</p>
 </dd>
-<dt><strong>clusters</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">list</span></code></a></span></dt><dd><p>List of clusters (nm), where each item corresponds to the same row in the design matrix and indicates which cluster the observation belongs to. List must be sorted (not necessarily alphabetically or numerically) according to clusters, i.e. cluster elements must be in consecutive blocks.</p>
+<dt><strong>clusters</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><code class="docutils literal notranslate"><span class="pre">list</span></code></a></span></dt><dd><p>List of clusters (nm), where each item corresponds to the same row in the design matrix and indicates which cluster the observation belongs to. List must be sorted (not necessarily alphabetically or numerically) according to clusters, i.e. cluster elements must be in consecutive blocks.</p>
 </dd>
 <dt><strong>maskvtx</strong><span class="classifier"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code></a></span></dt><dd><p>List of zero-based mask indices (nv,). If None, all voxels/vertices/variables are included.</p>
 </dd>
-<dt><strong>prs</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">int</span></code></a></span></dt><dd><p>Number of CPU cores used for parallel computing.</p>
+<dt><strong>prs</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="docutils literal notranslate"><span class="pre">int</span></code></a></span></dt><dd><p>Number of CPU cores used for parallel computing.</p>
 </dd>
-<dt><strong>nit</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">int</span></code></a></span></dt><dd><p>Number of iterations.</p>
+<dt><strong>nit</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="docutils literal notranslate"><span class="pre">int</span></code></a></span></dt><dd><p>Number of iterations.</p>
 </dd>
-<dt><strong>e</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">float</span></code></a></span></dt><dd><p>Convergence epsilon (gradient’s norm).</p>
+<dt><strong>e</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><code class="docutils literal notranslate"><span class="pre">float</span></code></a></span></dt><dd><p>Convergence epsilon (gradient’s norm).</p>
 </dd>
-<dt><strong>return_random_effects_estimates</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bltin-boolean-values" title="(in Python v3.14)"><span class="xref std std-ref">bool</span></a></span></dt><dd><p>Compute random effects estimates.</p>
+<dt><strong>return_random_effects_estimates</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#bltin-boolean-values" title="(in Python v3.15)"><span class="xref std std-ref">bool</span></a></span></dt><dd><p>Compute random effects estimates.</p>
 </dd>
-<dt><strong>return_minimal_information</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bltin-boolean-values" title="(in Python v3.14)"><span class="xref std std-ref">bool</span></a></span></dt><dd><p>Return minimal information.</p>
+<dt><strong>return_minimal_information</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#bltin-boolean-values" title="(in Python v3.15)"><span class="xref std std-ref">bool</span></a></span></dt><dd><p>Return minimal information.</p>
 </dd>
-<dt><strong>verbose</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bltin-boolean-values" title="(in Python v3.14)"><span class="xref std std-ref">bool</span></a></span></dt><dd><p>Increase verbosity.</p>
+<dt><strong>verbose</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#bltin-boolean-values" title="(in Python v3.15)"><span class="xref std std-ref">bool</span></a></span></dt><dd><p>Increase verbosity.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl>
-<dt><strong>stats</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">dict</span></code></a></span></dt><dd><p>A dict of dictionaries containing estimates for every voxel/vertex/variable where the model was fit.
+<dt><strong>stats</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><code class="docutils literal notranslate"><span class="pre">dict</span></code></a></span></dt><dd><p>A dict of dictionaries containing estimates for every voxel/vertex/variable where the model was fit.
 The indices of the voxels/vertices/variables are the keys of the outer dictionary. Each inner dictionary
 has the following keys:</p>
 <blockquote>
