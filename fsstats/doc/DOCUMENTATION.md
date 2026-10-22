@@ -385,7 +385,7 @@ ___
 - `--osgm`, `--pca`, `--sim` (permutation/Monte Carlo simulation and multiple-comparison correction), `--fsgd`, DTI and kinetic-modeling options (`--dti`, `--mrtm1`, `--mrtm2`, `--logan`)
 - Pruning (`--prune`) and smoothing (`--fwhm`/`--var-fwhm`)
 
-### Deviations from the lme toolbox (Matlab)
+### Deviations from the lme toolbox
 
 Introducing the `glm` module also brought two changes to the `lme` module's command-line interface and outputs, made for consistency across both modules:
 
