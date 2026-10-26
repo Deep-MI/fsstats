@@ -25,7 +25,7 @@ See the [documentation](documentation_input-data-format-specs) for exact format 
 
 ## Building the design matrix and contrasts
 
-We start with creating the design matrix, which contain all variables the we want to relate to the outcome (or that we want to control for):
+We start with creating the design matrix, which contain all variables that we want to relate to the outcome (or that we want to control for):
 
 - For this longitudinal analysis, the design matrix has one row per *visit* (not: per participant) and four columns. The first column is the intercept (all 1s), the second column is Time (years since baseline), the third column is the group indicator (0 = CN, 1 = AD), and the fourth column is the Group × Time interaction. The interaction term is the product of the values of the second and third columns; it is needed to assess potential differences in the slope across time between the groups. Note that the number of observations does not need to be the same across participants, and that follow-up intervals do not need to be identical across participants. 
 
