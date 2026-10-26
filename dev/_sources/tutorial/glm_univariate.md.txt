@@ -17,7 +17,7 @@ See the [documentation](documentation_input-data-format-specs) for the exact exp
 
 ## Building the design matrix and contrasts
 
-We start with creating the design matrix, which contain all variables the we want to relate to the outcome (or that we want to control for):
+We start with creating the design matrix, which contain all variables that we want to relate to the outcome (or that we want to control for):
 
 - For this cross-sectional comparison, the design matrix has one row per participant and three columns. The first column is the intercept (all 1s), the second column is the group indicator (0 = CN, 1 = AD), and the third column is Age at baseline.
 
